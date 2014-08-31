@@ -1,0 +1,57 @@
+#ifndef __IGL_MATH_H_
+#define __IGL_MATH_H_
+
+
+/* implement a 3d vector (4 coordinates) */
+class vector
+{
+public:
+	double x,y,z,w;
+
+	inline vector()
+		{ ;};
+  inline vector(double x0,double y0,double z0,double w0)
+		{ x = x0; y = y0; z = z0; w = w0; }
+	inline vector(vector &v)
+		{ *this = v; }
+  inline void null(void)
+		{ x = y = z = 0.0; }
+	inline double mag(void)
+		{ return(double)sqrt(x*x+y*y+z*z); };
+	inline void vec(double x0,double y0; double z0)
+		{ x = x0; y = y0; z = z0; }
+	inline void cross(vector &u,vector &v)
+	{
+		x = u.y*v.z - u.z*v.y;
+		y = u.z*v.x - u.x*v.z;
+		z = u.x*v.y - u.y*v.x
+	}
+	inline void normalize(void)
+	{ 
+		double l = (double)sqrt(x*x+y*y+z*z);
+		if ( l == 0.0 )  return;  
+		x /= l; y /= l; z /= l; 
+	}
+	inline double& operator[](int i)
+		{ return (&x)[i]; }
+};
+
+
+/* implement a 4x4 matrix for linear transformations */
+class mat4x4
+{
+public:
+	double m[4][4];
+
+	inline void null(void)
+		{ memset(&m,0,sizeof(m)); }
+	inline void load_identity(void)
+	{
+		memset(m,0,sizeof(m));
+		m[0][0] = m[1][1] = m[2][2] = m[3][3] = 1.0;
+	}
+	void set_rotation(double ang,vector &dir);
+	mat4x4 operator* (mat4x4& m1)
+};
+
+#endif  /* __igl_math_h_ */
