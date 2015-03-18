@@ -1,20 +1,19 @@
-#include <igl/object.h>
+#include <glic/object.h>
 
 
 // object constructor
-CiglObject::CiglObject()
+CglicObject::CglicObject():transform()
 {
-	cout << " -- CiglObject\n";
-  state = O_ON;
+  cout << "  --- [create CglicObject]" << endl;
+  state = TO_ON;
 }
 
-CiglObject::~CiglObject()
+CglicObject::~CglicObject()
 {
-	// check if display lists used...
-	// glDeleteLists();
+  cout << "  --- [destroy CglicObject]" << endl;
+  // check if display lists used...
+  // glDeleteLists();
 }
 
-
-void CiglObject::iglInit()
-{
-}
+void CglicObject::glicInit()
+{}

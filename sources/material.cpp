@@ -1,19 +1,17 @@
-#include <igl/material.h>
+#include <glic/material.h>
 
 
 // object constructor
-CiglMaterial::CiglMaterial()
+CglicMaterial::CglicMaterial()
 {
-	cout << " -- cIglMaterial\n";
+  cout << "  --- - [create CglicMaterial]" << endl;
 }
 
-CiglMaterial::~CiglMaterial()
+CglicMaterial::~CglicMaterial()
 {
-	// check if display lists used...
-	// glDeleteLists();
+  cout << "  --- - [destroy CglicMaterial]" << endl;
 }
 
 
-void CiglMaterial::iglInit()
-{
-}
+void CglicMaterial::glicInit()
+{}
