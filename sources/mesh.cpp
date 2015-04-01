@@ -167,35 +167,7 @@ GLuint CglicMesh::buildLine()
 void CglicMesh::display()
 {
   cout << "   ---> display mesh\n";
-  int i;
-  Tria  *pt;
-  Point     *p0,*p1,*p2;
-  float      pp0[3],pp1[3],pp2[3];
-  
-  /*listTria = glGenLists(1);
-   
-   glNewList(listTria,GL_COMPILE);
-   
-   
-   glColor3f(0.5, 0.1, 0.1);
-   for (int k=0; k<nt; k++) {
-   pt = &tria[k];
-   p0 = &point[pt->v[0]];
-   p1 = &point[pt->v[1]];
-   p2 = &point[pt->v[2]];
-   for (i=0; i<3 ; i++) {
-   pp0[i] = p0->c[i];
-   pp1[i] = p1->c[i];
-   pp2[i] = p2->c[i];
-   }
-   glVertex3fv(pp0);
-   glVertex3fv(pp1);
-   glVertex3fv(pp2);
-   }
-   glEnd();
-   glEndList();*/
-  
-  
+
   glPushMatrix();
   glScalef(1.01 * fabs(xmax-xmin),
            1.01 * fabs(ymax-ymin),
@@ -229,8 +201,7 @@ void CglicMesh::meshBox()
     if ( p0->c[2] > zmax ) zmax = p0->c[2];
   }
   
-  fprintf(stdout,"    Bounding box:  x:[%g  %g]  y:[%g  %g]  z:[%g  %g]\n",
-          xmin,xmax,ymin,ymax,zmin,zmax);
+  //fprintf(stdout,"    Bounding box:  x:[%g  %g]  y:[%g  %g]  z:[%g  %g]\n", xmin,xmax,ymin,ymax,zmin,zmax);
   
   /* translate mesh at center */
   xtra = 0.5 * (xmin+xmax);
@@ -238,7 +209,6 @@ void CglicMesh::meshBox()
   ztra = 0.5 * (zmin+zmax);
   for (int k=1; k<=np; k++) {
     p0 = &point[k];
-    //if ( ppt->tag == M_UNUSED && ne )  continue;
     p0->c[0] -= xtra;
     p0->c[1] -= ytra;
     p0->c[2] -= ztra;

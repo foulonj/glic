@@ -12,6 +12,5 @@ CglicMaterial::~CglicMaterial()
   cout << "  --- - [destroy CglicMaterial]" << endl;
 }
 
-
 void CglicMaterial::glicInit()
 {}
