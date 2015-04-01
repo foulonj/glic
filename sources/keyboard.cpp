@@ -64,6 +64,14 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
       if (state == 0)
         pcv->scene[pcv->window[pcv->winid()].ids]->transform.setTranslation(0.,0.5,0.);
       break;
+      case 'z':
+      cout << "ZOOM IN \n";
+      glTranslatef(0., 0., 0.1);
+      break;
+    case 'Z':
+      cout << "ZOOM OUT \n";
+      glTranslatef(0., 0., -0.1);
+      break;
     default:
       break;
   }
@@ -81,8 +89,12 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
       selection = -1;
     for (unsigned int i = 0; i < pcv->object.size(); i++)
       pcv->object[i]->state = CglicObject::TO_ON;
-    if (selection >= 0)
+    pcv->scene[pcv->window[pcv->winid()].ids]->state = CglicScene::TO_SEL;
+    if (selection >= 0){
       pcv->object[selection]->state = CglicObject::TO_SEL;
+      pcv->scene[pcv->window[pcv->winid()].ids]->state = CglicScene::TO_ON;
+    };
+    
     
     
     cout << "\n\n Selection " << selection << endl;

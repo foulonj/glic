@@ -16,10 +16,14 @@ class GLIC_API CglicTransform
 {
 public:
   mat4x4 mat;
-  vec3d translation;
   
+  vec3d translation;
+  double angle;
+  vec3d axe;
+
   CglicTransform();
   ~CglicTransform(){};
+  void setRotation(double ang, vec3d axis);
   void setTranslation(double x, double y, double z);
   void print();
 };

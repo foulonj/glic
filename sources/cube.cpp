@@ -23,7 +23,7 @@ void CglicCube::display()
     glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
   }
   else
-    glColor3f(0., 0.2, 0.7);
+    glColor3f(color[0], color[1], color[2]);
   
   glutSolidCube(0.8*r);
   glColor3f(1., 1., 1.);

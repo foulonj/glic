@@ -1,8 +1,13 @@
 #include <iostream>
 #include <glic.h>
+#include <cstdlib>
 
 using namespace std;
 
+
+double frand_a_b(double a, double b){
+  return ( rand()/(double)RAND_MAX ) * (b-a) + a;
+}
 
 int main(int argc, char **argv)
 {
@@ -10,7 +15,7 @@ int main(int argc, char **argv)
   
   CglicCanvas cv(argc,argv);
   
-  idw = cv.glicWindow(0,0,500,500);
+  idw = cv.glicWindow(0,0,1000,1000);
   //cout << "\t Id window: " << idw << endl;
   ids = cv.glicScene();
   //cout << "\t Id scene: " << ids << endl;
@@ -30,8 +35,15 @@ int main(int argc, char **argv)
   //ido = cv.glicObject(new CglicCube(0.7, 0.2, 0., 1.));
   cv.glicSetObject(ido, ids);
   
-  /*ido = cv.glicObject(new CglicAxis());
-  cv.glicSetObject(ido, ids);*/
+  for (int io = 0; io < 5; io++){
+    ido = cv.glicObject(new CglicCube(frand_a_b(0,1), frand_a_b(0,1), 1.0, frand_a_b(0.,1.)));
+    cv.glicSetObject(ido, ids);
+  }
+    
+  
+  
+  ido = cv.glicObject(new CglicAxis());
+  cv.glicSetObject(ido, ids);
   
   //ido = cv.glicObject(new CglicSphere(0.1));
   //cv.glicSetObject(ido, ids);
