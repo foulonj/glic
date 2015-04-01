@@ -7,6 +7,11 @@ CglicObject::CglicObject():transform()
   cout << "  --- [create CglicObject]" << endl;
   state = TO_ON;
   
+  mat_diffuse[0] = 0.1f;
+  mat_diffuse[1] = 0.5f;
+  mat_diffuse[2] = 0.8f;
+  mat_diffuse[3] = 1.0f;
+  
   m_tr[0]=1.;m_tr[1]=0.;m_tr[2]=0.;m_tr[3]=0.;
   m_tr[4]=0.;m_tr[5]=1.;m_tr[6]=0.;m_tr[7]=0.;
   m_tr[8]=0.;m_tr[9]=0.;m_tr[10]=1.;m_tr[11]=0.;

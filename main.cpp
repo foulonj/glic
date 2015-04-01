@@ -66,13 +66,14 @@ int main(int argc, char **argv)
   //cv.glicSetObject(ido, ids);
   
   
-  /*
+  
    if (argc>1){
    idw = cv.glicWindow(600,0,400,400);
    ids = cv.glicScene();
    cv.glicSetScene(ids, idw);
    cv.window[idw].show();
    cout << "\t\t Read mesh \n\n";
+     cout << "ARGV : " << argv[1] << endl;
    CglicMesh* mesh=new CglicMesh(argv[1]);
    cout << "\t\t Read mesh end\n\n";
    cout << "\t\t Mesh Info\n\n";
@@ -84,7 +85,7 @@ int main(int argc, char **argv)
    cout << "\t\t Set Mesh in window\n\n";
    cv.glicSetObject(ido, ids);
    cout << "\t\t Set Mesh in window end\n\n";
-   };*/
+   };
   
   
   

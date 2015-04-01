@@ -11,6 +11,7 @@
 
 #include <glic/object.h>
 
+#define FLOAT_MAX  1.e20
 
 typedef struct {
   double    c[3];
@@ -37,12 +38,20 @@ private:
   vector<Tria>     tria;
   vector<Normal>   normal;
   GLuint listTria;
+  GLuint listLineTria;
+public:
+  double      xmin,ymin,zmin,xmax,ymax,zmax;
+  double      xtra,ytra,ztra;
+  float       bbmin,bbmax;
   
 public:
   CglicMesh(char *name);
   void meshInfo(const int& verbose = 0, ostream& outstr = cout);
   void display();
+  void meshBox();
   ~CglicMesh(){};
+  GLuint buildList();
+  GLuint buildLine();
 };
 
 #endif
