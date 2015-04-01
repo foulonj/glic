@@ -11,10 +11,10 @@ CglicView::CglicView()
   //setPersp(60.0, 0.01, 50.0);
   //setPos(0.0, 0.0, -10.0);
   
-  setPos(0.0, 0.0, 1.0);
+  setPos(0.0, 0.0, 0.3);
   
   //Cube
-  setPersp(60.0, 0.01, 10.0);
+  setPersp(60.0, 0.01, 1.0);
   //setPos(0.0, 0.0, 0.0);
 }
 

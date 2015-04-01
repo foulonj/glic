@@ -57,7 +57,6 @@ void CglicScene::display()
   
   cout << "    -> Display list of object \n ";
   for (int iObj = 0; iObj < listObject.size(); iObj++){
-    cout << " id object : " << iObj << endl;
     glPushMatrix();
     glLoadIdentity();
     listObject[iObj]->applyTransformation();

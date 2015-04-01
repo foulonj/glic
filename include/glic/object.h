@@ -21,12 +21,16 @@ public:
   double m_tr[16];
 public:
   char  state;
+  char box;
+  char line;
 public:
   CglicObject();
   virtual ~CglicObject();
   virtual void display(){};
   CglicTransform transform;
   void applyTransformation();
+  void activeBB();
+  void activeMesh();
 protected:
   virtual void glicInit();
 };

@@ -6,7 +6,8 @@ CglicObject::CglicObject():transform()
 {
   cout << "  --- [create CglicObject]" << endl;
   state = TO_ON;
-  
+  box = TO_OFF;
+  line = TO_OFF;
   mat_diffuse[0] = 0.1f;
   mat_diffuse[1] = 0.5f;
   mat_diffuse[2] = 0.8f;
@@ -18,6 +19,7 @@ CglicObject::CglicObject():transform()
   m_tr[12]=0.;m_tr[13]=0.;m_tr[14]=0.;m_tr[15]=1.;
 }
 
+
 CglicObject::~CglicObject()
 {
   cout << "  --- [destroy CglicObject]" << endl;
@@ -27,6 +29,22 @@ CglicObject::~CglicObject()
 
 void CglicObject::glicInit()
 {}
+
+void CglicObject::activeBB()
+{
+  if (box == TO_OFF)
+    box = TO_ON;
+  else
+    box = TO_OFF;
+}
+
+void CglicObject::activeMesh()
+{
+  if (line == TO_OFF)
+    line = TO_ON;
+  else
+    line = TO_OFF;
+}
 
 void CglicObject::applyTransformation()
 {

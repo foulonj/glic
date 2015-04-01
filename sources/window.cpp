@@ -130,6 +130,7 @@ void CglicWindow::activateLight()
   };
   
   glEnable(GL_LIGHTING);	// Active l'éclairage
+  
   for (unsigned int iLight = 0; iLight < light.size(); iLight++)
   {
     cout << "iLight: " << iLight << endl;

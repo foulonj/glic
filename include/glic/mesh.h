@@ -38,7 +38,7 @@ private:
   vector<Tria>     tria;
   vector<Normal>   normal;
   GLuint listTria;
-  GLuint listLineTria;
+  GLuint listEdge;
 public:
   double      xmin,ymin,zmin,xmax,ymax,zmax;
   double      xtra,ytra,ztra;
@@ -50,8 +50,8 @@ public:
   void display();
   void meshBox();
   ~CglicMesh(){};
-  GLuint buildList();
-  GLuint buildLine();
+  GLuint buildTria();
+  GLuint buildEdge();
 };
 
 #endif

@@ -25,7 +25,9 @@ void CglicCube::display()
   else
     glColor3f(color[0], color[1], color[2]);
   
+  
   glutSolidCube(0.8*r);
   glColor3f(1., 1., 1.);
-  glutWireCube(r);
+  if (box == TO_ON)
+    glutWireCube(r);
 }

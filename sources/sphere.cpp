@@ -24,6 +24,7 @@ void CglicSphere::display()
   
   glutSolidSphere(0.8*r/2., 10., 10.);
   glColor3f(1., 1., 1.);
-  glutWireCube(r);
+  if ( box == TO_ON)
+    glutWireCube(r);
   
 }
