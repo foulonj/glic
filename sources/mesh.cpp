@@ -108,8 +108,8 @@ GLuint CglicMesh::buildTria()
   
   //glColor3f(0., 1., 0.);
   
-  /*GLfloat mat_amb[] = { 0.0, 0.0, 0.0, 1.0 };
-   GLfloat mat_dif[] = { 0.51, 0.52, 0.8, 1.0 };
+  GLfloat mat_amb[] = { 0.0, 0.0, 0.0, 1.0 };
+   GLfloat mat_dif[] = { 0., 0., 0., 1.0 };
    GLfloat mat_specular[] = { 0.07, 0.0, 0.0, 1.0 };
    GLfloat mat_emi[] = { 0.0, 0.0, 0.0, 1.0 };
    GLfloat mat_shininess[] = { 20.0 };
@@ -118,19 +118,21 @@ GLuint CglicMesh::buildTria()
    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_dif);
    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emi);
-   glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);*/
+   glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
   
   //glColor3f(0.51,0.52,0.8);
   
   
-  GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
-  GLfloat mat_shininess[] = { 80.0 };
+  //GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
+  //GLfloat mat_shininess[] = { 80.0 };
 
 
-  glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-  glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+  //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+  //glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
   
   glColor3f(0.51,0.52,0.8);
+  //glColor3f(1.,0.99,0.94);
+  
   
   glBegin (GL_TRIANGLES);
   for (int k=0; k<nt; k++) {
