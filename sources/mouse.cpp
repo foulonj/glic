@@ -1,5 +1,6 @@
 #include <glic/canvas.h>
 #include <glic/mouse.h>
+#include <glic/cube.h>
 extern CglicCanvas *pcv;
 
 
@@ -58,29 +59,25 @@ void CglicMouse::motion(int x, int y)
   
   if ( m_button[0] )
   {
-    if ( m_key == TM_SHIFT )
-    {
-      m_zoom -= (float) 0.0005 * diffy;
-    }
+    projsph(diffx, diffy, v);
+    /* axis of rotation: cross product */
+    m_axe.cross(m_pos,v);
+    dx = v[0] - m_pos[0];
+    dy = v[1] - m_pos[1];
+    dz = v[2] - m_pos[2];
+    m_ang = 180.0*sqrt(dx*dx + dy*dy + dz*dz);
+    m_pos = v;
+    
+    if (pcv->scene[pcv->window[pcv->winid()].ids]->state == CglicScene::TO_SEL)
+      pcv->scene[pcv->window[pcv->winid()].ids]->transform.setRotation(m_ang,m_axe);
     else
-    {
-      projsph(diffx, diffy, v);
-      /* axis of rotation: cross product */
-      m_axe.cross(m_pos,v);
-      dx = v[0] - m_pos[0];
-      dy = v[1] - m_pos[1];
-      dz = v[2] - m_pos[2];
-      m_ang = 180.0*sqrt(dx*dx + dy*dy + dz*dz);
-      m_pos = v;
-    }
-  }
-  else if ( m_button[1] )
-  {
-    m_trx += (float) 0.05 * diffx;
-    m_try -= (float) 0.05 * diffy;
-    m_ang   = 0.0;
-    m_lastx = x;
-    m_lasty = y;
+      for (unsigned int iObj = 0; iObj < pcv->scene[pcv->window[pcv->winid()].ids]->listObject.size(); iObj++){
+        if (pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->state == CglicCube::TO_SEL){
+          glPushMatrix();
+          pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->transform.setRotation(m_ang,m_axe);
+          glPopMatrix();
+        };
+      }
   }
 }
 
@@ -136,14 +133,13 @@ void CglicMouse::mouse(int b, int s, int x, int y)
       
       GLint viewport[4];
       GLubyte pixel[3];
-      GLubyte item[3];
+      //GLubyte item[3];
       
       glGetIntegerv(GL_VIEWPORT,viewport);
       
       glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
       
-      printf("\n\n\tRead Pixel color: %d %d %d\n\n\n",pixel[0],pixel[1],pixel[2]);
-      
+      //printf("\n\n\tRead Pixel color: %d %d %d\n\n\n",pixel[0],pixel[1],pixel[2]);
       
       break;
       
@@ -155,19 +151,10 @@ void CglicMouse::mouse(int b, int s, int x, int y)
     case GLUT_RIGHT_BUTTON:
       m_button[2] = ((GLUT_DOWN==s)?1:0);
       break;
+
   }
 }
 
 
 void CglicMouse::transform()
-{
-  cout << "----- mouse Transform \n";
-  if (m_key == TM_SHIFT)
-    glTranslatef(0.0, 0.0, -m_zoom);
-  glTranslatef(m_trx, m_try, 0.0);
-  glRotatef(m_ang, m_axe[0], m_axe[1], m_axe[2]);
-  glTranslatef(-m_otrx, -m_otry, 0.0);
-  m_otrx = m_trx;
-  m_otry = m_try;
-  m_ang = 0.0;
-}
+{}

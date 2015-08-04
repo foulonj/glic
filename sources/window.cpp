@@ -6,7 +6,7 @@ extern CglicCanvas *pcv;
 
 CglicWindow::CglicWindow(): m_id(-1) /*scene(NULL)*/
 {
-  view.setPos(2.0, 2.0, 2.0);
+  view.setPos(0.0, 0.0, 1.0);
 }
 
 
@@ -17,6 +17,7 @@ CglicWindow::CglicWindow(int x, int y, int w, int h)
   this->m_wpos[1] = y;
   this->m_wsiz[0] = w;
   this->m_wsiz[1] = h;
+  //view.setPos(0.0, 0.0, 1.0);
 }
 
 
@@ -60,14 +61,27 @@ void CglicWindow::show()
   
   glGetDoublev(GL_MODELVIEW_MATRIX, m_mnew);
   glPopMatrix();
+  
+  glPushMatrix();
+  glLoadIdentity();
+  glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot);
+  glPopMatrix();
+  
+  view.setView();
 }
 
 
 void CglicWindow::display()
 {
+  //view.setView();
+  //gluLookAt(0.,0.,0., 1.,-1.,0.0,0.,1.,0.);
+  //gluLookAt(0.,0.,0., 0.,0.,2.0,0.,1.,0.);
   cout << " - [display CglicWindow]" << endl;
   glDrawBuffer(GL_BACK_LEFT);
-  glClearColor(0.1, 0.1, 0.2, 1.0);
+  
+  //glClearColor(0.1, 0.1, 0.2, 1.0);
+  
+  glClearColor(0.5, 0.5, 0.5, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
   glMatrixMode(GL_MODELVIEW);
@@ -85,15 +99,16 @@ void CglicWindow::display()
   glGetDoublev(GL_MODELVIEW_MATRIX, m_mnew);
   glPopMatrix();
   
-  glMultMatrixd(m_mnew);
   
   /* redraw scene */
   glPushMatrix();
-  glMultMatrixd(pcv->scene[ids]->transform.mat.array());
+  pcv->scene[ids]->applyTransformation();
+  glMultMatrixd(pcv->scene[ids]->m_rot);
+  glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot);
   
   pcv->scene[ids]->display();
   glPopMatrix();
-  
+
   glutSwapBuffers();
 }
 
@@ -115,6 +130,7 @@ void CglicWindow::activateLight()
   };
   
   glEnable(GL_LIGHTING);	// Active l'éclairage
+  
   for (unsigned int iLight = 0; iLight < light.size(); iLight++)
   {
     cout << "iLight: " << iLight << endl;

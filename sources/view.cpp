@@ -11,9 +11,11 @@ CglicView::CglicView()
   //setPersp(60.0, 0.01, 50.0);
   //setPos(0.0, 0.0, -10.0);
   
+  setPos(0.0, 0.0, 0.3);
+  
   //Cube
-  setPersp(60.0, 0.01, 5.0);
-  setPos(0.0, 0.0, 0.0);
+  setPersp(60.0, 0.01, 1.0);
+  //setPos(0.0, 0.0, 0.0);
 }
 
 
@@ -49,6 +51,7 @@ void CglicView::reshape(int w, int h)
   cout << "   -- reshapeView " << w << " " << h << endl;
   glViewport(0,0,(GLsizei)w,(GLsizei)h);
   glMatrixMode(GL_PROJECTION);
+  //glMatrixMode(GL_PERSPECTIVE_CORRECTION_HINT);
   glLoadIdentity();
   gluPerspective(m_fovy, (double)w/h, m_znear, m_zfar);
   glTranslatef(0.0, 0.0, -0.5 * m_zfar);
@@ -67,7 +70,8 @@ void CglicView::setView()
   ey = m_pos[1];
   ez = m_pos[2];
   cx = m_center[0];
-  cy = m_center[1];
+  //cy = m_center[1];
+  cy = 1.0;
   cz = m_center[2];
   upx = m_up[0];
   upy = m_up[1];
@@ -79,6 +83,7 @@ void CglicView::setView()
   }
   else
   {
+    //cout << "\n\n\tGLLOOKAT: " << ex << ", "<< ey << ", "<< ez << endl;
     gluLookAt(ex,ey,ez,cx,cy,cz,upx,upy,upz);
   }
 }
