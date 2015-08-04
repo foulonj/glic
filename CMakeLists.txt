@@ -6,8 +6,8 @@ set(CMAKE_BUILD_TYPE "Release")
 
 #Options C++ (-Wno-deprecated: remove glut deprecated)
 
-set (CMAKE_CXX_FLAGS "-std=c++0x -stdlib=libc++ -g3 -Wall -Wno-deprecated -O0")
-
+set (CMAKE_CXX_FLAGS "-std=c++0x -g3 -Wall -Wno-deprecated -O0")
+# -stdlib=libc++
 #Options graphiques
 find_package(GLUT)
 find_package(OpenGL)
@@ -43,7 +43,7 @@ add_library(mesh SHARED libmesh/libmesh5.h libmesh/libmesh5.c)
 target_link_libraries(GLIC ${CORELIBS} mesh)
 
 project(main)
-add_executable(main ../main.cpp)
+add_executable(main main.cpp)
 target_link_libraries(main GLIC)
 
 if(vrpn)
