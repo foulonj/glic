@@ -17,52 +17,52 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
       for (unsigned int iObj = 0; iObj < pcv->scene[pcv->window[pcv->winid()].ids]->listObject.size(); iObj++){
         if (pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->state == CglicCube::TO_SEL){
           glPushMatrix();
-          pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->transform.setTranslation(-0.1,0.,0.);
+          pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->transform.setTranslation(-0.005,0.,0.);
           glPopMatrix();
           state = 1;
         };
       }
       if (state == 0)
-        pcv->scene[pcv->window[pcv->winid()].ids]->transform.setTranslation(-0.1,0.,0.);
+        pcv->scene[pcv->window[pcv->winid()].ids]->transform.setTranslation(-0.005,0.,0.);
       break;
     case GLUT_KEY_RIGHT:
       cout << "GLUT_KEY_RIGHT TRANSFORM SCENE" << endl;
       for (unsigned int iObj = 0; iObj < pcv->scene[pcv->window[pcv->winid()].ids]->listObject.size(); iObj++){
         if (pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->state == CglicCube::TO_SEL){
           glPushMatrix();
-          pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->transform.setTranslation(0.1,0.,0.);
+          pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->transform.setTranslation(0.005,0.,0.);
           glPopMatrix();
           state = 1;
         };
       }
       if (state == 0)
-        pcv->scene[pcv->window[pcv->winid()].ids]->transform.setTranslation(0.1,0.,0.);
+        pcv->scene[pcv->window[pcv->winid()].ids]->transform.setTranslation(0.005,0.,0.);
       break;
     case GLUT_KEY_DOWN:
       cout << "GLUT_KEY_DOWN" << endl;
       for (unsigned int iObj = 0; iObj < pcv->scene[pcv->window[pcv->winid()].ids]->listObject.size(); iObj++){
         if (pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->state == CglicCube::TO_SEL){
           glPushMatrix();
-          pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->transform.setTranslation(.0,-0.1,0.);
+          pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->transform.setTranslation(.0,0.,-0.005);
           glPopMatrix();
           state = 1;
         }
       }
       if (state == 0)
-        pcv->scene[pcv->window[pcv->winid()].ids]->transform.setTranslation(0.,-0.1,0.);
+        pcv->scene[pcv->window[pcv->winid()].ids]->transform.setTranslation(0.,0.,-0.005);
       break;
     case GLUT_KEY_UP:
       cout << "GLUT_KEY_UP" << endl;
       for (unsigned int iObj = 0; iObj < pcv->scene[pcv->window[pcv->winid()].ids]->listObject.size(); iObj++){
         if (pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->state == CglicCube::TO_SEL){
           glPushMatrix();
-          pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->transform.setTranslation(.0,0.1,0.);
+          pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->transform.setTranslation(.0,0.,0.005);
           glPopMatrix();
           state = 1;
         }
       }
       if (state == 0)
-        pcv->scene[pcv->window[pcv->winid()].ids]->transform.setTranslation(0.,0.1,0.);
+        pcv->scene[pcv->window[pcv->winid()].ids]->transform.setTranslation(0.,0.,0.005);
       break;
     default:
       break;

@@ -19,6 +19,7 @@ public:
   double color[4];
   GLfloat mat_diffuse[4];// = {0.1f, 0.5f, 0.8f, 1.0f};
   double m_tr[16];
+  double center[3];
 public:
   char  state;
   char box;

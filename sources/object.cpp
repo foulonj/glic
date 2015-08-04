@@ -17,6 +17,10 @@ CglicObject::CglicObject():transform()
   m_tr[4]=0.;m_tr[5]=1.;m_tr[6]=0.;m_tr[7]=0.;
   m_tr[8]=0.;m_tr[9]=0.;m_tr[10]=1.;m_tr[11]=0.;
   m_tr[12]=0.;m_tr[13]=0.;m_tr[14]=0.;m_tr[15]=1.;
+  
+  center[0] = 0.;
+  center[1] = 0.;
+  center[2] = 0.;
 }
 
 
@@ -52,10 +56,15 @@ void CglicObject::applyTransformation()
   glTranslatef(transform.translation[0],
                transform.translation[1],
                transform.translation[2]);
+  
+  //center[0] += transform.translation[0];
+  //center[1] += transform.translation[1];
+  //center[2] += transform.translation[2];
+  
   glRotatef(transform.angle,
-            transform.axe[0],
-            transform.axe[1],
-            transform.axe[2]);
+            transform.axe[0]+center[0],
+            transform.axe[1]+center[1],
+            transform.axe[2]+center[2]);
   
   transform.setTranslation(0., 0., 0.);
   vec3d axis;

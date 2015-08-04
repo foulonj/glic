@@ -215,6 +215,7 @@ void CglicMesh::display()
   if ( line == TO_ON)
     glCallList(listEdge);
   glFlush();
+  
 }
 
 void CglicMesh::meshBox()

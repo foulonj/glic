@@ -30,4 +30,5 @@ void CglicCube::display()
   glColor3f(1., 1., 1.);
   if (box == TO_ON)
     glutWireCube(r);
+  
 }

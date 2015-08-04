@@ -42,4 +42,5 @@ void CglicAxis::display()
   glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12,'z');
   
   glLineWidth(1.0);
+  
 }

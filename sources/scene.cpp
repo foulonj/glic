@@ -69,6 +69,7 @@ void CglicScene::display()
     listObject[iObj]->display();
     glPopMatrix();
   }
+  
 }
 
 
