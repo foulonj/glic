@@ -15,14 +15,14 @@
 class GLIC_API CglicScene
 {
 public:
-  
+
 //private:
-  //int  ids;
   enum TsceState {TO_OFF, TO_ON, TO_SEL, TO_DYN};
   void resize(int width, int height);
   std::vector<pCglicObject> listObject;
   CglicTransform transform;
   double m_rot[16];
+  vec3d center;
 public:
   char  state;
   int  ids;

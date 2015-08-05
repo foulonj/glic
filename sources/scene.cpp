@@ -6,7 +6,6 @@ CglicScene::CglicScene():transform()
 {
   cout << "  -- [create CglicScene]" << endl;
   state = TO_SEL;
-
 }
 
 CglicScene::~CglicScene()
@@ -30,12 +29,12 @@ void CglicScene::applyTransformation()
             transform.axe[0],
             transform.axe[1],
             transform.axe[2]);
-  
+
   transform.setTranslation(0., 0., 0.);
   vec3d axis;
   axis[0]=0.;axis[1]=0.;axis[2]=0.;
   transform.setRotation(0.,axis);
-  
+
 }
 
 
@@ -53,8 +52,8 @@ void CglicScene::display()
     glVertex3f(-10,0,i);
   }
   glEnd();
-  
-  
+
+
   cout << "    -> Display list of object \n ";
   for (int iObj = 0; iObj < listObject.size(); iObj++){
     glPushMatrix();
@@ -63,13 +62,13 @@ void CglicScene::display()
     glMultMatrixd(listObject[iObj]->m_tr);
     glGetDoublev(GL_MODELVIEW_MATRIX,listObject[iObj]->m_tr);
     glPopMatrix();
-    
+
     glPushMatrix();
     glMultMatrixd(listObject[iObj]->m_tr);
     listObject[iObj]->display();
     glPopMatrix();
   }
-  
+
 }
 
 

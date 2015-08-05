@@ -21,12 +21,14 @@ public:
 
 private:
 	double    m_fovy;
-  vec3d     m_pos,m_center,m_up;
+
   bool      m_stereo;
   double    m_eyesep;
   TViewType m_ctyp,m_eye;
 
 public:
+    vec3d m_center;
+    vec3d     m_pos,m_up;
 	CglicView();
 	virtual ~CglicView();
 
@@ -35,6 +37,7 @@ public:
 	void getPos(double &x, double &y, double &z);
 	void setView();
 	void reshape(int w, int h);
+	void updateCenter(vec3d v){m_center=v;};
 };
 
 typedef CglicView * pCglicView;
