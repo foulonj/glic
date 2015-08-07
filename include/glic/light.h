@@ -19,10 +19,10 @@ public:
   enum TlitType {TL_POINT, TL_DIRECTION, TL_SPOT};
   int      lid;
 private:
-  float    amb[4],dif[4],spe[4],pos[4];
-  int      cstatt,linatt,quadatt;
-  float    spotCutoff,spotDirect[3],spotExp;
-  TlitType ltyp;
+  glm::vec4 amb, dif, spe, pos;
+  int       cstatt,linatt,quadatt;
+  float     spotCutoff,spotDirect[3],spotExp;
+  TlitType  ltyp;
 
 public:
   // constructor + destructor

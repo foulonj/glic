@@ -24,9 +24,9 @@ CglicMouse::~CglicMouse()
 
 
 /* project point onto hemi-sphere */
-void CglicMouse::projsph(int diffx, int diffy, vec3d &v) {
+void CglicMouse::projsph(int diffx, int diffy, glm::vec3 &v) {
   double   d1,d2;
-  
+
   v[0] =  2.0*(double)diffx / (float)m_w;
   v[1] = -2.0*(double)diffy / (float)m_h;
   v[2] =  1.0;
@@ -46,35 +46,38 @@ void CglicMouse::projsph(int diffx, int diffy, vec3d &v) {
 
 void CglicMouse::motion(int x, int y)
 {
+  pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+  glm::vec3 righty  = pcv->window[pcv->winid()].view.m_right;
+
   GLuint   tm;
   double   dx,dy,dz;
-  vec3d    v;
-  
+  glm::vec3    v;
+
   tm = glutGet(GLUT_ELAPSED_TIME);
   if ( tm < m_tm + 40 )  return;
   m_tm = tm;
-  
+
   int diffx = x - m_lastx;
   int diffy = y - m_lasty;
-  
+
   if ( m_button[0] )
   {
     projsph(diffx, diffy, v);
     /* axis of rotation: cross product */
-    m_axe.cross(m_pos,v);
-    dx = v[0] - m_pos[0];
-    dy = v[1] - m_pos[1];
-    dz = v[2] - m_pos[2];
-    m_ang = 180.0*sqrt(dx*dx + dy*dy + dz*dz);
+    m_axe = glm::cross(m_pos,v);
+    glm::vec3 d;
+    d = v - m_pos;
+    d = d*d;
+    m_ang = 180.0*sqrt(d.x + d.y + d.z);
     m_pos = v;
-    
-    if (pcv->scene[pcv->window[pcv->winid()].ids]->state == CglicScene::TO_SEL)
-      pcv->scene[pcv->window[pcv->winid()].ids]->transform.setRotation(m_ang,m_axe);
+
+    if (scene->state == CglicScene::TO_SEL)
+      scene->transform.setRotation(m_ang,m_axe);
     else
-      for (unsigned int iObj = 0; iObj < pcv->scene[pcv->window[pcv->winid()].ids]->listObject.size(); iObj++){
-        if (pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->state == CglicCube::TO_SEL){
+      for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
+        if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
           glPushMatrix();
-          pcv->scene[pcv->window[pcv->winid()].ids]->listObject[iObj]->transform.setRotation(m_ang,m_axe);
+          scene->listObject[iObj]->transform.setRotation(m_ang, m_axe);
           glPopMatrix();
         };
       }
@@ -88,35 +91,35 @@ void CglicMouse::mouse(int b, int s, int x, int y)
   m_tm = glutGet(GLUT_ELAPSED_TIME);
   m_lastx = x;
   m_lasty = y;
-  
+
   /*
    cout << "\n\n GLUTGETMODIFIERS: " << glutGetModifiers() << "\n\n";
-   
+
    cout << "\n\n GLUT_ACTIVE_ALT : " << GLUT_ACTIVE_ALT << endl;
    cout << "\n\n GLUT_ACTIVE_CTRL : " << GLUT_ACTIVE_CTRL << endl;
-   
+
    //ALT
    if (glutGetModifiers() & GLUT_ACTIVE_ALT) {
    cout << "\n\n\tGLUTGETMODIFIERS ALT pressed.\n\n";
    }
-   
+
    //CTRL
    if (glutGetModifiers() & GLUT_ACTIVE_CTRL) {
    cout << "\n\n\t GLUTGETMODIFIERS CONTROL pressed.\n\n";
    }
-   
-   
+
+
    if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
    cout << "\n\n\tGLUTGETMODIFIERS SHIFT pressed.\n\n";
    }
    */
-  
-  
+
+
   switch(b)
   {
     case GLUT_LEFT_BUTTON:
       m_button[0] = ((GLUT_DOWN==s)?1:0);
-      
+
       m_w = glutGet(GLUT_WINDOW_WIDTH);
       m_h = glutGet(GLUT_WINDOW_HEIGHT);
       projsph(0, 0, m_pos);
@@ -125,29 +128,29 @@ void CglicMouse::mouse(int b, int s, int x, int y)
       m_key = TM_NONE;
       if ( glutGetModifiers() & GLUT_ACTIVE_SHIFT){cout << "\n\n\t Active shift \n\n"; m_key = TM_SHIFT;};
       if (glutGetModifiers() & GLUT_ACTIVE_CTRL){
-        cout << "\n GLUT Actve CTRL\n" << endl;
+        //cout << "\n GLUT Actve CTRL\n" << endl;
         m_key = TM_CTRL;
         pcv->glicPickObject(x, y);
       };
-      
-      
+
+
       GLint viewport[4];
       GLubyte pixel[3];
       //GLubyte item[3];
-      
+
       glGetIntegerv(GL_VIEWPORT,viewport);
-      
+
       glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
-      
+
       //printf("\n\n\tRead Pixel color: %d %d %d\n\n\n",pixel[0],pixel[1],pixel[2]);
-      
+
       break;
-      
-      
+
+
     case GLUT_MIDDLE_BUTTON:
       m_button[1] = ((GLUT_DOWN==s)?1:0);
       break;
-      
+
     case GLUT_RIGHT_BUTTON:
       m_button[2] = ((GLUT_DOWN==s)?1:0);
       break;

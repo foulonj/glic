@@ -11,6 +11,8 @@ void CglicKeyboard::keyColor(unsigned char key,int x,int y) {
 void CglicKeyboard::special(unsigned char key, int x, int y)
 {
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+  glm::vec3 moveX(0.005, 0., 0.);
+  glm::vec3 moveZ(0., 0., 0.005);
   int state = 0;
   switch (key) {
     case GLUT_KEY_LEFT:
@@ -18,52 +20,52 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
       for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
         if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
           glPushMatrix();
-          scene->listObject[iObj]->transform.setTranslation(-0.005,0.,0.);
+          scene->listObject[iObj]->transform.setTranslation(-moveX);
           glPopMatrix();
           state = 1;
         };
       }
       if (state == 0)
-        scene->transform.setTranslation(-0.005,0.,0.);
+        scene->transform.setTranslation(-moveX);
       break;
     case GLUT_KEY_RIGHT:
       cout << "GLUT_KEY_RIGHT TRANSFORM SCENE" << endl;
       for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
         if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
           glPushMatrix();
-          scene->listObject[iObj]->transform.setTranslation(0.005,0.,0.);
+          scene->listObject[iObj]->transform.setTranslation(moveX);
           glPopMatrix();
           state = 1;
         };
       }
       if (state == 0)
-        scene->transform.setTranslation(0.005,0.,0.);
+        scene->transform.setTranslation(moveX);
       break;
     case GLUT_KEY_DOWN:
       cout << "GLUT_KEY_DOWN" << endl;
       for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
         if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
           glPushMatrix();
-          scene->listObject[iObj]->transform.setTranslation(.0,0.,-0.005);
+          scene->listObject[iObj]->transform.setTranslation(-moveZ);
           glPopMatrix();
           state = 1;
         }
       }
       if (state == 0)
-        scene->transform.setTranslation(0.,0.,-0.005);
+        scene->transform.setTranslation(-moveZ);
       break;
     case GLUT_KEY_UP:
       cout << "GLUT_KEY_UP" << endl;
       for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
         if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
           glPushMatrix();
-          scene->listObject[iObj]->transform.setTranslation(.0,0.,0.005);
+          scene->listObject[iObj]->transform.setTranslation(moveZ);
           glPopMatrix();
           state = 1;
         }
       }
       if (state == 0)
-        scene->transform.setTranslation(0.,0.,0.005);
+        scene->transform.setTranslation(moveZ);
       break;
     default:
       break;
@@ -73,9 +75,11 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
 void CglicKeyboard::keyboard(unsigned char key, int x, int y)
 {
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
-  //  ESC = end
+  // QUIT
   if ( key == 'q' || key == 27 )
     exit(0);
+
+  // SELECT
   if ( key =='s')
   {
     selection+=1;
@@ -90,19 +94,23 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
       scene->state = CglicScene::TO_ON;
     };
   };
-  if (key == 'z' ){
-    cout << "ZOOM IN \n";
+
+  // ZOOM
+  if((key == 'z') || (key == 'Z')){
     double zoomFactor = 0.1;
-    vec3d zoom = (pcv->window[pcv->winid()].view.m_center - pcv->window[pcv->winid()].view.m_pos);
+    glm::vec3 zoom = (scene->center - pcv->window[pcv->winid()].view.m_cam);
     zoom *= zoomFactor;
-    scene->transform.setTranslation(zoom[0],
-        zoom[1],
-        zoom[2]);
+    if (key == 'z' ){
+      cout << "ZOOM IN \n";
+      scene->transform.setTranslation(zoom);
+    }
+    else if (key == 'Z' ){
+      cout << "ZOOM OUT \n";
+      scene->transform.setTranslation(-zoom);
+    };
   }
-  else if (key == 'Z' ){
-    cout << "ZOOM OUT \n";
-    scene->transform.setTranslation(0.,0.,-0.1);
-  };
+
+  // BB and WIREFRAME
   if (key == 'b' ){
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
       scene->listObject[i]->activeBB();

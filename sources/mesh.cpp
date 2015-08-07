@@ -11,24 +11,24 @@ CglicMesh::CglicMesh(char *name)
   double   *n,dd;
   float     fp1,fp2,fp3;
   int       k,inm;
-  
-  cout << "\n NAME:" << name << endl;
-  
+
+  //cout << "\n NAME:" << name << endl;
+
   inm = GmfOpenMesh(name,GmfRead,&ver,&dim);
   if ( !inm ){
-    cout << "  ** FILE NOT FOUND.\n";
+    //cout << "  ** FILE NOT FOUND.\n";
     exit(0);
   }
-  
+
   np = GmfStatKwd(inm,GmfVertices);
   nt = GmfStatKwd(inm,GmfTriangles);
   nn = GmfStatKwd(inm,GmfNormals);
-  
+
   if ( !np ){
     cout << "  ** MISSING DATA\n";
     exit(0);
   }
-  
+
   point.resize(np+1);
   GmfGotoKwd(inm,GmfVertices);
   for (k=0; k<np; k++){
@@ -42,7 +42,7 @@ CglicMesh::CglicMesh(char *name)
     else
       GmfGetLin(inm,GmfVertices,&ppt->c[0],&ppt->c[1],&ppt->c[2],&ppt->ref);
   }
-  
+
   //read triangles
   tria.resize(nt+1);
   GmfGotoKwd(inm,GmfTriangles);
@@ -50,9 +50,9 @@ CglicMesh::CglicMesh(char *name)
     pt = &tria[k];
     GmfGetLin(inm,GmfTriangles,&pt->v[0],&pt->v[1],&pt->v[2],&pt->ref);
   }
-  
+
   normal.resize(np+1);
-  
+
   if ( nn ) {
     GmfGotoKwd(inm,GmfNormals);
     for (k=0; k<nn; k++) {
@@ -78,9 +78,9 @@ CglicMesh::CglicMesh(char *name)
 
 void CglicMesh::meshInfo(const int& verbose, ostream& outstr)
 {
-  cout << " \t\t MeshInfo \n" << endl;
+  //cout << " \t\t MeshInfo \n" << endl;
   cout << "np: " << np << ", nt: " << nt << ", nn:" << nn << ", dim: " << dim << ", ver: " << ver << endl;
-  
+
   if (verbose){
     cout << "Points" << endl;
     for (int i = 0; i < np; i++)
@@ -101,39 +101,40 @@ GLuint CglicMesh::buildTria()
   Tria  *pt;
   Point     *p0,*p1,*p2;
   float      pp0[3],pp1[3],pp2[3];
-  
+
   listTria = glGenLists(1);
-  
+
   glNewList(listTria,GL_COMPILE);
-  
+
   //glColor3f(0., 1., 0.);
-  
+
+/*
   GLfloat mat_amb[] = { 0.0, 0.0, 0.0, 1.0 };
    GLfloat mat_dif[] = { 0., 0., 0., 1.0 };
    GLfloat mat_specular[] = { 0.07, 0.0, 0.0, 1.0 };
    GLfloat mat_emi[] = { 0.0, 0.0, 0.0, 1.0 };
    GLfloat mat_shininess[] = { 20.0 };
-   
+
    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_amb);
    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_dif);
    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
    glMaterialfv(GL_FRONT, GL_EMISSION, mat_emi);
    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-  
+*/
   //glColor3f(0.51,0.52,0.8);
-  
-  
+
+
   //GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
   //GLfloat mat_shininess[] = { 80.0 };
 
 
   //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
   //glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-  
-  glColor3f(0.51,0.52,0.8);
+
+
   //glColor3f(1.,0.99,0.94);
-  
-  
+
+
   glBegin (GL_TRIANGLES);
   for (int k=0; k<nt; k++) {
     pt = &tria[k];
@@ -145,7 +146,7 @@ GLuint CglicMesh::buildTria()
       pp1[i] = p1->c[i];
       pp2[i] = p2->c[i];
     }
-    
+
     glVertex3fv(pp0);
     glVertex3fv(pp1);
     glVertex3fv(pp2);
@@ -161,12 +162,12 @@ GLuint CglicMesh::buildEdge()
   Tria  *pt;
   Point     *p0,*p1,*p2;
   float      pp0[3],pp1[3],pp2[3];
-  
+
   listEdge = glGenLists(1);
-  
+
   glNewList(listEdge,GL_COMPILE);
-  
-  glColor3f(0., 0., 1.);
+
+
   for (int k=0; k<nt; k++) {
     pt = &tria[k];
     p0 = &point[pt->v[0]-1];
@@ -177,7 +178,7 @@ GLuint CglicMesh::buildEdge()
       pp1[i] = p1->c[i];
       pp2[i] = p2->c[i];
     }
-    
+
     glBegin(GL_LINES);
     glVertex3fv(pp0);
     glVertex3fv(pp1);
@@ -191,12 +192,12 @@ GLuint CglicMesh::buildEdge()
     glVertex3fv(pp0);
     glEnd();
   }
-  
+
   glEndList();
   return(listEdge);
 }
-
-
+/*
+//Old display
 void CglicMesh::display()
 {
   cout << "   ---> display mesh\n";
@@ -210,22 +211,76 @@ void CglicMesh::display()
     glutWireCube(1.0);
     glPopMatrix();
   };
-  
+
+  //glDisable(GL_LIGHTING);
+  if(state != TO_ON){
+    glDisable(GL_DEPTH_TEST);
+    glColor3f(0.2, 0.9, 0.2);
+    glCullFace(GL_FRONT);
+    float s = 1.05;
+    glScalef(s, s, s);
+    glCallList(listTria);
+    glScalef(1./s, 1./s, 1./s);
+    glFlush();
+    glEnable(GL_DEPTH_TEST);
+  }
+  glColor3f(0.51,0.52,0.8);
   glCallList(listTria);
-  if ( line == TO_ON)
+  if ( line == TO_ON){
+    glColor3f(0., 0., 1.);
     glCallList(listEdge);
+  }
   glFlush();
-  
 }
+*/
+
+void CglicMesh::display()
+{
+  //cout << "   ---> display mesh\n";
+
+  //Bounding box
+  if (box == TO_ON){
+    glPushMatrix();
+    glScalef(1.01 * fabs(xmax-xmin),
+             1.01 * fabs(ymax-ymin),
+             1.01 * fabs(zmax-zmin));
+    glColor3f(1.0,1.0,1.0);
+    glutWireCube(1.0);
+    glPopMatrix();
+  };
+
+  //Contour
+  if(state != TO_ON){
+    glDisable(GL_DEPTH_TEST);
+    glColor3f(0.2, 0.9, 0.2);
+    glCullFace(GL_FRONT);
+    float s = 1.05;
+    glScalef(s, s, s);
+    glCallList(listTria);
+    glScalef(1./s, 1./s, 1./s);
+    glFlush();
+    glEnable(GL_DEPTH_TEST);
+  }
+
+  //Display effectif
+  glColor3f(0.51,0.52,0.8);
+  glCallList(listTria);
+  if ( line == TO_ON){
+    glColor3f(0., 0., 1.);
+    glCallList(listEdge);
+  }
+  glFlush();
+}
+
 
 void CglicMesh::meshBox()
 {
-  
+
   Point     *p0;
   /* default */
   xmin = ymin = zmin =  FLOAT_MAX;
   xmax = ymax = zmax = -FLOAT_MAX;
-  
+
   for (int k=0; k<np; k++) {
     p0 = &point[k];
     if ( p0->c[0] < xmin ) xmin = p0->c[0];
@@ -235,9 +290,9 @@ void CglicMesh::meshBox()
     if ( p0->c[2] < zmin ) zmin = p0->c[2];
     if ( p0->c[2] > zmax ) zmax = p0->c[2];
   }
-  
+
   //fprintf(stdout,"    Bounding box:  x:[%g  %g]  y:[%g  %g]  z:[%g  %g]\n", xmin,xmax,ymin,ymax,zmin,zmax);
-  
+
   /* translate mesh at center */
   xtra = 0.5 * (xmin+xmax);
   ytra = 0.5 * (ymin+ymax);

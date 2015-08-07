@@ -4,7 +4,7 @@
 // object constructor
 CglicObject::CglicObject():transform()
 {
-  cout << "  --- [create CglicObject]" << endl;
+  //cout << "  --- [create CglicObject]" << endl;
   state = TO_ON;
   box = TO_OFF;
   line = TO_OFF;
@@ -26,7 +26,7 @@ CglicObject::CglicObject():transform()
 
 CglicObject::~CglicObject()
 {
-  cout << "  --- [destroy CglicObject]" << endl;
+  //cout << "  --- [destroy CglicObject]" << endl;
   // check if display lists used...
   // glDeleteLists();
 }
@@ -69,8 +69,7 @@ void CglicObject::applyTransformation()
             transform.axe[2]);
   glTranslatef(-center[0], -center[1], -center[2]);
 
-  transform.setTranslation(0., 0., 0.);
-  vec3d axis;
-  axis[0]=0.;axis[1]=0.;axis[2]=0.;
-  transform.setRotation(0.,axis);
+  glm::vec3 null_vec3;
+  transform.setTranslation(null_vec3);
+  transform.setRotation(0., null_vec3);
 }

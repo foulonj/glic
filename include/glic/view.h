@@ -27,17 +27,18 @@ private:
   TViewType m_ctyp,m_eye;
 
 public:
-    vec3d m_center;
-    vec3d     m_pos,m_up;
+  glm::vec3 m_look, m_cam, m_up;
+  glm::vec3 m_right;
 	CglicView();
 	virtual ~CglicView();
 
-	void setPos(double x, double y, double z);
+	void setPos(glm::vec3 newPos);
+	void getPos(glm::vec3 &pos);
 	void setPersp(double fovy, double znear, double zfar);
-	void getPos(double &x, double &y, double &z);
+
 	void setView();
 	void reshape(int w, int h);
-	void updateCenter(vec3d v){m_center=v;};
+	void updateCenter(glm::vec3 v){m_look=v;};
 };
 
 typedef CglicView * pCglicView;

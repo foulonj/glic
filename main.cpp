@@ -9,8 +9,8 @@ double frand_a_b(double a, double b){
   return ( rand()/(double)RAND_MAX ) * (b-a) + a;
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
+
   int   idw,ids,ido;
 
   CglicCanvas cv(argc,argv);
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     ids = cv.glicScene();
     cv.glicSetScene(ids, idw);
     cv.window[idw].show();
-    cout << "\t\t Read mesh \n\n";
+    //cout << "\t\t Read mesh \n\n";
 
     vector<CglicMesh*> mesh;
     for (int i=0; i < argc - 1; i++){

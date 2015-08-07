@@ -1,5 +1,8 @@
 #include <glic/view.h>
 
+#include "glm/gtx/string_cast.hpp"
+
+
 
 CglicView::CglicView()
 {
@@ -7,15 +10,8 @@ CglicView::CglicView()
   m_eyesep = 1.0;
   m_eye    = TV_LEFT;
   m_ctyp   = TV_DEF;
-
-  //setPersp(60.0, 0.01, 50.0);
-  //setPos(0.0, 0.0, -10.0);
-
-  setPos(0.0, 0.0, 0.3);
-
-  //Cube
+  setPos(glm::vec3(0., 0., 0.3));
   setPersp(60.0, 0.01, 1.0);
-  //setPos(0.0, 0.0, 0.0);
 }
 
 
@@ -24,17 +20,15 @@ CglicView::~CglicView()
 }
 
 
-void CglicView::setPos(double x, double y, double z)
+void CglicView::setPos(glm::vec3 newPos)
 {
-  m_pos = vec3d(x,y,z);
+  m_cam = newPos;
 }
 
 
-void CglicView::getPos(double &x, double &y, double &z)
+void CglicView::getPos(glm::vec3 &pos)
 {
-  x = m_pos[0];
-  y = m_pos[1];
-  z = m_pos[2];
+  pos = m_cam;
 }
 
 
@@ -48,7 +42,7 @@ void CglicView::setPersp(double fovy, double znear, double zfar)
 
 void CglicView::reshape(int w, int h)
 {
-  cout << "   -- reshapeView " << w << " " << h << endl;
+  //cout << "   -- reshapeView " << w << " " << h << endl;
   glViewport(0,0,(GLsizei)w,(GLsizei)h);
   glMatrixMode(GL_PROJECTION);
   //glMatrixMode(GL_PERSPECTIVE_CORRECTION_HINT);
@@ -61,28 +55,21 @@ void CglicView::reshape(int w, int h)
 
 void CglicView::setView()
 {
-  GLdouble   ex,ey,ez;
-  GLdouble   cx,cy,cz;
-  GLdouble   upx,upy,upz;
 
-  cout << "   -- setView\n";
-  ex = m_pos[0];
-  ey = m_pos[1];
-  ez = m_pos[2];
-  cx = m_center[0];
-  cy = m_center[1];
-  cz = m_center[2];
-  upx = m_up[0];
-  upy = m_up[1];
-  upz = m_up[2];
-
-  if ( m_stereo == true )
-  {
+  //cout << "   -- setView\n";
+  if ( m_stereo == true ){
 
   }
   else
   {
-    //cout << "\n\n\tGLLOOKAT: " << ex << ", "<< ey << ", "<< ez << endl;
-    gluLookAt(ex,ey,ez,cx,cy,cz,upx,upy,upz);
+    gluLookAt(m_cam.x, m_cam.y, m_cam.z,
+              m_look.x, m_look.y, m_look.z,
+              m_up.x, m_up.y, m_up.z);
   }
+  m_right = glm::cross(m_cam, -m_up);
+  cout << "stereo = " << m_stereo << endl;
+  cout << "cam = " << glm::to_string(m_cam) << endl;
+  cout << "look = " << glm::to_string(m_look) << endl;
+  cout << "right = " << glm::to_string(m_right) << endl;
+  cout << " " << endl;
 }

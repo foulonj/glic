@@ -6,7 +6,7 @@ extern CglicCanvas *pcv;
 
 CglicWindow::CglicWindow(): m_id(-1) /*scene(NULL)*/
 {
-  view.setPos(0.0, 0.0, 1.0);
+  view.setPos(glm::vec3(0, 0, 0.3));
 }
 
 
@@ -64,7 +64,8 @@ void CglicWindow::show()
 
   glPushMatrix();
   glLoadIdentity();
-  glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot);
+  //glGetDoublev(GL_MODELVIEW_MATRIX, (double*) glm::value_ptr( pcv->scene[ids]->m_rot ) );
+  glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot );
   glPopMatrix();
 
   view.setView();
@@ -74,14 +75,11 @@ void CglicWindow::show()
 void CglicWindow::display()
 {
   //view.setView();
-  //gluLookAt(0.,0.,0., 1.,-1.,0.0,0.,1.,0.);
-  //gluLookAt(0.,0.,0., 0.,0.,2.0,0.,1.,0.);
-  cout << " - [display CglicWindow]" << endl;
+
+  //cout << " - [display CglicWindow]" << endl;
   glDrawBuffer(GL_BACK_LEFT);
 
-  //glClearColor(0.1, 0.1, 0.2, 1.0);
-
-  glClearColor(0.5, 0.5, 0.5, 1.0);
+  glClearColor(0.1, 0.1, 0.15, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glMatrixMode(GL_MODELVIEW);
@@ -103,11 +101,25 @@ void CglicWindow::display()
   /* redraw scene */
   glPushMatrix();
   pcv->scene[ids]->applyTransformation();
-  glMultMatrixd(pcv->scene[ids]->m_rot);
-  glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot);
+  //On multiplie la matrice active par m_rot
+  //glMultMatrixd(  (double*) glm::value_ptr( pcv->scene[ids]->m_rot) );
+  glMultMatrixd( pcv->scene[ids]->m_rot );
 
+  //On insère MODELVIEW dans m_rot
+  glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot);//tempMROT);
+  /*GLdouble *tempMROT = NULL;
+  tempMROT = new GLdouble[16];
+  glGetDoublev(GL_MODELVIEW_MATRIX, tempMROT);
+  for(int i = 0 ; i < 4 ; i++)
+    cout << tempMROT[4*i + 0] << " "
+         << tempMROT[4*i + 1] << " "
+         << tempMROT[4*i + 2] << " "
+         << tempMROT[4*i + 3] << endl;
+  pcv->scene[ids]->m_rot = glm::make_mat4x4(tempMROT);
+  delete[] tempMROT;*/
   pcv->scene[ids]->display();
   glPopMatrix();
+
 
   view.updateCenter(pcv->scene[ids]->listObject[0]->center);
 
@@ -124,8 +136,8 @@ int CglicWindow::glicAddLight(pCglicLight li)
 void CglicWindow::activateLight()
 {
 
-  cout << " - [Activate light]" << endl;
-  cout << " ---- Number of lights: " << light.size() << endl;
+  //cout << " - [Activate light]" << endl;
+  //cout << " ---- Number of lights: " << light.size() << endl;
 
   if (light.size() <= 0){
     return ;
