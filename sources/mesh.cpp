@@ -252,7 +252,7 @@ void CglicMesh::display()
   //Contour
   if(state != TO_ON){
     glDisable(GL_DEPTH_TEST);
-    glColor3f(0.2, 0.9, 0.2);
+    glColor3f(1.0, 0.6, 0.0);
     glCullFace(GL_FRONT);
     float s = 1.05;
     glScalef(s, s, s);
@@ -270,6 +270,8 @@ void CglicMesh::display()
     glCallList(listEdge);
   }
   glFlush();
+
+  cout << point.size() << endl;
 }
 
 

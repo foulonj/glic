@@ -74,12 +74,8 @@ void CglicWindow::show()
 
 void CglicWindow::display()
 {
-  //view.setView();
-
-  //cout << " - [display CglicWindow]" << endl;
   glDrawBuffer(GL_BACK_LEFT);
-
-  glClearColor(0.1, 0.1, 0.15, 1.0);
+  glClearColor(0.05, 0.05, 0.05, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glMatrixMode(GL_MODELVIEW);
@@ -97,26 +93,13 @@ void CglicWindow::display()
   glGetDoublev(GL_MODELVIEW_MATRIX, m_mnew);
   glPopMatrix();
 
-
   /* redraw scene */
   glPushMatrix();
   pcv->scene[ids]->applyTransformation();
-  //On multiplie la matrice active par m_rot
-  //glMultMatrixd(  (double*) glm::value_ptr( pcv->scene[ids]->m_rot) );
   glMultMatrixd( pcv->scene[ids]->m_rot );
 
   //On insère MODELVIEW dans m_rot
   glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot);//tempMROT);
-  /*GLdouble *tempMROT = NULL;
-  tempMROT = new GLdouble[16];
-  glGetDoublev(GL_MODELVIEW_MATRIX, tempMROT);
-  for(int i = 0 ; i < 4 ; i++)
-    cout << tempMROT[4*i + 0] << " "
-         << tempMROT[4*i + 1] << " "
-         << tempMROT[4*i + 2] << " "
-         << tempMROT[4*i + 3] << endl;
-  pcv->scene[ids]->m_rot = glm::make_mat4x4(tempMROT);
-  delete[] tempMROT;*/
   pcv->scene[ids]->display();
   glPopMatrix();
 

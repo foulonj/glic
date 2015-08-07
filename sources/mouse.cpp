@@ -10,7 +10,6 @@ CglicMouse::CglicMouse()
   m_ang = 0.0;
   m_trx  = m_try  = 0.0;
   m_otrx = m_otry = 0.0;
-  m_lastx = 0;  m_lasty = 0;
   m_button[0] = m_button[1] = m_button[2] = 0;
   m_zoom  = 0.0;
   m_pos[0] = m_pos[1] = m_pos[2] = 0.0;
@@ -24,45 +23,39 @@ CglicMouse::~CglicMouse()
 
 
 /* project point onto hemi-sphere */
-void CglicMouse::projsph(int diffx, int diffy, glm::vec3 &v) {
+glm::vec3 CglicMouse::projsph(glm::vec2 diff) {
   double   d1,d2;
-
-  v[0] =  2.0*(double)diffx / (float)m_w;
-  v[1] = -2.0*(double)diffy / (float)m_h;
-  v[2] =  1.0;
-  d1 = v[0]*v[0] + v[1]*v[1];
+  glm::vec3 v;
+  v.x =  2.0*(double)diff.x / (float)currPos.x;
+  v.y = -2.0*(double)diff.y / (float)currPos.y;
+  d1 = v.x*v.x + v.y*v.y;
   if ( d1 > 0.0 ) {
     d2 = sqrt(d1);
-    if ( d2 > 1.0 )  d2 = 1.0;
-    v[2] = cos(M_PI_2 * d2);
-    d1  += v[2]*v[2];
-    d1   = 1.0 / sqrt(d1);
-    v[0] *= d1;
-    v[1] *= d1;
-    v[2] *= d1;
+    if ( d2 > 1.0 )
+      d2 = 1.0;
+    v.z = cos(M_PI_2 * d2);
+    v /= glm::length(v);
   }
+  return v;
 }
 
 
 void CglicMouse::motion(int x, int y)
 {
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
-  glm::vec3 righty  = pcv->window[pcv->winid()].view.m_right;
 
   GLuint   tm;
-  double   dx,dy,dz;
   glm::vec3    v;
 
   tm = glutGet(GLUT_ELAPSED_TIME);
   if ( tm < m_tm + 40 )  return;
   m_tm = tm;
 
-  int diffx = x - m_lastx;
-  int diffy = y - m_lasty;
+  glm::vec2 diffPos = glm::vec2(x,y) - lastPos;
 
   if ( m_button[0] )
   {
-    projsph(diffx, diffy, v);
+    v = projsph(diffPos);
     /* axis of rotation: cross product */
     m_axe = glm::cross(m_pos,v);
     glm::vec3 d;
@@ -89,40 +82,16 @@ void CglicMouse::mouse(int b, int s, int x, int y)
 {
   GLint  key;
   m_tm = glutGet(GLUT_ELAPSED_TIME);
-  m_lastx = x;
-  m_lasty = y;
-
-  /*
-   cout << "\n\n GLUTGETMODIFIERS: " << glutGetModifiers() << "\n\n";
-
-   cout << "\n\n GLUT_ACTIVE_ALT : " << GLUT_ACTIVE_ALT << endl;
-   cout << "\n\n GLUT_ACTIVE_CTRL : " << GLUT_ACTIVE_CTRL << endl;
-
-   //ALT
-   if (glutGetModifiers() & GLUT_ACTIVE_ALT) {
-   cout << "\n\n\tGLUTGETMODIFIERS ALT pressed.\n\n";
-   }
-
-   //CTRL
-   if (glutGetModifiers() & GLUT_ACTIVE_CTRL) {
-   cout << "\n\n\t GLUTGETMODIFIERS CONTROL pressed.\n\n";
-   }
-
-
-   if (glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
-   cout << "\n\n\tGLUTGETMODIFIERS SHIFT pressed.\n\n";
-   }
-   */
-
+  lastPos = glm::vec2(x,y);
 
   switch(b)
   {
     case GLUT_LEFT_BUTTON:
       m_button[0] = ((GLUT_DOWN==s)?1:0);
 
-      m_w = glutGet(GLUT_WINDOW_WIDTH);
-      m_h = glutGet(GLUT_WINDOW_HEIGHT);
-      projsph(0, 0, m_pos);
+      currPos = glm::vec2( glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT) );
+
+      m_pos = projsph(glm::vec2(0.));
       key = glutGetModifiers();
       //cout << "\n\n\tno active shift \n\n";
       m_key = TM_NONE;

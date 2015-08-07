@@ -73,6 +73,7 @@ void CglicScene::display()
 
 
   //cout << "    -> Display list of object \n ";
+
   for (int iObj = 0; iObj < listObject.size(); iObj++){
     glPushMatrix();
     glLoadIdentity();
@@ -85,8 +86,6 @@ void CglicScene::display()
     glMultMatrixd(listObject[iObj]->m_tr);
     listObject[iObj]->display();
     glPopMatrix();
-
-
   }
 }
 
