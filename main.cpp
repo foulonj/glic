@@ -9,9 +9,23 @@ double frand_a_b(double a, double b){
   return ( rand()/(double)RAND_MAX ) * (b-a) + a;
 }
 
+void InitGlew(){
+  GLenum err = glewInit();
+  if (err != GLEW_OK){
+    cout << "glewinit impossible" << endl;
+    exit(1);
+  }
+  if (!GLEW_VERSION_2_1){
+    cout << "Version 2.1 pas supportée" << endl;
+    exit(1);
+  }
+}
+
 int main(int argc, char **argv){
 
   int   idw,ids,ido;
+
+
 
   CglicCanvas cv(argc,argv);
 
@@ -67,6 +81,8 @@ int main(int argc, char **argv){
     //ido = cv.glicObject(new CglicCube());
     //cv.glicSetObject(ido, ids);
 
+    InitGlew();
+
   }
 
   else
@@ -77,14 +93,24 @@ int main(int argc, char **argv){
     cv.window[idw].show();
     //cout << "\t\t Read mesh \n\n";
 
+
+
     vector<CglicMesh*> mesh;
     for (int i=0; i < argc - 1; i++){
       cout << "i: " << i << endl;
-    mesh.push_back(new CglicMesh(argv[i+1]));
-    mesh[i]->meshInfo(0);
-    ido = cv.glicObject(mesh[i]);
-    cv.glicSetObject(ido, ids);
+      mesh.push_back(new CglicMesh(argv[i+1]));
+      mesh[i]->meshInfo(0);
+      ido = cv.glicObject(mesh[i]);
+      cv.glicSetObject(ido, ids);
     }
+
+    //Ajout d'un axe
+    ido = cv.glicObject(new CglicAxis());
+    cv.glicSetObject(ido, ids);
+
+    InitGlew();
+    SHADER shader;
+    shader.load("/home/loic/dev/glic/shaders/shader.vert", "/home/loic/dev/glic/shaders/shader.vert");
   };
 
 

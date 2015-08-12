@@ -10,8 +10,6 @@
 #define __GLIC_VIEW_H_
 
 #include "defs.h"
-#include <glic/math1.h>
-
 
 class GLIC_API CglicView
 {

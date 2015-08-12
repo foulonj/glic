@@ -18,9 +18,9 @@ CglicObject::CglicObject():transform()
   m_tr[8]=0.;m_tr[9]=0.;m_tr[10]=1.;m_tr[11]=0.;
   m_tr[12]=0.;m_tr[13]=0.;m_tr[14]=0.;m_tr[15]=1.;
 
-  center[0] = 0.;
-  center[1] = 0.;
-  center[2] = 0.;
+  //center[0] = 0.;
+  //center[1] = 0.;
+  //center[2] = 0.;
 }
 
 
@@ -52,22 +52,23 @@ void CglicObject::activeMesh()
 
 void CglicObject::applyTransformation()
 {
+  //Remplacent tout ce qui suit
+
+  glm::vec3 tr = transform.translation;
+  glm::vec3 ax = transform.axe;
+
+  //MODEL   = glm::translate(MODEL, tr);
+  //MODEL   = glm::rotate(MODEL, (float)transform.angle, ax);
+  //center += tr;
+
+  //A remplacer
   //glLoadIdentity();
-  glTranslatef(transform.translation[0],
-               transform.translation[1],
-               transform.translation[2]);
 
-  center[0] += transform.translation[0];
-  center[1] += transform.translation[1];
-  center[2] += transform.translation[2];
-
-
-  glTranslatef(center[0], center[1], center[2]);
-  glRotatef(transform.angle,
-            transform.axe[0],
-            transform.axe[1],
-            transform.axe[2]);
-  glTranslatef(-center[0], -center[1], -center[2]);
+  glTranslatef(tr.x, tr.y, tr.z);
+  center += tr;
+  glTranslatef(center.x, center.y, center.z);
+  glRotatef(transform.angle, ax.x, ax.y, ax.z);
+  glTranslatef(-center.x, -center.y, -center.z);
 
   glm::vec3 null_vec3;
   transform.setTranslation(null_vec3);

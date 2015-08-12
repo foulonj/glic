@@ -10,7 +10,6 @@
 #define __GLIC_TRANSFORM_H_
 
 #include "defs.h"
-#include <glic/math1.h>
 
 class GLIC_API CglicTransform
 {

@@ -22,6 +22,11 @@ public:
   double m_rot[16];
   //glm::mat4x4 m_rot;
   glm::vec3 center;
+
+public:
+  glm::mat4 VIEW;
+  glm::mat4 PROJ;
+
 public:
   char  state;
   int  ids;

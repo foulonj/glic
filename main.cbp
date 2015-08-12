@@ -1,251 +1,244 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-   <FileVersion major="1" minor="6" />
-   <Project>
-      <Option title="main" />
-      <Option makefile_is_custom="1" />
-      <Option compiler="gcc" />
-      <Option virtualFolders="CMake Files\;" />
-      <Build>
-      <Target title="all">
-         <Option working_dir="/home/loic/dev/glic" />
-         <Option type="4" />
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 all" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
-      <Target title="GLIC">
-         <Option output="/home/loic/dev/glic/libGLIC.so" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/loic/dev/glic" />
-         <Option object_output="./" />
-         <Option type="3" />
-         <Option compiler="gcc" />
-         <Compiler>
-            <Add directory="/home/loic/dev/glic/include" />
-            <Add directory="/home/loic/dev/glic/libmesh" />
-            <Add directory="/usr/include" />
-            <Add directory="/usr/include/c++/4.8" />
-            <Add directory="/usr/include/c++/4.8/backward" />
-            <Add directory="/usr/include/x86_64-linux-gnu" />
-            <Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
-            <Add directory="/usr/local/include" />
-         </Compiler>
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 GLIC" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
-      <Target title="GLIC/fast">
-         <Option output="/home/loic/dev/glic/libGLIC.so" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/loic/dev/glic" />
-         <Option object_output="./" />
-         <Option type="3" />
-         <Option compiler="gcc" />
-         <Compiler>
-            <Add directory="/home/loic/dev/glic/include" />
-            <Add directory="/home/loic/dev/glic/libmesh" />
-            <Add directory="/usr/include" />
-            <Add directory="/usr/include/c++/4.8" />
-            <Add directory="/usr/include/c++/4.8/backward" />
-            <Add directory="/usr/include/x86_64-linux-gnu" />
-            <Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
-            <Add directory="/usr/local/include" />
-         </Compiler>
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 GLIC/fast" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
-      <Target title="main">
-         <Option output="/home/loic/dev/glic/main" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/loic/dev/glic" />
-         <Option object_output="./" />
-         <Option type="1" />
-         <Option compiler="gcc" />
-         <Compiler>
-            <Add directory="/home/loic/dev/glic/include" />
-            <Add directory="/home/loic/dev/glic/libmesh" />
-            <Add directory="/usr/include" />
-            <Add directory="/usr/include/c++/4.8" />
-            <Add directory="/usr/include/c++/4.8/backward" />
-            <Add directory="/usr/include/x86_64-linux-gnu" />
-            <Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
-            <Add directory="/usr/local/include" />
-         </Compiler>
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 main" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
-      <Target title="main/fast">
-         <Option output="/home/loic/dev/glic/main" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/loic/dev/glic" />
-         <Option object_output="./" />
-         <Option type="1" />
-         <Option compiler="gcc" />
-         <Compiler>
-            <Add directory="/home/loic/dev/glic/include" />
-            <Add directory="/home/loic/dev/glic/libmesh" />
-            <Add directory="/usr/include" />
-            <Add directory="/usr/include/c++/4.8" />
-            <Add directory="/usr/include/c++/4.8/backward" />
-            <Add directory="/usr/include/x86_64-linux-gnu" />
-            <Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
-            <Add directory="/usr/local/include" />
-         </Compiler>
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 main/fast" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
-      <Target title="mesh">
-         <Option output="/home/loic/dev/glic/libmesh.so" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/loic/dev/glic" />
-         <Option object_output="./" />
-         <Option type="3" />
-         <Option compiler="gcc" />
-         <Compiler>
-            <Add directory="/home/loic/dev/glic/include" />
-            <Add directory="/home/loic/dev/glic/libmesh" />
-            <Add directory="/usr/include" />
-            <Add directory="/usr/include/c++/4.8" />
-            <Add directory="/usr/include/c++/4.8/backward" />
-            <Add directory="/usr/include/x86_64-linux-gnu" />
-            <Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
-            <Add directory="/usr/local/include" />
-         </Compiler>
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 mesh" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
-      <Target title="mesh/fast">
-         <Option output="/home/loic/dev/glic/libmesh.so" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/loic/dev/glic" />
-         <Option object_output="./" />
-         <Option type="3" />
-         <Option compiler="gcc" />
-         <Compiler>
-            <Add directory="/home/loic/dev/glic/include" />
-            <Add directory="/home/loic/dev/glic/libmesh" />
-            <Add directory="/usr/include" />
-            <Add directory="/usr/include/c++/4.8" />
-            <Add directory="/usr/include/c++/4.8/backward" />
-            <Add directory="/usr/include/x86_64-linux-gnu" />
-            <Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
-            <Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
-            <Add directory="/usr/local/include" />
-         </Compiler>
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 mesh/fast" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
-      <Target title="rebuild_cache">
-         <Option working_dir="/home/loic/dev/glic" />
-         <Option type="4" />
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 rebuild_cache" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
-      </Build>
-      <Unit filename="/home/loic/dev/glic/libmesh/libmesh5.c">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/main.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/axis.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/canvas.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/cube.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/keyboard.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/light.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/material.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/mesh.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/mouse.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/object.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/scene.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/sphere.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/transform.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/view.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/sources/window.cpp">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/axis.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/canvas.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/cube.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/defs.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/keyboard.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/light.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/material.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/math1.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/mesh.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/mouse.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/object.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/scene.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/sphere.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/transform.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/view.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/include/glic/window.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/libmesh/libmesh5.h">
-      </Unit>
-      <Unit filename="/home/loic/dev/glic/CMakeLists.txt">
-          <Option virtualFolder="CMake Files\" />
-      </Unit>
-   </Project>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="main" />
+		<Option makefile_is_custom="1" />
+		<Option default_target="main" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="CMake Files/;" />
+		<Build>
+			<Target title="all">
+				<Option type="4" />
+				<Option compiler="gcc" />
+				<MakeCommands>
+					<Build command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 all' />
+					<CompileFile command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="GLIC">
+				<Option output="/home/loic/dev/glic/libGLIC.so" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="/home/loic/dev/glic" />
+				<Option object_output="./" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="/home/loic/dev/glic/include" />
+					<Add directory="/home/loic/dev/glic/libmesh" />
+					<Add directory="/usr/include" />
+					<Add directory="/usr/include/c++/4.8" />
+					<Add directory="/usr/include/c++/4.8/backward" />
+					<Add directory="/usr/include/x86_64-linux-gnu" />
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+					<Add directory="/usr/local/include" />
+				</Compiler>
+				<MakeCommands>
+					<Build command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 GLIC' />
+					<CompileFile command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="GLIC/fast">
+				<Option output="/home/loic/dev/glic/libGLIC.so" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="/home/loic/dev/glic" />
+				<Option object_output="./" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="/home/loic/dev/glic/include" />
+					<Add directory="/home/loic/dev/glic/libmesh" />
+					<Add directory="/usr/include" />
+					<Add directory="/usr/include/c++/4.8" />
+					<Add directory="/usr/include/c++/4.8/backward" />
+					<Add directory="/usr/include/x86_64-linux-gnu" />
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+					<Add directory="/usr/local/include" />
+				</Compiler>
+				<MakeCommands>
+					<Build command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 GLIC/fast' />
+					<CompileFile command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="main">
+				<Option output="/home/loic/dev/glic/main" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="/home/loic/dev/glic" />
+				<Option object_output="./" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="3257-3258.d.mesh 3257-3258.d.mesh" />
+				<Compiler>
+					<Add directory="/home/loic/dev/glic/include" />
+					<Add directory="/home/loic/dev/glic/libmesh" />
+					<Add directory="/usr/include" />
+					<Add directory="/usr/include/c++/4.8" />
+					<Add directory="/usr/include/c++/4.8/backward" />
+					<Add directory="/usr/include/x86_64-linux-gnu" />
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+					<Add directory="/usr/local/include" />
+				</Compiler>
+				<MakeCommands>
+					<Build command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 main' />
+					<CompileFile command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="main/fast">
+				<Option output="/home/loic/dev/glic/main" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="/home/loic/dev/glic" />
+				<Option object_output="./" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="/home/loic/dev/glic/include" />
+					<Add directory="/home/loic/dev/glic/libmesh" />
+					<Add directory="/usr/include" />
+					<Add directory="/usr/include/c++/4.8" />
+					<Add directory="/usr/include/c++/4.8/backward" />
+					<Add directory="/usr/include/x86_64-linux-gnu" />
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+					<Add directory="/usr/local/include" />
+				</Compiler>
+				<MakeCommands>
+					<Build command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 main/fast' />
+					<CompileFile command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="mesh">
+				<Option output="/home/loic/dev/glic/libmesh.so" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="/home/loic/dev/glic" />
+				<Option object_output="./" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="/home/loic/dev/glic/include" />
+					<Add directory="/home/loic/dev/glic/libmesh" />
+					<Add directory="/usr/include" />
+					<Add directory="/usr/include/c++/4.8" />
+					<Add directory="/usr/include/c++/4.8/backward" />
+					<Add directory="/usr/include/x86_64-linux-gnu" />
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+					<Add directory="/usr/local/include" />
+				</Compiler>
+				<MakeCommands>
+					<Build command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 mesh' />
+					<CompileFile command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="mesh/fast">
+				<Option output="/home/loic/dev/glic/libmesh.so" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="/home/loic/dev/glic" />
+				<Option object_output="./" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="/home/loic/dev/glic/include" />
+					<Add directory="/home/loic/dev/glic/libmesh" />
+					<Add directory="/usr/include" />
+					<Add directory="/usr/include/c++/4.8" />
+					<Add directory="/usr/include/c++/4.8/backward" />
+					<Add directory="/usr/include/x86_64-linux-gnu" />
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/4.8" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+					<Add directory="/usr/local/include" />
+				</Compiler>
+				<MakeCommands>
+					<Build command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 mesh/fast' />
+					<CompileFile command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option type="4" />
+				<Option compiler="gcc" />
+				<MakeCommands>
+					<Build command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 rebuild_cache' />
+					<CompileFile command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -f &quot;/home/loic/dev/glic/Makefile&quot;  VERBOSE=1 clean' />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="CMakeLists.txt">
+			<Option virtualFolder="CMake Files/" />
+		</Unit>
+		<Unit filename="include/glic.h" />
+		<Unit filename="include/glic/axis.h" />
+		<Unit filename="include/glic/canvas.h" />
+		<Unit filename="include/glic/cube.h" />
+		<Unit filename="include/glic/defs.h" />
+		<Unit filename="include/glic/keyboard.h" />
+		<Unit filename="include/glic/light.h" />
+		<Unit filename="include/glic/material.h" />
+		<Unit filename="include/glic/mesh.h" />
+		<Unit filename="include/glic/mouse.h" />
+		<Unit filename="include/glic/object.h" />
+		<Unit filename="include/glic/scene.h" />
+		<Unit filename="include/glic/shader.h" />
+		<Unit filename="include/glic/sphere.h" />
+		<Unit filename="include/glic/transform.h" />
+		<Unit filename="include/glic/view.h" />
+		<Unit filename="include/glic/window.h" />
+		<Unit filename="libmesh/libmesh5.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="libmesh/libmesh5.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="sources/axis.cpp" />
+		<Unit filename="sources/canvas.cpp" />
+		<Unit filename="sources/cube.cpp" />
+		<Unit filename="sources/keyboard.cpp" />
+		<Unit filename="sources/light.cpp" />
+		<Unit filename="sources/material.cpp" />
+		<Unit filename="sources/mesh.cpp" />
+		<Unit filename="sources/mouse.cpp" />
+		<Unit filename="sources/object.cpp" />
+		<Unit filename="sources/scene.cpp" />
+		<Unit filename="sources/shader.cpp" />
+		<Unit filename="sources/sphere.cpp" />
+		<Unit filename="sources/transform.cpp" />
+		<Unit filename="sources/view.cpp" />
+		<Unit filename="sources/window.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
 </CodeBlocks_project_file>

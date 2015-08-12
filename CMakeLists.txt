@@ -12,8 +12,9 @@ set (CMAKE_CXX_FLAGS "-std=c++0x -g3 -Wall -Wno-deprecated -O0")
 find_package(GLUT)
 find_package(OpenGL)
 find_package(X11)
+find_package(GLEW)
 
-set(CORELIBS ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${X11_LIBRARIES})
+set(CORELIBS ${GLEW_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${X11_LIBRARIES})
 
 option(VRPN "VRPN" OFF)
 
@@ -27,12 +28,12 @@ if(vrpn)
 	include_directories("include/glic/")
 	include_directories("vrpn/include/")
 	include_directories(${VRPN_INCLUDE_DIR})
-	
+
 	get_property(inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
 	message("inc_dirs = ${inc_dirs}")
 	file(GLOB_RECURSE vrpn_files vrpn/sources/* vrpn/include/*)
 	add_library(VRPN SHARED ${vrpn_files})
-	
+
 endif(vrpn)
 
 #Compilation

@@ -19,10 +19,12 @@ public:
   glm::vec4 color, mat_diffuse;
   double m_tr[16];
   glm::vec3 center;
+
 public:
-  char  state;
+  char state;
   char box;
   char line;
+
 public:
   CglicObject();
   virtual ~CglicObject();
@@ -31,6 +33,10 @@ public:
   void applyTransformation();
   void activeBB();
   void activeMesh();
+
+public:
+  glm::mat4 MODEL;
+
 protected:
   virtual void glicInit();
 };
