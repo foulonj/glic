@@ -25,6 +25,7 @@ public:
   void setRotation(double ang, glm::vec3 axis);
   void setTranslation(glm::vec3 tr);
   void print();
+  void reset();
 };
 
 #endif

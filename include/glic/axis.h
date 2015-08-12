@@ -20,6 +20,11 @@ public:
   float *vertices;
   GLuint buffer;
   SHADER shader;
+  vector<glm::vec3> colo;
+  vector<glm::vec3> grid;
+  vector<glm::vec3> axes;
+
+
   CglicAxis();
   void display();
   ~CglicAxis();

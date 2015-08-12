@@ -98,15 +98,15 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   // ZOOM
   if((key == 'z') || (key == 'Z')){
     double zoomFactor = 0.1;
-    glm::vec3 zoom = (scene->center - pcv->window[pcv->winid()].view.m_cam);
+    glm::vec3 zoom = (scene->m_look - scene->m_cam);
     zoom *= zoomFactor;
     if (key == 'z' ){
       cout << "ZOOM IN \n";
-      scene->transform.setTranslation(zoom);
+      scene->m_cam -= zoom;
     }
     else if (key == 'Z' ){
       cout << "ZOOM OUT \n";
-      scene->transform.setTranslation(-zoom);
+      scene->m_cam += zoom;
     };
   }
 

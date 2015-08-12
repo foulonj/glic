@@ -6,7 +6,6 @@ extern CglicCanvas *pcv;
 
 CglicWindow::CglicWindow(): m_id(-1) /*scene(NULL)*/
 {
-  view.setPos(glm::vec3(0, 0, 0.3));
 }
 
 
@@ -81,30 +80,31 @@ void CglicWindow::display()
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   memcpy(m_mold,m_mnew,16*sizeof(double));
-
   glPushMatrix();
   activateLight();
   glPopMatrix();
-
   /* current transformation */
   glPushMatrix();
   pcv->mice.transform();
   glMultMatrixd(m_mnew);
   glGetDoublev(GL_MODELVIEW_MATRIX, m_mnew);
   glPopMatrix();
-
   /* redraw scene */
   glPushMatrix();
-  pcv->scene[ids]->applyTransformation();
-  glMultMatrixd( pcv->scene[ids]->m_rot );
 
+  pcv->scene[ids]->applyTransformation();
+
+  pcv->scene[ids]->update_matrices();
+
+  //
+  glMultMatrixd( pcv->scene[ids]->m_rot );
   //On insère MODELVIEW dans m_rot
   glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot);//tempMROT);
+
   pcv->scene[ids]->display();
+
+  //
   glPopMatrix();
-
-
-  view.updateCenter(pcv->scene[ids]->listObject[0]->center);
 
   glutSwapBuffers();
 }

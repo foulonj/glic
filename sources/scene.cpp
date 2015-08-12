@@ -2,16 +2,12 @@
 
 
 // object constructor
-CglicScene::CglicScene():transform()
-{
-  //cout << "  -- [create CglicScene]" << endl;
+CglicScene::CglicScene():transform(){
   state = TO_SEL;
+  m_up = glm::vec3(0., 1., 0.);
 }
+CglicScene::~CglicScene(){}
 
-CglicScene::~CglicScene()
-{
-  //cout << "  -- [destroy CglicScene]" << endl;
-}
 
 void CglicScene::addObject(pCglicObject object)
 {
@@ -19,46 +15,52 @@ void CglicScene::addObject(pCglicObject object)
   listObject.push_back(object);
 }
 
+void CglicScene::update_matrices()
+{
+  m_look = -m_cam;
+  m_right = glm::cross(m_look, m_up);
+  VIEW = glm::lookAt(m_cam, m_look, m_up);
+  PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
+}
+
 void CglicScene::applyTransformation()
 {
-  //glLoadIdentity();
-  glTranslatef(transform.translation.x,
-               transform.translation.y,
-               transform.translation.z);
-  glRotatef(transform.angle,
-            transform.axe.x,
-            transform.axe.y,
-            transform.axe.z);
+  glm::vec3 tr = transform.translation;
+  glm::vec3 ax = transform.axe;
 
-  glm::vec3 null_vec3;
-  transform.setTranslation(null_vec3);
-  transform.setRotation(0., null_vec3);
+  /*
+  for (int iObj = 0; iObj < listObject.size(); iObj++){
+    listObject[iObj]->MODEL = glm::translate(listObject[iObj]->MODEL, tr);
+    if(ax != glm::vec3(0.0f))
+      listObject[iObj]->MODEL = glm::rotate(listObject[iObj]->MODEL, (float)transform.angle, ax);
+  }*/
 
+  glTranslatef(tr.x, tr.y, tr.z);
+  glRotatef(transform.angle, ax.x, ax.y, ax.z);
+
+  transform.reset();
+  center += tr;
 }
+
 
 
 void CglicScene::display()
 {
-  //cout << "  -- [display CglicScene n." << ids << "]" << endl;
-  //cout << "    -> Display list of object \n ";
 
   for (int iObj = 0; iObj < listObject.size(); iObj++){
-    /*
-    Ici, on applique les changements de MVP,
-    à faire avec :
-      MODEL         dans object
-      VIEW et PROJ  dans scene
-    */
     glPushMatrix();
     glLoadIdentity();
+
     listObject[iObj]->applyTransformation();
+
     glMultMatrixd(listObject[iObj]->m_tr);
     glGetDoublev(GL_MODELVIEW_MATRIX,listObject[iObj]->m_tr);
     glPopMatrix();
-
     glPushMatrix();
     glMultMatrixd(listObject[iObj]->m_tr);
+
     listObject[iObj]->display();
+
     glPopMatrix();
   }
 }

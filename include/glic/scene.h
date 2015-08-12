@@ -11,6 +11,7 @@
 
 #include "defs.h"
 #include <glic/object.h>
+#include <glic/view.h>
 
 class GLIC_API CglicScene
 {
@@ -24,17 +25,25 @@ public:
   glm::vec3 center;
 
 public:
+  pCglicView view;
+
+public:
+  glm::vec3 m_look, m_cam, m_up;
+  glm::vec3 m_right;
+
   glm::mat4 VIEW;
   glm::mat4 PROJ;
 
 public:
   char  state;
   int  ids;
+
   CglicScene();
   virtual ~CglicScene();
   void display();
   void addObject(pCglicObject object);
   void applyTransformation();
+  void update_matrices();
 
 protected:
   virtual void glicInit();

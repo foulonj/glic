@@ -26,3 +26,9 @@ void CglicTransform::print()
     cout << endl;
   }
 }
+
+void CglicTransform::reset(){
+  glm::vec3 null_vec3;
+  setTranslation(null_vec3);
+  setRotation(0., null_vec3);
+}

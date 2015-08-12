@@ -89,7 +89,11 @@ int main(int argc, char **argv){
   {
     idw = cv.glicWindow(0,0,1000,1000);
     ids = cv.glicScene();
+
+    //On associe ici la view de window à la scene ids
     cv.glicSetScene(ids, idw);
+
+
     cv.window[idw].show();
     //cout << "\t\t Read mesh \n\n";
 

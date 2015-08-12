@@ -74,6 +74,20 @@ CglicMesh::CglicMesh(char *name)
   meshBox();
   listTria=buildTria();
   listEdge=buildEdge();
+
+  shader.load("/home/loic/dev/glic/shaders/shader.vert", "/home/loic/dev/glic/shaders/shader.frag");
+  int nV = point.size();
+  float *vertices = new float[nV * 3];
+  for (int i = 0 ; i < nV ; i++){
+    for(int j = 0 ; j < 3 ; j++){
+      vertices[3 * i + j] = point[i].c[j];
+    }
+    //vertices[3*i + 1] = 0.0f;
+  }
+  int mem = 3 * sizeof(float) * nV;
+  glGenBuffers( 1,               &buffer);
+  glBindBuffer( GL_ARRAY_BUFFER, buffer);
+  glBufferData( GL_ARRAY_BUFFER, mem, vertices, GL_STATIC_DRAW);
 }
 
 void CglicMesh::meshInfo(const int& verbose, ostream& outstr)
@@ -271,7 +285,26 @@ void CglicMesh::display()
   }
   glFlush();
 
-  cout << point.size() << endl;
+/*
+  cout << endl;
+  for(int i = 0 ; i < 4 ; i++)
+    cout << MODEL[i][0] << " " << MODEL[i][1] << " " << MODEL[i][2] << " " << MODEL[i][3] << endl;
+  cout << endl;
+
+  glUseProgram(shader.mProgramID);
+  glEnableVertexAttribArray( 5);
+  glBindBuffer(              GL_ARRAY_BUFFER, buffer);
+  glVertexAttribPointer(     5, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(      shader.mProgramID, 5, "vertex_position");
+
+  glm::mat4 MVP = MODEL;
+  GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
+  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glDrawArrays(GL_LINES, 0, point.size());
+  glUseProgram(0);
+  glDisableVertexAttribArray(5);
+  */
 }
 
 

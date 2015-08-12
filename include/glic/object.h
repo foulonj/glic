@@ -11,6 +11,7 @@
 
 #include "defs.h"
 #include <glic/transform.h>
+#include <glic/shader.h>
 
 class GLIC_API CglicObject
 {
@@ -35,6 +36,8 @@ public:
   void activeMesh();
 
 public:
+  SHADER shader;
+  GLuint buffer;
   glm::mat4 MODEL;
 
 protected:

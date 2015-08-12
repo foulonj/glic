@@ -40,7 +40,7 @@ void CglicCanvas::glicSetScene(int ids, int idw)
 {
   cout << " [add scene n." << ids << " to window n." << idw << " ]"<< endl;
   window[idw].ids = ids;
-  window[idw].view.m_look = scene[ids]->center;
+  scene[ids]->view = &window[idw].view;
 }
 
 
