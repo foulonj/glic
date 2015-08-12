@@ -12,12 +12,17 @@
 
 #include <glic/object.h>
 
+#include <glic/shader.h>
+
 class GLIC_API CglicAxis : public CglicObject
 {
 public:
-  CglicAxis(){};
+  float *vertices;
+  GLuint buffer;
+  SHADER shader;
+  CglicAxis();
   void display();
-  ~CglicAxis(){};
+  ~CglicAxis();
 };
 
 #endif

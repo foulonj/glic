@@ -93,7 +93,7 @@ int main(int argc, char **argv){
     cv.window[idw].show();
     //cout << "\t\t Read mesh \n\n";
 
-
+    InitGlew();
 
     vector<CglicMesh*> mesh;
     for (int i=0; i < argc - 1; i++){
@@ -108,9 +108,9 @@ int main(int argc, char **argv){
     ido = cv.glicObject(new CglicAxis());
     cv.glicSetObject(ido, ids);
 
-    InitGlew();
-    SHADER shader;
-    shader.load("/home/loic/dev/glic/shaders/shader.vert", "/home/loic/dev/glic/shaders/shader.vert");
+
+    //SHADER shader;
+    //shader.load("/home/loic/dev/glic/shaders/shader.vert", "/home/loic/dev/glic/shaders/shader.vert");
   };
 
 
