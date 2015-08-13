@@ -42,6 +42,8 @@ glm::vec3 CglicMouse::projsph(glm::vec2 diff) {
 
 void CglicMouse::motion(int x, int y)
 {
+  bool VBOs = false;
+
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
 
   GLuint   tm;
@@ -74,10 +76,14 @@ void CglicMouse::motion(int x, int y)
     else
       for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
         if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
-          glPushMatrix();
+
+          if(!VBOs)
+            glPushMatrix();
           scene->listObject[iObj]->transform.setRotation(m_ang, m_axe);
-          glPopMatrix();
-        };
+          if(!VBOs)
+            glPopMatrix();
+
+        }
       }
   }
 }

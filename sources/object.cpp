@@ -53,19 +53,23 @@ void CglicObject::activeMesh()
 
 void CglicObject::applyTransformation()
 {
-  //Remplacent tout ce qui suit
+  bool VBOs = false;
 
   glm::vec3 tr = transform.translation;
   glm::vec3 ax = transform.axe;
 
-  MODEL = glm::translate(MODEL, tr);
-  if(ax != glm::vec3(0.0f))
-    MODEL = glm::rotate(MODEL, (float)transform.angle, ax);
+  if(VBOs){
+    MODEL = glm::translate(MODEL, tr);
+    if(ax != glm::vec3(0.0f))
+      MODEL = glm::rotate(MODEL, (float)transform.angle / 100.0f, ax);
+  }
 
-  //glTranslatef(tr.x, tr.y, tr.z);
-  //glTranslatef(center.x, center.y, center.z);
-  //glRotatef(transform.angle, ax.x, ax.y, ax.z);
-  //glTranslatef(-center.x, -center.y, -center.z);
+  else{
+    glTranslatef(tr.x, tr.y, tr.z);
+    glTranslatef(center.x, center.y, center.z);
+    glRotatef(transform.angle, ax.x, ax.y, ax.z);
+    glTranslatef(-center.x, -center.y, -center.z);
+  }
 
   center += tr;
   transform.reset();

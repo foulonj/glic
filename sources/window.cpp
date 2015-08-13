@@ -28,6 +28,8 @@ CglicWindow::~CglicWindow()
 
 void CglicWindow::show()
 {
+  bool VBOs = false;
+
   cout << " - [open window]" << endl;
 
   glutInitWindowPosition(m_wpos[0], m_wpos[1]);
@@ -54,18 +56,17 @@ void CglicWindow::show()
   glEnable(GL_DITHER);
   glDisable(GL_CULL_FACE);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-
-  glGetDoublev(GL_MODELVIEW_MATRIX, m_mnew);
-  glPopMatrix();
-
-  glPushMatrix();
-  glLoadIdentity();
-  //glGetDoublev(GL_MODELVIEW_MATRIX, (double*) glm::value_ptr( pcv->scene[ids]->m_rot ) );
-  glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot );
-  glPopMatrix();
+  if(!VBOs){
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glGetDoublev(GL_MODELVIEW_MATRIX, m_mnew);
+    glPopMatrix();
+    glPushMatrix();
+    glLoadIdentity();
+    glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot );
+    glPopMatrix();
+  }
 
   view.setView();
 }
@@ -73,40 +74,46 @@ void CglicWindow::show()
 
 void CglicWindow::display()
 {
+
+  bool VBOs = false;
+
   glDrawBuffer(GL_BACK_LEFT);
   glClearColor(0.05, 0.05, 0.05, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  memcpy(m_mold,m_mnew,16*sizeof(double));
-  glPushMatrix();
-  activateLight();
-  glPopMatrix();
-  /* current transformation */
-  glPushMatrix();
-  pcv->mice.transform();
-  glMultMatrixd(m_mnew);
-  glGetDoublev(GL_MODELVIEW_MATRIX, m_mnew);
-  glPopMatrix();
-  /* redraw scene */
-  glPushMatrix();
+  if(VBOs){
+    pcv->scene[ids]->applyTransformation();
+    pcv->scene[ids]->update_matrices();
+    pcv->scene[ids]->display();
+    glutSwapBuffers();
+  }
 
-  pcv->scene[ids]->applyTransformation();
+  else{
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    memcpy(m_mold,m_mnew,16*sizeof(double));
+    glPushMatrix();
+    activateLight();
+    glPopMatrix();
 
-  pcv->scene[ids]->update_matrices();
+    /* current transformation */
+    glPushMatrix();
+    pcv->mice.transform();
+    glMultMatrixd(m_mnew);
+    glGetDoublev(GL_MODELVIEW_MATRIX, m_mnew);
+    glPopMatrix();
 
-  //
-  glMultMatrixd( pcv->scene[ids]->m_rot );
-  //On insère MODELVIEW dans m_rot
-  glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot);//tempMROT);
-
-  pcv->scene[ids]->display();
-
-  //
-  glPopMatrix();
-
-  glutSwapBuffers();
+    /* redraw scene */
+    glPushMatrix();
+    //Scenes Transformations
+    pcv->scene[ids]->applyTransformation();
+    pcv->scene[ids]->update_matrices();
+    glMultMatrixd( pcv->scene[ids]->m_rot );
+    glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot);//tempMROT);
+    pcv->scene[ids]->display();
+    glPopMatrix();
+    glutSwapBuffers();
+  }
 }
 
 int CglicWindow::glicAddLight(pCglicLight li)

@@ -8,8 +8,25 @@ void CglicKeyboard::keyColor(unsigned char key,int x,int y) {
   pcv->winid();
 }
 
+void setTranslation(glm::vec3 tr, bool VBO, int &state){
+  pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+  for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
+    if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
+      if(!VBO)
+        glPushMatrix();
+      scene->listObject[iObj]->transform.setTranslation(tr);
+      if(!VBO)
+        glPopMatrix();
+      state = 1;
+    }
+  }
+  if (state == 0)
+    scene->transform.setTranslation(tr);
+}
+
 void CglicKeyboard::special(unsigned char key, int x, int y)
 {
+  bool VBOs = false;
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
   glm::vec3 moveX(0.005, 0., 0.);
   glm::vec3 moveZ(0., 0., 0.005);
@@ -17,56 +34,21 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
   switch (key) {
     case GLUT_KEY_LEFT:
       cout << "GLUT_KEY_LEFT" << endl;
-      for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
-        if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
-          glPushMatrix();
-          scene->listObject[iObj]->transform.setTranslation(-moveX);
-          glPopMatrix();
-          state = 1;
-        };
-      }
-      if (state == 0)
-        scene->transform.setTranslation(-moveX);
+      setTranslation(-moveX, VBOs, state);
       break;
     case GLUT_KEY_RIGHT:
       cout << "GLUT_KEY_RIGHT TRANSFORM SCENE" << endl;
-      for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
-        if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
-          glPushMatrix();
-          scene->listObject[iObj]->transform.setTranslation(moveX);
-          glPopMatrix();
-          state = 1;
-        };
-      }
-      if (state == 0)
-        scene->transform.setTranslation(moveX);
+      setTranslation(moveX, VBOs, state);
       break;
     case GLUT_KEY_DOWN:
       cout << "GLUT_KEY_DOWN" << endl;
-      for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
-        if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
-          glPushMatrix();
-          scene->listObject[iObj]->transform.setTranslation(-moveZ);
-          glPopMatrix();
-          state = 1;
-        }
-      }
-      if (state == 0)
-        scene->transform.setTranslation(-moveZ);
+      setTranslation(-moveZ, VBOs, state);
       break;
     case GLUT_KEY_UP:
       cout << "GLUT_KEY_UP" << endl;
-      for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
-        if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
-          glPushMatrix();
-          scene->listObject[iObj]->transform.setTranslation(moveZ);
-          glPopMatrix();
-          state = 1;
-        }
-      }
-      if (state == 0)
-        scene->transform.setTranslation(moveZ);
+      setTranslation(moveZ, VBOs, state);
       break;
+
     default:
       break;
   }

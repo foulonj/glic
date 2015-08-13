@@ -46,25 +46,30 @@ CglicAxis::~CglicAxis(){
 
 void CglicAxis::display()
 {
-  /*
-  //Triangle
-  glLineWidth(5.0);
-  glUseProgram(shader.mProgramID);
-  glEnableVertexAttribArray( 0);
-  glBindBuffer(              GL_ARRAY_BUFFER, buffer);
-  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      shader.mProgramID, 0, "vertex_position");
+  bool VBOs = false;
 
-  glm::mat4 MVP = MODEL;
+  if(VBOs){
+    //Triangle
+    glLineWidth(5.0);
+    glUseProgram(shader.mProgramID);
+    glEnableVertexAttribArray( 0);
+    glBindBuffer(              GL_ARRAY_BUFFER, buffer);
+    glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(      shader.mProgramID, 0, "vertex_position");
 
-  GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
-  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
-  glDisableVertexAttribArray(0);
-  glLineWidth(1.0);
-  glUseProgram(0);
-  */
+    glm::mat4 MVP = *pPROJ * *pVIEW * MODEL * glm::scale(MODEL, glm::vec3(0.1, 0.1, 0.1));
+
+    GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glDisableVertexAttribArray(0);
+    glLineWidth(1.0);
+    glUseProgram(0);
+    glPolygonMode(GL_FRONT, GL_FILL);
+  }
+
 
   // Grid
   glLineWidth(1.0);

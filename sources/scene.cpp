@@ -61,19 +61,21 @@ void CglicScene::update_matrices()
 
 void CglicScene::applyTransformation()
 {
+  bool VBOs = false;
   glm::vec3 tr = transform.translation;
   glm::vec3 ax = transform.axe;
 
-cout << "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii" << endl;
-
-  for (int iObj = 0; iObj < listObject.size(); iObj++){
-    listObject[iObj]->MODEL = glm::translate(listObject[iObj]->MODEL, tr);
-    if(ax != glm::vec3(0.0f))
-      listObject[iObj]->MODEL = glm::rotate(listObject[iObj]->MODEL, (float)transform.angle, ax);
+  if(VBOs){
+    for (int iObj = 0; iObj < listObject.size(); iObj++){
+      listObject[iObj]->MODEL = glm::translate(listObject[iObj]->MODEL, tr);
+      if(ax != glm::vec3(0.0f))
+        listObject[iObj]->MODEL = glm::rotate(listObject[iObj]->MODEL, (float)transform.angle, ax);
+    }
   }
-
-  glTranslatef(tr.x, tr.y, tr.z);
-  glRotatef(transform.angle, ax.x, ax.y, ax.z);
+  else{
+    glTranslatef(tr.x, tr.y, tr.z);
+    glRotatef(transform.angle, ax.x, ax.y, ax.z);
+  }
 
   transform.reset();
   center += tr;
@@ -83,22 +85,27 @@ cout << "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii" << endl;
 
 void CglicScene::display()
 {
-
+  bool VBOs = false;
   for (int iObj = 0; iObj < listObject.size(); iObj++){
-    glPushMatrix();
-    glLoadIdentity();
+    if(!VBOs){
+      glPushMatrix();
+      glLoadIdentity();
+    }
 
     listObject[iObj]->applyTransformation();
 
-    glMultMatrixd(listObject[iObj]->m_tr);
-    glGetDoublev(GL_MODELVIEW_MATRIX,listObject[iObj]->m_tr);
-    glPopMatrix();
-    glPushMatrix();
-    glMultMatrixd(listObject[iObj]->m_tr);
+    if(!VBOs){
+      glMultMatrixd(listObject[iObj]->m_tr);
+      glGetDoublev(GL_MODELVIEW_MATRIX,listObject[iObj]->m_tr);
+      glPopMatrix();
+      glPushMatrix();
+      glMultMatrixd(listObject[iObj]->m_tr);
+    }
 
     listObject[iObj]->display();
 
-    glPopMatrix();
+    if(!VBOs)
+      glPopMatrix();
   }
 }
 

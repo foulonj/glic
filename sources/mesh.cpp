@@ -210,51 +210,36 @@ GLuint CglicMesh::buildEdge()
   glEndList();
   return(listEdge);
 }
-/*
-//Old display
-void CglicMesh::display()
-{
-  cout << "   ---> display mesh\n";
-
-  if (box == TO_ON){
-    glPushMatrix();
-    glScalef(1.01 * fabs(xmax-xmin),
-             1.01 * fabs(ymax-ymin),
-             1.01 * fabs(zmax-zmin));
-    glColor3f(1.0,1.0,1.0);
-    glutWireCube(1.0);
-    glPopMatrix();
-  };
-
-  //glDisable(GL_LIGHTING);
-  if(state != TO_ON){
-    glDisable(GL_DEPTH_TEST);
-    glColor3f(0.2, 0.9, 0.2);
-    glCullFace(GL_FRONT);
-    float s = 1.05;
-    glScalef(s, s, s);
-    glCallList(listTria);
-    glScalef(1./s, 1./s, 1./s);
-    glFlush();
-    glEnable(GL_DEPTH_TEST);
-  }
-  glColor3f(0.51,0.52,0.8);
-  glCallList(listTria);
-  if ( line == TO_ON){
-    glColor3f(0., 0., 1.);
-    glCallList(listEdge);
-  }
-  glFlush();
-}
-*/
 
 void CglicMesh::display()
 {
   //cout << "   ---> display mesh\n";
 
-  bool useVBOs = false;
+  bool VBOs = false;
 
-  if(!useVBOs){
+  if(VBOs){
+    glUseProgram(shader.mProgramID);
+    glEnableVertexAttribArray( 5);
+    glBindBuffer(              GL_ARRAY_BUFFER, buffer);
+    glVertexAttribPointer(     5, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(      shader.mProgramID, 5, "vertex_position");
+
+    glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
+    cout << endl;
+    cout << " MVP: " << endl;
+    for(int i = 0 ; i < 4 ; i++)
+      cout << MVP[i][0] << " " << MVP[i][1] << " " << MVP[i][2] << " " << MVP[i][3] << endl;
+    cout << endl;
+
+    GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDrawArrays(GL_LINES, 0, point.size());
+    glUseProgram(0);
+    glDisableVertexAttribArray(5);
+  }
+
+  else{
     //Bounding box
     if (box == TO_ON){
       glPushMatrix();
@@ -285,28 +270,6 @@ void CglicMesh::display()
       glCallList(listEdge);
     }
     glFlush();
-  }
-
-  else if(useVBOs){
-    glUseProgram(shader.mProgramID);
-    glEnableVertexAttribArray( 5);
-    glBindBuffer(              GL_ARRAY_BUFFER, buffer);
-    glVertexAttribPointer(     5, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindAttribLocation(      shader.mProgramID, 5, "vertex_position");
-
-    glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
-    cout << endl;
-    cout << " MVP: " << endl;
-    for(int i = 0 ; i < 4 ; i++)
-      cout << MVP[i][0] << " " << MVP[i][1] << " " << MVP[i][2] << " " << MVP[i][3] << endl;
-    cout << endl;
-
-    GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawArrays(GL_LINES, 0, point.size());
-    glUseProgram(0);
-    glDisableVertexAttribArray(5);
   }
 }
 
