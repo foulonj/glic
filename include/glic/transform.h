@@ -10,22 +10,22 @@
 #define __GLIC_TRANSFORM_H_
 
 #include "defs.h"
-#include <glic/math1.h>
 
 class GLIC_API CglicTransform
 {
 public:
-  mat4x4 mat;
-  
-  vec3d translation;
+  glm::mat4 mat;
+
+  glm::vec3 translation;
   double angle;
-  vec3d axe;
+  glm::vec3 axe;
 
   CglicTransform();
   ~CglicTransform(){};
-  void setRotation(double ang, vec3d axis);
-  void setTranslation(double x, double y, double z);
+  void setRotation(double ang, glm::vec3 axis);
+  void setTranslation(glm::vec3 tr);
   void print();
+  void reset();
 };
 
 #endif

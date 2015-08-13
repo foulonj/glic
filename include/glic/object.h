@@ -11,19 +11,21 @@
 
 #include "defs.h"
 #include <glic/transform.h>
+#include <glic/shader.h>
 
 class GLIC_API CglicObject
 {
 public:
   enum TobjState {TO_OFF, TO_ON, TO_SEL, TO_DYN};
-  double color[4];
-  GLfloat mat_diffuse[4];// = {0.1f, 0.5f, 0.8f, 1.0f};
+  glm::vec4 color, mat_diffuse;
   double m_tr[16];
-  double center[3];
+  glm::vec3 center;
+
 public:
-  char  state;
+  char state;
   char box;
   char line;
+
 public:
   CglicObject();
   virtual ~CglicObject();
@@ -32,6 +34,12 @@ public:
   void applyTransformation();
   void activeBB();
   void activeMesh();
+
+public:
+  SHADER shader;
+  GLuint buffer;
+  glm::mat4 MODEL;
+
 protected:
   virtual void glicInit();
 };

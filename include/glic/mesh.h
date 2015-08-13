@@ -32,6 +32,7 @@ typedef struct {
 
 class GLIC_API CglicMesh : public CglicObject
 {
+
 private:
   int np,nt,nn,dim,ver;
   vector<Point>    point;
@@ -39,11 +40,12 @@ private:
   vector<Normal>   normal;
   GLuint listTria;
   GLuint listEdge;
+
 public:
   double      xmin,ymin,zmin,xmax,ymax,zmax;
   double      xtra,ytra,ztra;
   float       bbmin,bbmax;
-  
+
 public:
   CglicMesh(char *name);
   void meshInfo(const int& verbose = 0, ostream& outstr = cout);

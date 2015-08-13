@@ -3,30 +3,32 @@
 
 CglicTransform::CglicTransform():mat()
 {
-  mat.load_identity();
+  //mat.load_identity();
 }
 
-void CglicTransform::setRotation(double ang, vec3d axis)
+void CglicTransform::setRotation(double ang, glm::vec3 axis)
 {
-  axe[0]=axis[0];
-  axe[1]=axis[1];
-  axe[2]=axis[2];
+  axe = axis;
   angle = ang;
 }
 
 
-void CglicTransform::setTranslation(double x, double y, double z)
+void CglicTransform::setTranslation(glm::vec3 tr)
 {
-  translation[0] = x;
-  translation[1] = y;
-  translation[2] = z;
+  translation = tr;
 }
 
 void CglicTransform::print()
 {
   for (int i = 0; i < 4; i++){
     for (int j = 0; j < 4; j++)
-      cout << mat(i,j) << "  ";
+      cout << mat[i][j] << "  ";
     cout << endl;
   }
+}
+
+void CglicTransform::reset(){
+  glm::vec3 null_vec3;
+  setTranslation(null_vec3);
+  setRotation(0., null_vec3);
 }

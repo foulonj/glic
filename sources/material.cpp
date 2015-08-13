@@ -4,12 +4,12 @@
 // object constructor
 CglicMaterial::CglicMaterial()
 {
-  cout << "  --- - [create CglicMaterial]" << endl;
+  //cout << "  --- - [create CglicMaterial]" << endl;
 }
 
 CglicMaterial::~CglicMaterial()
 {
-  cout << "  --- - [destroy CglicMaterial]" << endl;
+  //cout << "  --- - [destroy CglicMaterial]" << endl;
 }
 
 void CglicMaterial::glicInit()

@@ -19,6 +19,8 @@
 
 using namespace std;
 
+#include "GL/glew.h"
+
 #ifdef WIN32
 #include <windows.h>
 #endif
@@ -45,6 +47,13 @@ using namespace std;
 #else
 #define GLIC_API
 #endif
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 
 
 #endif
