@@ -17,22 +17,31 @@ void CglicScene::addObject(pCglicObject object)
 
 void CglicScene::update_matrices()
 {
+  //Update vectors
   bool lookAtZero = true;
-
   if(lookAtZero)
     m_look = -m_cam;
   else
     m_look = center - m_cam;
-
   m_right = glm::cross(m_look, m_up);
+
+  //Update Matrices
+  VIEW = glm::lookAt(m_cam, m_look, m_up);
+  PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
+
+  //Send matrices to objects
+  for(int i = 0 ; i < listObject.size() ; i++){
+    listObject[i]->pPROJ = &PROJ;
+    listObject[i]->pVIEW = &VIEW;
+  }
+
+  //DEBUG
+  //Vectors
   cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
   cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
   cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
   cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
-  VIEW = glm::lookAt(m_cam, m_look, m_up);
-  PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
-
-
+  //Matrices
   cout << endl;
   cout << " MODEL " << endl;
   int iObj = 0;

@@ -20,6 +20,8 @@ CglicObject::CglicObject():transform()
 
   MODEL = glm::mat4(1.0f);
   center = glm::vec3(0.0f);
+  pPROJ = NULL;
+  pVIEW = NULL;
 }
 
 
@@ -59,13 +61,12 @@ void CglicObject::applyTransformation()
   MODEL = glm::translate(MODEL, tr);
   if(ax != glm::vec3(0.0f))
     MODEL = glm::rotate(MODEL, (float)transform.angle, ax);
-  //center += tr;
 
-  glTranslatef(tr.x, tr.y, tr.z);
+  //glTranslatef(tr.x, tr.y, tr.z);
+  //glTranslatef(center.x, center.y, center.z);
+  //glRotatef(transform.angle, ax.x, ax.y, ax.z);
+  //glTranslatef(-center.x, -center.y, -center.z);
+
   center += tr;
-  glTranslatef(center.x, center.y, center.z);
-  glRotatef(transform.angle, ax.x, ax.y, ax.z);
-  glTranslatef(-center.x, -center.y, -center.z);
-
   transform.reset();
 }

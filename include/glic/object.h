@@ -20,6 +20,14 @@ public:
   glm::vec4 color, mat_diffuse;
   double m_tr[16];
   glm::vec3 center;
+  CglicTransform transform;
+
+public:
+  SHADER shader;
+  GLuint buffer;
+  glm::mat4 MODEL;
+  glm::mat4 *pVIEW;
+  glm::mat4 *pPROJ;
 
 public:
   char state;
@@ -30,15 +38,12 @@ public:
   CglicObject();
   virtual ~CglicObject();
   virtual void display(){};
-  CglicTransform transform;
+
   void applyTransformation();
   void activeBB();
   void activeMesh();
 
-public:
-  SHADER shader;
-  GLuint buffer;
-  glm::mat4 MODEL;
+
 
 protected:
   virtual void glicInit();
