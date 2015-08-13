@@ -56,11 +56,10 @@ void CglicObject::applyTransformation()
   glm::vec3 tr = transform.translation;
   glm::vec3 ax = transform.axe;
 
-  /*MODEL = glm::translate(MODEL, tr);
-  cout << "axe = " << ax.x << " " << ax.y << " " << ax.z << endl;
+  MODEL = glm::translate(MODEL, tr);
   if(ax != glm::vec3(0.0f))
     MODEL = glm::rotate(MODEL, (float)transform.angle, ax);
-  center += tr;*/
+  //center += tr;
 
   glTranslatef(tr.x, tr.y, tr.z);
   center += tr;

@@ -285,12 +285,11 @@ void CglicMesh::display()
   }
   glFlush();
 
-/*
-  cout << endl;
-  for(int i = 0 ; i < 4 ; i++)
-    cout << MODEL[i][0] << " " << MODEL[i][1] << " " << MODEL[i][2] << " " << MODEL[i][3] << endl;
-  cout << endl;
 
+
+
+
+/*
   glUseProgram(shader.mProgramID);
   glEnableVertexAttribArray( 5);
   glBindBuffer(              GL_ARRAY_BUFFER, buffer);

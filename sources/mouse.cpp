@@ -64,8 +64,13 @@ void CglicMouse::motion(int x, int y)
     m_ang = 180.0*sqrt(d.x + d.y + d.z);
     m_pos = v;
 
-    if (scene->state == CglicScene::TO_SEL)
+    if (scene->state == CglicScene::TO_SEL){
+      int a = 2;
       scene->transform.setRotation(m_ang,m_axe);
+      glm::quat quat       = glm::angleAxis((float)m_ang, m_axe);
+      glm::mat4 rotation   = glm::toMat4(quat);
+      scene->m_cam = glm::vec3( rotation * glm::vec4(scene->m_cam,1));
+    }
     else
       for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
         if (scene->listObject[iObj]->state == CglicCube::TO_SEL){

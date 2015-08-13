@@ -1,10 +1,10 @@
 #include <glic/scene.h>
 
-
 // object constructor
 CglicScene::CglicScene():transform(){
   state = TO_SEL;
   m_up = glm::vec3(0., 1., 0.);
+  m_cam = glm::vec3(0,0,2);
 }
 CglicScene::~CglicScene(){}
 
@@ -17,10 +17,37 @@ void CglicScene::addObject(pCglicObject object)
 
 void CglicScene::update_matrices()
 {
-  m_look = -m_cam;
+  bool lookAtZero = true;
+
+  if(lookAtZero)
+    m_look = -m_cam;
+  else
+    m_look = center - m_cam;
+
   m_right = glm::cross(m_look, m_up);
+  cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
+  cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
+  cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
+  cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
   VIEW = glm::lookAt(m_cam, m_look, m_up);
   PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
+
+
+  cout << endl;
+  cout << " MODEL " << endl;
+  int iObj = 0;
+  for(int i = 0 ; i < 4 ; i++)
+    cout << listObject[iObj]->MODEL[i][0] << " " << listObject[iObj]->MODEL[i][1] << " " << listObject[iObj]->MODEL[i][2] << " " << listObject[iObj]->MODEL[i][3] << endl;
+  cout << endl;
+  cout << " VIEW " << endl;
+  for(int i = 0 ; i < 4 ; i++)
+    cout << VIEW [i][0] << " " << VIEW [i][1] << " " << VIEW [i][2] << " " << VIEW [i][3] << endl;
+  cout << endl;
+  cout << " PROJ " << endl;
+  for(int i = 0 ; i < 4 ; i++)
+    cout << PROJ[i][0] << " " << PROJ[i][1] << " " << PROJ[i][2] << " " << PROJ[i][3] << endl;
+  cout << endl;
+
 }
 
 void CglicScene::applyTransformation()
@@ -28,12 +55,13 @@ void CglicScene::applyTransformation()
   glm::vec3 tr = transform.translation;
   glm::vec3 ax = transform.axe;
 
-  /*
+cout << "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii" << endl;
+
   for (int iObj = 0; iObj < listObject.size(); iObj++){
     listObject[iObj]->MODEL = glm::translate(listObject[iObj]->MODEL, tr);
     if(ax != glm::vec3(0.0f))
       listObject[iObj]->MODEL = glm::rotate(listObject[iObj]->MODEL, (float)transform.angle, ax);
-  }*/
+  }
 
   glTranslatef(tr.x, tr.y, tr.z);
   glRotatef(transform.angle, ax.x, ax.y, ax.z);
