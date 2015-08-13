@@ -20,7 +20,7 @@ option(VRPN "VRPN" OFF)
 
 #Include files
 #include_directories("include/")
-include_directories("include/" "libmesh/")
+include_directories("include/" "libmesh/" "glm/")
 
 if(vrpn)
 	list(APPEND CMAKE_MODULE_PATH /Users/Shared/Library/vrpn/cmake)
@@ -38,7 +38,7 @@ endif(vrpn)
 
 #Compilation
 #Recuperation de la liste des fichiers .cpp et .h
-file(GLOB_RECURSE source_files sources/* include/glic/*)
+file(GLOB_RECURSE source_files sources/* include/glic/* )
 add_library(GLIC SHARED ${source_files})
 add_library(mesh SHARED libmesh/libmesh5.h libmesh/libmesh5.c)
 target_link_libraries(GLIC ${CORELIBS} mesh)
