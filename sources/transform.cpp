@@ -1,34 +1,33 @@
 #include <glic/transform.h>
 
-
-CglicTransform::CglicTransform():mat()
+void CglicTransform::setRotation(glm::mat4 hMat, glm::mat4 vMat)
 {
-  //mat.load_identity();
+  hRot = hMat;
+  vRot = vMat;
 }
 
-void CglicTransform::setRotation(double ang, glm::vec3 axis)
+void CglicTransform::setTranslation(glm::vec3 translation)
 {
-  axe = axis;
-  angle = ang;
+  tr = translation;
 }
 
-
-void CglicTransform::setTranslation(glm::vec3 tr)
-{
-  translation = tr;
+void CglicTransform::reset(){
+  tr = glm::vec3(0.0f);
+  hRot = vRot = glm::mat4(1.0f);
 }
 
 void CglicTransform::print()
 {
+  cout << "horizontal rotation:" << endl;
   for (int i = 0; i < 4; i++){
     for (int j = 0; j < 4; j++)
-      cout << mat[i][j] << "  ";
+      cout << hRot[i][j] << "  ";
     cout << endl;
   }
-}
-
-void CglicTransform::reset(){
-  glm::vec3 null_vec3;
-  setTranslation(null_vec3);
-  setRotation(0., null_vec3);
+  cout << "vertical rotation:" << endl;
+  for (int i = 0; i < 4; i++){
+    for (int j = 0; j < 4; j++)
+      cout << vRot[i][j] << "  ";
+    cout << endl;
+  }
 }

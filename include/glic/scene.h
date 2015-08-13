@@ -44,6 +44,7 @@ public:
   void addObject(pCglicObject object);
   void applyTransformation();
   void update_matrices();
+  void debug();
 
 protected:
   virtual void glicInit();

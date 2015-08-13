@@ -90,12 +90,9 @@ int main(int argc, char **argv){
     idw = cv.glicWindow(0,0,1000,1000);
     ids = cv.glicScene();
 
-    //On associe ici la view de window à la scene ids
     cv.glicSetScene(ids, idw);
 
-
     cv.window[idw].show();
-    //cout << "\t\t Read mesh \n\n";
 
     InitGlew();
 
@@ -111,14 +108,7 @@ int main(int argc, char **argv){
     //Ajout d'un axe
     ido = cv.glicObject(new CglicAxis());
     cv.glicSetObject(ido, ids);
-
-
-    //SHADER shader;
-    //shader.load("/home/loic/dev/glic/shaders/shader.vert", "/home/loic/dev/glic/shaders/shader.vert");
   };
-
-
-
 
   cv.glicMainLoop();
   return(EXIT_SUCCESS);

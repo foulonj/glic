@@ -42,6 +42,12 @@ private:
   GLuint listEdge;
 
 public:
+  std::vector<float> vertices;
+  std::vector<int>   indices;
+  GLuint meshBuffer;
+  GLuint indicesBuffer;
+
+public:
   double      xmin,ymin,zmin,xmax,ymax,zmax;
   double      xtra,ytra,ztra;
   float       bbmin,bbmax;
@@ -52,8 +58,6 @@ public:
   void display();
   void meshBox();
   ~CglicMesh(){};
-  GLuint buildTria();
-  GLuint buildEdge();
 };
 
 #endif

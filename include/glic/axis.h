@@ -17,17 +17,18 @@
 class GLIC_API CglicAxis : public CglicObject
 {
 public:
-  float *vertices;
-  GLuint buffer;
+  GLuint cubeBuffer;
+  GLuint gridBuffer;
+  GLuint axesBuffer;
   SHADER shader;
-  vector<glm::vec3> colo;
-  vector<glm::vec3> grid;
-  vector<glm::vec3> axes;
 
+  vector<float> colo;
+  vector<float> grid;
+  vector<float> axes;
 
   CglicAxis();
   void display();
-  ~CglicAxis();
+  ~CglicAxis(){};
 };
 
 #endif

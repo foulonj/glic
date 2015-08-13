@@ -10,7 +10,7 @@ CglicView::CglicView()
   m_eyesep = 1.0;
   m_eye    = TV_LEFT;
   m_ctyp   = TV_DEF;
-  setPersp(50.0, 0.01, 2.0);
+  setPersp(70.0, 0.01, 20.0);
 }
 
 

@@ -56,64 +56,19 @@ void CglicWindow::show()
   glEnable(GL_DITHER);
   glDisable(GL_CULL_FACE);
 
-  if(!VBOs){
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    glGetDoublev(GL_MODELVIEW_MATRIX, m_mnew);
-    glPopMatrix();
-    glPushMatrix();
-    glLoadIdentity();
-    glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot );
-    glPopMatrix();
-  }
-
-  view.setView();
+  //view.setView();
 }
 
 
 void CglicWindow::display()
 {
-
-  bool VBOs = false;
-
   glDrawBuffer(GL_BACK_LEFT);
   glClearColor(0.05, 0.05, 0.05, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  if(VBOs){
-    pcv->scene[ids]->applyTransformation();
-    pcv->scene[ids]->update_matrices();
-    pcv->scene[ids]->display();
-    glutSwapBuffers();
-  }
+  pcv->scene[ids]->display();
 
-  else{
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    memcpy(m_mold,m_mnew,16*sizeof(double));
-    glPushMatrix();
-    activateLight();
-    glPopMatrix();
-
-    /* current transformation */
-    glPushMatrix();
-    pcv->mice.transform();
-    glMultMatrixd(m_mnew);
-    glGetDoublev(GL_MODELVIEW_MATRIX, m_mnew);
-    glPopMatrix();
-
-    /* redraw scene */
-    glPushMatrix();
-    //Scenes Transformations
-    pcv->scene[ids]->applyTransformation();
-    pcv->scene[ids]->update_matrices();
-    glMultMatrixd( pcv->scene[ids]->m_rot );
-    glGetDoublev(GL_MODELVIEW_MATRIX, pcv->scene[ids]->m_rot);//tempMROT);
-    pcv->scene[ids]->display();
-    glPopMatrix();
-    glutSwapBuffers();
-  }
+  glutSwapBuffers();
 }
 
 int CglicWindow::glicAddLight(pCglicLight li)

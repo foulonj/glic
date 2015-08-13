@@ -30,7 +30,7 @@ public:
 
 public:
   CglicMouse();
-  virtual ~CglicMouse();
+  virtual ~CglicMouse(){};
 
   void motion(int x, int y);
   void mouse(int b, int s, int x, int y);

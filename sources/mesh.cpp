@@ -72,22 +72,28 @@ CglicMesh::CglicMesh(char *name)
     }
   }
   meshBox();
-  listTria=buildTria();
-  listEdge=buildEdge();
 
+  face_color = glm::vec3(0.8, 0.8, 1);
+  edge_color = glm::vec3(0,0,1);
+
+  //Chargement du shader
   shader.load("/home/loic/dev/glic/shaders/shader.vert", "/home/loic/dev/glic/shaders/shader.frag");
-  int nV = point.size();
-  float *vertices = new float[nV * 3];
-  for (int i = 0 ; i < nV ; i++){
-    for(int j = 0 ; j < 3 ; j++){
-      vertices[3 * i + j] = point[i].c[j];
-    }
-    //vertices[3*i + 1] = 0.0f;
-  }
-  int mem = 3 * sizeof(float) * nV;
-  glGenBuffers( 1,               &buffer);
-  glBindBuffer( GL_ARRAY_BUFFER, buffer);
-  glBufferData( GL_ARRAY_BUFFER, mem, vertices, GL_STATIC_DRAW);
+
+  //Buffer des vertices
+  for (int i = 0 ; i < point.size() ; i++)
+    for(int j = 0 ; j < 3 ; j++)
+      vertices.push_back(point[i].c[j]);
+  glGenBuffers( 1,               &meshBuffer);
+  glBindBuffer( GL_ARRAY_BUFFER, meshBuffer);
+  glBufferData( GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+
+  //Buffer des indices
+  for (int i = 0 ; i < tria.size() ; i++)
+    for(int j = 0 ; j < 3 ; j++)
+      indices.push_back(tria[i].v[j]-1);
+  glGenBuffers(1, &indicesBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 }
 
 void CglicMesh::meshInfo(const int& verbose, ostream& outstr)
@@ -108,136 +114,69 @@ void CglicMesh::meshInfo(const int& verbose, ostream& outstr)
   }
 }
 
-
-GLuint CglicMesh::buildTria()
-{
-  int i;
-  Tria  *pt;
-  Point     *p0,*p1,*p2;
-  float      pp0[3],pp1[3],pp2[3];
-
-  listTria = glGenLists(1);
-
-  glNewList(listTria,GL_COMPILE);
-
-  //glColor3f(0., 1., 0.);
-
-/*
-  GLfloat mat_amb[] = { 0.0, 0.0, 0.0, 1.0 };
-   GLfloat mat_dif[] = { 0., 0., 0., 1.0 };
-   GLfloat mat_specular[] = { 0.07, 0.0, 0.0, 1.0 };
-   GLfloat mat_emi[] = { 0.0, 0.0, 0.0, 1.0 };
-   GLfloat mat_shininess[] = { 20.0 };
-
-   glMaterialfv(GL_FRONT, GL_AMBIENT, mat_amb);
-   glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_dif);
-   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-   glMaterialfv(GL_FRONT, GL_EMISSION, mat_emi);
-   glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-*/
-  //glColor3f(0.51,0.52,0.8);
-
-
-  //GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
-  //GLfloat mat_shininess[] = { 80.0 };
-
-
-  //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-  //glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-
-
-  //glColor3f(1.,0.99,0.94);
-
-
-  glBegin (GL_TRIANGLES);
-  for (int k=0; k<nt; k++) {
-    pt = &tria[k];
-    p0 = &point[pt->v[0]-1];
-    p1 = &point[pt->v[1]-1];
-    p2 = &point[pt->v[2]-1];
-    for (i=0; i<3 ; i++) {
-      pp0[i] = p0->c[i];
-      pp1[i] = p1->c[i];
-      pp2[i] = p2->c[i];
-    }
-
-    glVertex3fv(pp0);
-    glVertex3fv(pp1);
-    glVertex3fv(pp2);
-  }
-  glEnd();
-  glEndList();
-  return(listTria);
-}
-
-GLuint CglicMesh::buildEdge()
-{
-  int i;
-  Tria  *pt;
-  Point     *p0,*p1,*p2;
-  float      pp0[3],pp1[3],pp2[3];
-
-  listEdge = glGenLists(1);
-
-  glNewList(listEdge,GL_COMPILE);
-
-
-  for (int k=0; k<nt; k++) {
-    pt = &tria[k];
-    p0 = &point[pt->v[0]-1];
-    p1 = &point[pt->v[1]-1];
-    p2 = &point[pt->v[2]-1];
-    for (i=0; i<3 ; i++) {
-      pp0[i] = p0->c[i];
-      pp1[i] = p1->c[i];
-      pp2[i] = p2->c[i];
-    }
-
-    glBegin(GL_LINES);
-    glVertex3fv(pp0);
-    glVertex3fv(pp1);
-    glEnd();
-    glBegin(GL_LINES);
-    glVertex3fv(pp1);
-    glVertex3fv(pp2);
-    glEnd();
-    glBegin(GL_LINES);
-    glVertex3fv(pp2);
-    glVertex3fv(pp0);
-    glEnd();
-  }
-
-  glEndList();
-  return(listEdge);
-}
-
 void CglicMesh::display()
 {
   //cout << "   ---> display mesh\n";
 
-  bool VBOs = false;
+  glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
 
-  if(VBOs){
-    glUseProgram(shader.mProgramID);
-    glEnableVertexAttribArray( 5);
-    glBindBuffer(              GL_ARRAY_BUFFER, buffer);
-    glVertexAttribPointer(     5, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindAttribLocation(      shader.mProgramID, 5, "vertex_position");
+  /*
 
-    glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
-    cout << endl;
-    cout << " MVP: " << endl;
-    for(int i = 0 ; i < 4 ; i++)
-      cout << MVP[i][0] << " " << MVP[i][1] << " " << MVP[i][2] << " " << MVP[i][3] << endl;
-    cout << endl;
+  //Initialization
+  glUseProgram(shader.mProgramID);
+  GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
+  GLuint colorID  = glGetUniformLocation(shader.mProgramID, "COL");
+  glEnableVertexAttribArray( 0);
+  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawArrays(GL_LINES, 0, point.size());
-    glUseProgram(0);
-    glDisableVertexAttribArray(5);
-  }
+  //Display
+  glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
+  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(      shader.mProgramID, 0, "vertex_position");
+  //Faces
+  uniformVec3(colorID, face_color);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glDrawArrays(GL_TRIANGLES, 0, np);
+  //Edges
+  glLineWidth(2.0);
+  uniformVec3(colorID, edge_color);
+  glPolygonMode(GL_FRONT, GL_LINE);
+  glDrawArrays(GL_TRIANGLES, 0, np);
+
+  */
+
+  //Initialization
+  glUseProgram(shader.mProgramID);
+  GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
+  GLuint colorID  = glGetUniformLocation(shader.mProgramID, "COL");
+  glEnableVertexAttribArray( 0);
+  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+  //Display
+  glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
+  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(      shader.mProgramID, 0, "vertex_position");
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+  //Faces
+  uniformVec3(colorID, face_color);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+  //Edges
+  glLineWidth(1.0);
+  uniformVec3(colorID, edge_color);
+  glPolygonMode(GL_FRONT, GL_LINE);
+  glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+
+
+
+
+
+
+
+
+
+/*
 
   else{
     //Bounding box
@@ -271,6 +210,7 @@ void CglicMesh::display()
     }
     glFlush();
   }
+  */
 }
 
 

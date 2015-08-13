@@ -1,5 +1,8 @@
 #include <glic/object.h>
 
+void CglicObject::uniformVec3(int ID, glm::vec3 v){
+  glUniform3f(ID, v.x, v.y, v.z);
+}
 
 // object constructor
 CglicObject::CglicObject():transform()
@@ -13,24 +16,24 @@ CglicObject::CglicObject():transform()
   mat_diffuse[2] = 0.8f;
   mat_diffuse[3] = 1.0f;
 
-  m_tr[0]=1.;m_tr[1]=0.;m_tr[2]=0.;m_tr[3]=0.;
-  m_tr[4]=0.;m_tr[5]=1.;m_tr[6]=0.;m_tr[7]=0.;
-  m_tr[8]=0.;m_tr[9]=0.;m_tr[10]=1.;m_tr[11]=0.;
-  m_tr[12]=0.;m_tr[13]=0.;m_tr[14]=0.;m_tr[15]=1.;
-
   MODEL = glm::mat4(1.0f);
   center = glm::vec3(0.0f);
   pPROJ = NULL;
   pVIEW = NULL;
+
+  //Colors
+  R = glm::vec3(1, 0, 0);
+  G = glm::vec3(0, 1, 0);
+  B = glm::vec3(0, 0, 1);
+  WHITE = glm::vec3(1, 1, 1);
+  BLACK = glm::vec3(0, 0, 0);
+  grid_color = glm::vec3(WHITE * 0.5f);
+  face_color = glm::vec3(0.8f*R + 0.2f*B);
+  edge_color = glm::vec3(0.5f*R + 0.2f*B);
 }
 
 
-CglicObject::~CglicObject()
-{
-  //cout << "  --- [destroy CglicObject]" << endl;
-  // check if display lists used...
-  // glDeleteLists();
-}
+CglicObject::~CglicObject(){}
 
 void CglicObject::glicInit()
 {}
@@ -53,24 +56,8 @@ void CglicObject::activeMesh()
 
 void CglicObject::applyTransformation()
 {
-  bool VBOs = false;
-
-  glm::vec3 tr = transform.translation;
-  glm::vec3 ax = transform.axe;
-
-  if(VBOs){
-    MODEL = glm::translate(MODEL, tr);
-    if(ax != glm::vec3(0.0f))
-      MODEL = glm::rotate(MODEL, (float)transform.angle / 100.0f, ax);
-  }
-
-  else{
-    glTranslatef(tr.x, tr.y, tr.z);
-    glTranslatef(center.x, center.y, center.z);
-    glRotatef(transform.angle, ax.x, ax.y, ax.z);
-    glTranslatef(-center.x, -center.y, -center.z);
-  }
-
-  center += tr;
+  MODEL = glm::translate(MODEL, transform.tr);
+  MODEL = transform.hRot * transform.vRot * MODEL;
+  center += transform.tr;
   transform.reset();
 }

@@ -17,11 +17,6 @@ CglicMouse::CglicMouse()
   m_key = TM_NONE;
 }
 
-
-CglicMouse::~CglicMouse()
-{}
-
-
 /* project point onto hemi-sphere */
 glm::vec3 CglicMouse::projsph(glm::vec2 diff) {
   double   d1,d2;
@@ -42,8 +37,6 @@ glm::vec3 CglicMouse::projsph(glm::vec2 diff) {
 
 void CglicMouse::motion(int x, int y)
 {
-  bool VBOs = false;
-
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
 
   GLuint   tm;
@@ -58,33 +51,25 @@ void CglicMouse::motion(int x, int y)
   if ( m_button[0] )
   {
     v = projsph(diffPos);
-    /* axis of rotation: cross product */
-    m_axe = glm::cross(m_pos,v);
-    glm::vec3 d;
-    d = v - m_pos;
-    d = d*d;
-    m_ang = 180.0*sqrt(d.x + d.y + d.z);
+    glm::vec3 d = v - m_pos;
     m_pos = v;
 
-    if (scene->state == CglicScene::TO_SEL){
-      int a = 2;
-      scene->transform.setRotation(m_ang,m_axe);
-      glm::quat quat       = glm::angleAxis((float)m_ang, m_axe);
-      glm::mat4 rotation   = glm::toMat4(quat);
-      scene->m_cam = glm::vec3( rotation * glm::vec4(scene->m_cam,1));
-    }
+    cout << "mvt = " << d.x << "/" << d.y << endl;
+
+    //Calcul des matrices de rotation
+    glm::quat hQuat  = glm::angleAxis(-d.x, scene->m_up);
+    glm::mat4 hRot   = glm::toMat4(hQuat);
+    glm::quat vQuat  = glm::angleAxis(d.y, scene->m_right);
+    glm::mat4 vRot   = glm::toMat4(vQuat);
+
+    //Si la scène est sélectionnée
+    if (scene->state == CglicScene::TO_SEL)
+      scene->transform.setRotation(hRot, vRot);
+    //Si un objet est sélectionné
     else
-      for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
-        if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
-
-          if(!VBOs)
-            glPushMatrix();
-          scene->listObject[iObj]->transform.setRotation(m_ang, m_axe);
-          if(!VBOs)
-            glPopMatrix();
-
-        }
-      }
+      for (unsigned int i = 0; i < scene->listObject.size(); i++)
+        if (scene->listObject[i]->state == CglicCube::TO_SEL)
+          scene->listObject[i]->transform.setRotation(hRot, vRot);
   }
 }
 

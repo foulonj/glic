@@ -8,15 +8,12 @@ void CglicKeyboard::keyColor(unsigned char key,int x,int y) {
   pcv->winid();
 }
 
-void setTranslation(glm::vec3 tr, bool VBO, int &state){
+void setTranslation(glm::vec3 tr, int &state){
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
   for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
-    if (scene->listObject[iObj]->state == CglicCube::TO_SEL){
-      if(!VBO)
-        glPushMatrix();
-      scene->listObject[iObj]->transform.setTranslation(tr);
-      if(!VBO)
-        glPopMatrix();
+    pCglicObject obj = scene->listObject[iObj];
+    if (obj->state == CglicCube::TO_SEL){
+      obj->transform.setTranslation(tr);
       state = 1;
     }
   }
@@ -26,29 +23,26 @@ void setTranslation(glm::vec3 tr, bool VBO, int &state){
 
 void CglicKeyboard::special(unsigned char key, int x, int y)
 {
-  bool VBOs = false;
-  pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
   glm::vec3 moveX(0.005, 0., 0.);
   glm::vec3 moveZ(0., 0., 0.005);
   int state = 0;
   switch (key) {
     case GLUT_KEY_LEFT:
       cout << "GLUT_KEY_LEFT" << endl;
-      setTranslation(-moveX, VBOs, state);
+      setTranslation(-moveX, state);
       break;
     case GLUT_KEY_RIGHT:
       cout << "GLUT_KEY_RIGHT TRANSFORM SCENE" << endl;
-      setTranslation(moveX, VBOs, state);
+      setTranslation(moveX, state);
       break;
     case GLUT_KEY_DOWN:
       cout << "GLUT_KEY_DOWN" << endl;
-      setTranslation(-moveZ, VBOs, state);
+      setTranslation(-moveZ, state);
       break;
     case GLUT_KEY_UP:
       cout << "GLUT_KEY_UP" << endl;
-      setTranslation(moveZ, VBOs, state);
+      setTranslation(moveZ, state);
       break;
-
     default:
       break;
   }
@@ -80,7 +74,7 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   // ZOOM
   if((key == 'z') || (key == 'Z')){
     double zoomFactor = 0.1;
-    glm::vec3 zoom = (scene->m_look - scene->m_cam);
+    glm::vec3 zoom = (scene->m_cam);
     zoom *= zoomFactor;
     if (key == 'z' ){
       cout << "ZOOM IN \n";

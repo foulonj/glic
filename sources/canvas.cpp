@@ -5,22 +5,17 @@ CglicCanvas *pcv;
 
 CglicCanvas::CglicCanvas(int argc, char **argv)
 {
-  //cout << "[create CglicCanvas]\n";
   pcv = this;
 
-  // here come the OpenGL calls
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
-  // initializing lighting
   glicLight();
 }
 
 
 int CglicCanvas::glicWindow(int x, int y, int w, int h)
 {
-  //cout << " [create CglicWindow]\n";
-
   window.push_back(CglicWindow(x,y,w,h));
   return window.size()-1;
 }
@@ -28,17 +23,14 @@ int CglicCanvas::glicWindow(int x, int y, int w, int h)
 
 int CglicCanvas::glicScene()
 {
-  //cout << " [create CglicScene]\n";
   scene.push_back(new CglicScene());
   scene[scene.size()-1]->ids = scene.size()-1;
   cout << "scene.size()-1: " << scene.size()-1 << endl;
   return scene.size()-1;
 }
 
-
 void CglicCanvas::glicSetScene(int ids, int idw)
 {
-  cout << " [add scene n." << ids << " to window n." << idw << " ]"<< endl;
   window[idw].ids = ids;
   scene[ids]->view = &window[idw].view;
 }
@@ -46,50 +38,47 @@ void CglicCanvas::glicSetScene(int ids, int idw)
 
 void CglicCanvas::glicLight()
 {
-  //cout << " [create all CglicLight]\n";
-
-
-  cout << "   Sun " << endl;
+  //cout << "   Sun " << endl;
    light.push_back(CglicLight(0));
    light[0].setPos(0., 0., 1., 1.);
    light[0].setCol(CglicMaterial::TC_DIF, 1., 0., 0., 0.5);
-   cout << "   Sun  end" << endl;
+   //cout << "   Sun  end" << endl;
 
-  cout << "   Light 1 " << endl;
+  //cout << "   Light 1 " << endl;
   light.push_back(CglicLight(0));
   light[0].setPos(-1.0, 0., 0.5, 1.);
   light[0].setCol(CglicMaterial::TC_DIF, 1., 0., 0., 0.5);
-  cout << "   Light 1  end" << endl;
+  //cout << "   Light 1  end" << endl;
 
-  cout << "   Light 2 " << endl;
+  //cout << "   Light 2 " << endl;
   light.push_back(CglicLight(1));
-  cout << "   Light 2 bis" << endl;
+  //cout << "   Light 2 bis" << endl;
   light[1].setPos(1.0, 0., 0.5, 1.);
   light[1].setCol(CglicMaterial::TC_DIF,0., 1., 0., 0.5);
 
-  cout << "   Light 3 " << endl;
+  //cout << "   Light 3 " << endl;
   light.push_back(CglicLight(2));
-  cout << "   Light 3 bis" << endl;
+  //cout << "   Light 3 bis" << endl;
   light[2].setPos(0., 1., 0.5, 1.);
   light[2].setCol(CglicMaterial::TC_DIF, 0., 0., 1., 1.);
 }
 
 int CglicCanvas::glicObject(pCglicObject obj)
 {
-  cout << " [define CglicObject]" << endl;
+  //cout << " [define CglicObject]" << endl;
   object.push_back(obj);
   return object.size() - 1;
 }
 
 void CglicCanvas::glicSetObject(int ido, int ids)
 {
-  cout << " [add Object n." << ido << " to scene n." << ids << "]" << endl;
+  //cout << " [add Object n." << ido << " to scene n." << ids << "]" << endl;
   scene[ids]->addObject(object[ido]);
 }
 
 int CglicCanvas::glicPickObject(int x, int y)
 {
-  cout << " [pick Object ] " << endl;
+  //cout << " [pick Object ] " << endl;
 
   return 0;
 }
@@ -98,7 +87,6 @@ int CglicCanvas::glicPickObject(int x, int y)
 int CglicCanvas::winid()
 {
   int idw = glutGetWindow();
-  //cout << " [get win id n." << idw << " ]" << endl;
   for (int i=0; i<window.size(); i++) {
     if ( window[i].m_id == idw )  return(i);
   }

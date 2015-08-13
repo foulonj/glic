@@ -14,16 +14,13 @@
 class GLIC_API CglicTransform
 {
 public:
-  glm::mat4 mat;
+  glm::vec3 tr;
+  glm::mat4 hRot, vRot;
 
-  glm::vec3 translation;
-  double angle;
-  glm::vec3 axe;
-
-  CglicTransform();
+  CglicTransform(){};
   ~CglicTransform(){};
-  void setRotation(double ang, glm::vec3 axis);
-  void setTranslation(glm::vec3 tr);
+  void setRotation(glm::mat4 hMat, glm::mat4 vMat);
+  void setTranslation(glm::vec3 translation);
   void print();
   void reset();
 };
