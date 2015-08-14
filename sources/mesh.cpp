@@ -78,6 +78,11 @@ CglicMesh::CglicMesh(char *name)
   //Chargement du shader
   shader.load("shaders/shader.vert", "shaders/shader.frag");
 
+  //Préparation des buffers
+  std::vector<float> vertices;
+  std::vector<float> normals;
+  std::vector<int>   indices;
+
   //Buffer des vertices
   for (int i = 0 ; i < point.size() ; i++)
     for(int j = 0 ; j < 3 ; j++)
@@ -85,6 +90,14 @@ CglicMesh::CglicMesh(char *name)
   glGenBuffers( 1,               &meshBuffer);
   glBindBuffer( GL_ARRAY_BUFFER, meshBuffer);
   glBufferData( GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+
+  //Buffer des normales
+  for (int i = 0 ; i < normal.size() ; i++)
+    for(int j = 0 ; j < 3 ; j++)
+      normals.push_back(normal[i].n[j]);
+  glGenBuffers( 1,               &normalBuffer);
+  glBindBuffer( GL_ARRAY_BUFFER, normalBuffer);
+  glBufferData( GL_ARRAY_BUFFER, sizeof(float) * normals.size(), &normals[0], GL_STATIC_DRAW);
 
   //Buffer des indices
   for (int i = 0 ; i < tria.size() ; i++)
@@ -172,8 +185,16 @@ void CglicMesh::getBBOX()
 }
 
 
+
+
+
 void CglicMesh::display()
 {
+
+  glShadeModel(GL_FLAT);
+  glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
+  glShadeModel(GL_SMOOTH);
+
   //cout << "   ---> display mesh\n";
 
   glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
@@ -197,7 +218,7 @@ void CglicMesh::display()
     uniformVec3(colorID, sele_color);
     glDisable(GL_DEPTH_TEST);
     glPolygonMode(GL_FRONT, GL_LINE);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
     glEnable(GL_DEPTH_TEST);
     glLineWidth(1.0);
   }
@@ -206,11 +227,11 @@ void CglicMesh::display()
   glPolygonOffset(1,0);
   uniformVec3(colorID, face_color);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+  glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   //Edges
   uniformVec3(colorID, edge_color);
   glPolygonMode(GL_FRONT, GL_LINE);
-  glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+  glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   //Bounding box
   if(box == TO_ON){
     if(state==TO_SEL){

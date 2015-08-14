@@ -40,12 +40,12 @@ private:
   vector<Normal>   normal;
 
 public:
-  std::vector<float> vertices;
-  std::vector<int>   indices;
+  //Buffers identifiers
   GLuint meshBuffer;
   GLuint indicesBuffer;
   GLuint bboxBuffer;
   GLuint bboxIndBuffer;
+  GLuint normalBuffer;
 
 public:
   glm::vec3 bbmin, bbmax;
