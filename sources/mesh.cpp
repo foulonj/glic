@@ -76,7 +76,7 @@ CglicMesh::CglicMesh(char *name)
   getBBOX();
 
   //Chargement du shader
-  shader.load("/home/loic/dev/glic/shaders/shader.vert", "/home/loic/dev/glic/shaders/shader.frag");
+  shader.load("shaders/shader.vert", "shaders/shader.frag");
 
   //Buffer des vertices
   for (int i = 0 ; i < point.size() ; i++)

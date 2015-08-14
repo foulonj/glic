@@ -38,6 +38,7 @@ int main(int argc, char **argv){
     cv.glicSetScene(ids, idw);
 
 
+
     cv.window[idw].show();
 
     //cv.window[idw].glicAddLight(&cv.light[0]);
@@ -81,6 +82,7 @@ int main(int argc, char **argv){
     //ido = cv.glicObject(new CglicCube());
     //cv.glicSetObject(ido, ids);
 
+
     InitGlew();
 
   }
@@ -104,11 +106,19 @@ int main(int argc, char **argv){
       ido = cv.glicObject(mesh[i]);
       cv.glicSetObject(ido, ids);
     }
-
-    //Ajout d'un axe
     ido = cv.glicObject(new CglicAxis());
     cv.glicSetObject(ido, ids);
-  };
+
+
+    /*
+    idw = cv.glicWindow(1000,0,1000,1000);
+    ids = cv.glicScene();
+    cv.glicSetScene(ids, idw);
+    cv.window[idw].show();
+    ido = cv.glicObject(new CglicAxis());
+    cv.glicSetObject(ido, ids);
+    */
+  }
 
   cv.glicMainLoop();
   return(EXIT_SUCCESS);

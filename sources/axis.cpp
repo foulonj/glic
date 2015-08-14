@@ -4,7 +4,7 @@
 
 
 CglicAxis::CglicAxis(){
-  shader.load("/home/loic/dev/glic/shaders/shader.vert", "/home/loic/dev/glic/shaders/shader.frag");
+  shader.load("shaders/shader.vert", "shaders/shader.frag");
 
   float cube[] = {
     -1.0f,-1.0f,-1.0f,

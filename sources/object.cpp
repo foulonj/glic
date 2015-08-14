@@ -64,24 +64,12 @@ void CglicObject::activeMesh()
     line = TO_OFF;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// PAS CORRECT POUR LES ROTATIONS
-//////////////////////////////////////////////////////////////////////////////////////////
+
 void CglicObject::applyTransformation()
 {
-
+  //Attention au pb de rescale quand on tourne trop vite
   glm::mat4 ID = glm::mat4(1.0f);
-
-
   center += transform.tr;
   MODEL =  glm::translate(ID, center) * transform.hRot * transform.vRot * glm::translate(ID, -center) * glm::translate(ID, transform.tr) * MODEL;
-
-
-  //Tourne autour du bon point, mais pas selon les bons axes, les translations ne marchent plus non plus
-  //MODEL =  glm::translate(ID, transform.tr) * MODEL * transform.hRot * transform.vRot;
-
-  //Les translations remarchent, mais la rotation ne se fait plus sur les bons angles, ni su au bon point
-  //MODEL =  glm::translate(glm::mat4(1.0f), transform.tr) * MODEL * glm::translate(ID, -center) * transform.hRot * transform.vRot * glm::translate(ID, center);
-
   transform.reset();
 }
