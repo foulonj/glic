@@ -40,6 +40,9 @@ private:
   vector<Normal>   normal;
 
 public:
+  //type de rendu: "SMOOTH" ou "FLAT" pour différencier les shaders
+  string renderType;
+
   //Buffers identifiers
   GLuint meshBuffer;
   GLuint indicesBuffer;
