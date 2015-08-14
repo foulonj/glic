@@ -26,10 +26,20 @@ CglicObject::CglicObject():transform()
   G          = glm::vec3(0,   1,   0);
   B          = glm::vec3(0,   0,   1);
   grid_color = glm::vec3(0.5, 0.5, 0.5);
-  face_color = glm::vec3(0.8, 0,   0.2);
-  edge_color = glm::vec3(0.5, 0 ,  0.2);
+  //face_color = glm::vec3(0.8, 0,   0.2);
+  //edge_color = glm::vec3(0.5, 0 ,  0.2);
   sele_color = glm::vec3(1,   0.6, 0);
   idle_color = glm::vec3(0.8, 0.8, 0.8);
+
+  //New random implementation
+  double a = (rand()/(double)(RAND_MAX + 1)) + 1;
+  double b = (rand()/(double)(RAND_MAX + 1)) + 1;
+  double c = (rand()/(double)(RAND_MAX + 1)) + 1;
+  glm::vec3 rand = glm::vec3(a,b,c);
+  face_color = glm::vec3(0.5f) + 0.5f * rand;
+  edge_color = 0.5f * rand;
+
+
 }
 
 
@@ -59,12 +69,19 @@ void CglicObject::activeMesh()
 //////////////////////////////////////////////////////////////////////////////////////////
 void CglicObject::applyTransformation()
 {
-  glm::mat4 ID = glm::mat4(1.0f);
-  center += transform.tr;
-  //Ainsi, le comportement est bon à l'origine
-  MODEL =  transform.hRot * transform.vRot * MODEL;
 
-  MODEL = glm::translate(MODEL, transform.tr);
+  glm::mat4 ID = glm::mat4(1.0f);
+
+
+  center += transform.tr;
+  MODEL =  glm::translate(ID, center) * transform.hRot * transform.vRot * glm::translate(ID, -center) * glm::translate(ID, transform.tr) * MODEL;
+
+
+  //Tourne autour du bon point, mais pas selon les bons axes, les translations ne marchent plus non plus
+  //MODEL =  glm::translate(ID, transform.tr) * MODEL * transform.hRot * transform.vRot;
+
+  //Les translations remarchent, mais la rotation ne se fait plus sur les bons angles, ni su au bon point
+  //MODEL =  glm::translate(glm::mat4(1.0f), transform.tr) * MODEL * glm::translate(ID, -center) * transform.hRot * transform.vRot * glm::translate(ID, center);
 
   transform.reset();
 }

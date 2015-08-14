@@ -94,8 +94,8 @@ CglicMesh::CglicMesh(char *name)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-  face_color = glm::vec3(0.8, 0.8, 1);
-  edge_color = glm::vec3(0,0,1);
+  //face_color = glm::vec3(0.8, 0.8, 1);
+  //edge_color = glm::vec3(0,0,1);
 
 }
 
@@ -116,6 +116,61 @@ void CglicMesh::meshInfo(const int& verbose, ostream& outstr)
       cout << normal[i].n[0] << ", " << normal[i].n[1] << ", " << normal[i].n[2] << endl;
   }
 }
+
+void CglicMesh::getBBOX()
+{
+  Point     *p0;
+  /* default */
+  bbmin = glm::vec3(FLOAT_MAX);
+  bbmax = glm::vec3(-FLOAT_MAX);
+
+  for (int k=0; k<np; k++) {
+    p0 = &point[k];
+    if ( p0->c[0] < bbmin.x ) bbmin.x = p0->c[0];
+    if ( p0->c[0] > bbmax.x ) bbmax.x = p0->c[0];
+    if ( p0->c[1] < bbmin.y ) bbmin.y = p0->c[1];
+    if ( p0->c[1] > bbmax.y ) bbmax.y = p0->c[1];
+    if ( p0->c[2] < bbmin.z ) bbmin.z = p0->c[2];
+    if ( p0->c[2] > bbmax.z ) bbmax.z = p0->c[2];
+  }
+
+  /* translate mesh at center */
+  tra = 0.5f * (bbmin + bbmax);
+  for (int k=0; k<np; k++) {
+    p0 = &point[k];
+    p0->c[0] -= tra.x;
+    p0->c[1] -= tra.y;
+    p0->c[2] -= tra.z;
+  }
+
+  float cube[] = {
+    -0.5, -0.5, -0.5,
+     0.5, -0.5, -0.5,
+     0.5,  0.5, -0.5,
+    -0.5,  0.5, -0.5,
+    -0.5, -0.5,  0.5,
+     0.5, -0.5,  0.5,
+     0.5,  0.5,  0.5,
+    -0.5,  0.5,  0.5,
+  };
+  glGenBuffers(1, &bboxBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
+
+  GLushort elements[] = {
+    0, 1, 2, 3,
+    4, 5, 6, 7,
+    0, 4, 1, 5, 2, 6, 3, 7
+  };
+  glGenBuffers(1, &bboxIndBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
 
 void CglicMesh::display()
 {
@@ -178,6 +233,7 @@ void CglicMesh::display()
     glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
     glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4*sizeof(GLushort)));
     glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8*sizeof(GLushort)));
+    glLineWidth(1.0);
   }
 
   //Closing
@@ -185,59 +241,4 @@ void CglicMesh::display()
   glUseProgram(0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-
-void CglicMesh::getBBOX()
-{
-  Point     *p0;
-  /* default */
-  bbmin = glm::vec3(FLOAT_MAX);
-  bbmax = glm::vec3(-FLOAT_MAX);
-
-  for (int k=0; k<np; k++) {
-    p0 = &point[k];
-    if ( p0->c[0] < bbmin.x ) bbmin.x = p0->c[0];
-    if ( p0->c[0] > bbmax.x ) bbmax.x = p0->c[0];
-    if ( p0->c[1] < bbmin.y ) bbmin.y = p0->c[1];
-    if ( p0->c[1] > bbmax.y ) bbmax.y = p0->c[1];
-    if ( p0->c[2] < bbmin.z ) bbmin.z = p0->c[2];
-    if ( p0->c[2] > bbmax.z ) bbmax.z = p0->c[2];
-  }
-
-  /* translate mesh at center */
-  tra = 0.5f * (bbmin + bbmax);
-  for (int k=0; k<np; k++) {
-    p0 = &point[k];
-    p0->c[0] -= tra.x;
-    p0->c[1] -= tra.y;
-    p0->c[2] -= tra.z;
-  }
-
-  float cube[] = {
-    -0.5, -0.5, -0.5,
-     0.5, -0.5, -0.5,
-     0.5,  0.5, -0.5,
-    -0.5,  0.5, -0.5,
-    -0.5, -0.5,  0.5,
-     0.5, -0.5,  0.5,
-     0.5,  0.5,  0.5,
-    -0.5,  0.5,  0.5,
-  };
-  glGenBuffers(1, &bboxBuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
-
-  GLushort elements[] = {
-    0, 1, 2, 3,
-    4, 5, 6, 7,
-    0, 4, 1, 5, 2, 6, 3, 7
-  };
-  glGenBuffers(1, &bboxIndBuffer);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

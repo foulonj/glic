@@ -92,20 +92,6 @@ void CglicAxis::display()
   glEnableVertexAttribArray( 0);
   glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-  //Cube
-  glBindBuffer(              GL_ARRAY_BUFFER, cubeBuffer);
-  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      shader.mProgramID, 0, "vertex_position");
-  //Faces
-  uniformVec3(colorID, face_color);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  glDrawArrays(GL_TRIANGLES, 0, 36);
-  //Edges
-  glLineWidth(5.0);
-  uniformVec3(colorID, edge_color);
-  glPolygonMode(GL_FRONT, GL_LINE);
-  glDrawArrays(GL_TRIANGLES, 0, 36);
-
   //GRID
   glLineWidth(1.0);
   glBindBuffer(              GL_ARRAY_BUFFER, gridBuffer);
