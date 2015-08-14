@@ -1,6 +1,7 @@
 #version 130
 
 in vec3 vertex_position;
+in vec3 vertex_normal;
 out vec3 fragmentColor;
 
 uniform mat4 MVP;

@@ -132,11 +132,12 @@ void CglicMesh::meshInfo(const int& verbose, ostream& outstr)
 
 void CglicMesh::getBBOX()
 {
+  //Init
   Point     *p0;
-  /* default */
   bbmin = glm::vec3(FLOAT_MAX);
   bbmax = glm::vec3(-FLOAT_MAX);
 
+  //Compute bounding box
   for (int k=0; k<np; k++) {
     p0 = &point[k];
     if ( p0->c[0] < bbmin.x ) bbmin.x = p0->c[0];
@@ -147,7 +148,7 @@ void CglicMesh::getBBOX()
     if ( p0->c[2] > bbmax.z ) bbmax.z = p0->c[2];
   }
 
-  /* translate mesh at center */
+  //Translate mesh to center
   tra = 0.5f * (bbmin + bbmax);
   for (int k=0; k<np; k++) {
     p0 = &point[k];
@@ -156,6 +157,7 @@ void CglicMesh::getBBOX()
     p0->c[2] -= tra.z;
   }
 
+  //Bounding box buffer
   float cube[] = {
     -0.5, -0.5, -0.5,
      0.5, -0.5, -0.5,
@@ -170,6 +172,7 @@ void CglicMesh::getBBOX()
   glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
 
+  //Indices buffer
   GLushort elements[] = {
     0, 1, 2, 3,
     4, 5, 6, 7,
@@ -180,6 +183,7 @@ void CglicMesh::getBBOX()
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+  //Freeing ressources
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -190,28 +194,32 @@ void CglicMesh::getBBOX()
 
 void CglicMesh::display()
 {
-
-  glShadeModel(GL_FLAT);
-  glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
-  glShadeModel(GL_SMOOTH);
-
-  //cout << "   ---> display mesh\n";
-
+  //MVP update
   glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
 
   //Initialization
   glUseProgram(shader.mProgramID);
   GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
   GLuint colorID  = glGetUniformLocation(shader.mProgramID, "COL");
-  glEnableVertexAttribArray( 0);
   glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-  //Display
+  //Mesh buffer binding
+  glEnableVertexAttribArray( 0);
   glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
   glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
   glBindAttribLocation(      shader.mProgramID, 0, "vertex_position");
 
+  //Normal buffer binding
+  glEnableVertexAttribArray( 1);
+  glBindBuffer(              GL_ARRAY_BUFFER, normalBuffer);
+  glVertexAttribPointer(     1, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(      shader.mProgramID, 1, "vertex_normal");
+
+  //Indices buffer binding
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+
+
+
   //Contour
   if(state == TO_SEL){
     glLineWidth(10.0);
@@ -222,16 +230,19 @@ void CglicMesh::display()
     glEnable(GL_DEPTH_TEST);
     glLineWidth(1.0);
   }
+
   //Faces
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(1,0);
   uniformVec3(colorID, face_color);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+
   //Edges
   uniformVec3(colorID, edge_color);
   glPolygonMode(GL_FRONT, GL_LINE);
   glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+
   //Bounding box
   if(box == TO_ON){
     if(state==TO_SEL){
@@ -248,7 +259,6 @@ void CglicMesh::display()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
 
     glm::mat4 SCALE = glm::scale(MVP, 1.02f * (bbmax - bbmin));
-
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &SCALE[0][0]);
 
     glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
@@ -257,8 +267,11 @@ void CglicMesh::display()
     glLineWidth(1.0);
   }
 
-  //Closing
+
+
+  //Closing and freeing ressources
   glDisableVertexAttribArray( 0);
+  glDisableVertexAttribArray( 1);
   glUseProgram(0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
