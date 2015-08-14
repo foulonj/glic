@@ -44,9 +44,12 @@ public:
   std::vector<int>   indices;
   GLuint meshBuffer;
   GLuint indicesBuffer;
+  GLuint bboxBuffer;
+  GLuint bboxIndBuffer;
 
 public:
   glm::vec3 bbmin, bbmax;
+  glm::vec3 tra;
 
 public:
   CglicMesh(char *name);

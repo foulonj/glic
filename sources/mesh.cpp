@@ -71,10 +71,9 @@ CglicMesh::CglicMesh(char *name)
       n[2] *= dd;
     }
   }
-  getBBOX();
 
-  face_color = glm::vec3(0.8, 0.8, 1);
-  edge_color = glm::vec3(0,0,1);
+  //Calcul de la bounding box
+  getBBOX();
 
   //Chargement du shader
   shader.load("/home/loic/dev/glic/shaders/shader.vert", "/home/loic/dev/glic/shaders/shader.frag");
@@ -94,6 +93,10 @@ CglicMesh::CglicMesh(char *name)
   glGenBuffers(1, &indicesBuffer);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+  face_color = glm::vec3(0.8, 0.8, 1);
+  edge_color = glm::vec3(0,0,1);
+
 }
 
 void CglicMesh::meshInfo(const int& verbose, ostream& outstr)
@@ -136,32 +139,58 @@ void CglicMesh::display()
   //Contour
   if(state == TO_SEL){
     glLineWidth(10.0);
-    uniformVec3(colorID, select_color);
+    uniformVec3(colorID, sele_color);
     glDisable(GL_DEPTH_TEST);
     glPolygonMode(GL_FRONT, GL_LINE);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
     glEnable(GL_DEPTH_TEST);
+    glLineWidth(1.0);
   }
   //Faces
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(1,0);
   uniformVec3(colorID, face_color);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
   //Edges
-  glLineWidth(1.0);
   uniformVec3(colorID, edge_color);
   glPolygonMode(GL_FRONT, GL_LINE);
   glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
   //Bounding box
   if(box == TO_ON){
-    displayBBOX();
+    if(state==TO_SEL){
+      glLineWidth(2.0);
+      uniformVec3(colorID, sele_color);
+    }
+    else{
+      glLineWidth(1.0);
+      uniformVec3(colorID, idle_color);
+    }
+    glPolygonMode(GL_FRONT, GL_LINE);
+    glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
+
+    glm::mat4 SCALE = glm::scale(MVP, 1.02f * (bbmax - bbmin));
+
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &SCALE[0][0]);
+
+    glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4*sizeof(GLushort)));
+    glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8*sizeof(GLushort)));
   }
+
+  //Closing
+  glDisableVertexAttribArray( 0);
+  glUseProgram(0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 
 void CglicMesh::getBBOX()
 {
   Point     *p0;
-  glm::vec3 tra;
   /* default */
   bbmin = glm::vec3(FLOAT_MAX);
   bbmax = glm::vec3(-FLOAT_MAX);
@@ -184,25 +213,31 @@ void CglicMesh::getBBOX()
     p0->c[1] -= tra.y;
     p0->c[2] -= tra.z;
   }
-}
 
-void CglicMesh::displayBBOX(){
+  float cube[] = {
+    -0.5, -0.5, -0.5,
+     0.5, -0.5, -0.5,
+     0.5,  0.5, -0.5,
+    -0.5,  0.5, -0.5,
+    -0.5, -0.5,  0.5,
+     0.5, -0.5,  0.5,
+     0.5,  0.5,  0.5,
+    -0.5,  0.5,  0.5,
+  };
+  glGenBuffers(1, &bboxBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
 
-  /*
-  glUseProgram(shader.mProgramID);
-  GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
-  GLuint colorID  = glGetUniformLocation(shader.mProgramID, "COL");
-  glEnableVertexAttribArray( 0);
-  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+  GLushort elements[] = {
+    0, 1, 2, 3,
+    4, 5, 6, 7,
+    0, 4, 1, 5, 2, 6, 3, 7
+  };
+  glGenBuffers(1, &bboxIndBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-  //Display
-  glBindBuffer(              GL_ARRAY_BUFFER, boxBuffer);
-  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      shader.mProgramID, 0, "vertex_position");
-  //Edges
-  glLineWidth(1.0);
-  uniformVec3(colorID, glm::vec3(1,1,1));
-  glPolygonMode(GL_FRONT, GL_LINE);
-  glDrawArrays(GL_LINES, .size(), GL_UNSIGNED_INT, (void*)0);
-  */
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

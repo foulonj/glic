@@ -22,15 +22,14 @@ CglicObject::CglicObject():transform()
   pVIEW = NULL;
 
   //Colors
-  R = glm::vec3(1, 0, 0);
-  G = glm::vec3(0, 1, 0);
-  B = glm::vec3(0, 0, 1);
-  WHITE = glm::vec3(1, 1, 1);
-  BLACK = glm::vec3(0, 0, 0);
-  grid_color = glm::vec3(WHITE * 0.5f);
-  face_color = glm::vec3(0.8f*R + 0.2f*B);
-  edge_color = glm::vec3(0.5f*R + 0.2f*B);
-  select_color = glm::vec3(1.0f*R + 0.5f*G);
+  R          = glm::vec3(1,   0,   0);
+  G          = glm::vec3(0,   1,   0);
+  B          = glm::vec3(0,   0,   1);
+  grid_color = glm::vec3(0.5, 0.5, 0.5);
+  face_color = glm::vec3(0.8, 0,   0.2);
+  edge_color = glm::vec3(0.5, 0 ,  0.2);
+  sele_color = glm::vec3(1,   0.6, 0);
+  idle_color = glm::vec3(0.8, 0.8, 0.8);
 }
 
 
@@ -63,6 +62,9 @@ void CglicObject::applyTransformation()
   glm::mat4 ID = glm::mat4(1.0f);
   center += transform.tr;
   //Ainsi, le comportement est bon à l'origine
-  MODEL =  glm::translate(ID, transform.tr) * MODEL * transform.hRot * transform.vRot;
+  MODEL =  transform.hRot * transform.vRot * MODEL;
+
+  MODEL = glm::translate(MODEL, transform.tr);
+
   transform.reset();
 }
