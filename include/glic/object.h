@@ -26,7 +26,7 @@ public:
   void uniformVec3(int ID, glm::vec3 v);
 
   glm::vec3 R, G, B, WHITE, BLACK;
-  glm::vec3 grid_color, face_color, edge_color;
+  glm::vec3 grid_color, face_color, edge_color, select_color;
 
   glm::mat4 MODEL;
   glm::mat4 *pVIEW;

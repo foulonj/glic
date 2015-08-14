@@ -30,6 +30,7 @@ CglicObject::CglicObject():transform()
   grid_color = glm::vec3(WHITE * 0.5f);
   face_color = glm::vec3(0.8f*R + 0.2f*B);
   edge_color = glm::vec3(0.5f*R + 0.2f*B);
+  select_color = glm::vec3(1.0f*R + 0.5f*G);
 }
 
 
@@ -54,10 +55,14 @@ void CglicObject::activeMesh()
     line = TO_OFF;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////
+// PAS CORRECT POUR LES ROTATIONS
+//////////////////////////////////////////////////////////////////////////////////////////
 void CglicObject::applyTransformation()
 {
-  MODEL = glm::translate(MODEL, transform.tr);
-  MODEL = transform.hRot * transform.vRot * MODEL;
+  glm::mat4 ID = glm::mat4(1.0f);
   center += transform.tr;
+  //Ainsi, le comportement est bon à l'origine
+  MODEL =  glm::translate(ID, transform.tr) * MODEL * transform.hRot * transform.vRot;
   transform.reset();
 }

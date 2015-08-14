@@ -38,8 +38,6 @@ private:
   vector<Point>    point;
   vector<Tria>     tria;
   vector<Normal>   normal;
-  GLuint listTria;
-  GLuint listEdge;
 
 public:
   std::vector<float> vertices;
@@ -48,15 +46,14 @@ public:
   GLuint indicesBuffer;
 
 public:
-  double      xmin,ymin,zmin,xmax,ymax,zmax;
-  double      xtra,ytra,ztra;
-  float       bbmin,bbmax;
+  glm::vec3 bbmin, bbmax;
 
 public:
   CglicMesh(char *name);
   void meshInfo(const int& verbose = 0, ostream& outstr = cout);
   void display();
-  void meshBox();
+  void getBBOX();
+  void displayBBOX();
   ~CglicMesh(){};
 };
 

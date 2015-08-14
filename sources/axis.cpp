@@ -45,7 +45,7 @@ CglicAxis::CglicAxis(){
     1.0f,-1.0f, 1.0f
   };
   for(int i = 0 ; i < 108 ; i++)
-    cube[i] = 0.1 * cube[i];
+    cube[i] = 0.05 * cube[i];
   glGenBuffers( 1,               &cubeBuffer);
   glBindBuffer( GL_ARRAY_BUFFER, cubeBuffer);
   glBufferData( GL_ARRAY_BUFFER, 3 * sizeof(float) * 36, cube, GL_STATIC_DRAW);
