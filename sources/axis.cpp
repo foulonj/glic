@@ -4,7 +4,7 @@
 
 
 CglicAxis::CglicAxis(){
-  shader.load("shaders/shader.vert", "shaders/shader.frag");
+
 
   float cube[] = {
     -1.0f,-1.0f,-1.0f,
@@ -79,6 +79,8 @@ CglicAxis::CglicAxis(){
   glGenBuffers( 1,               &axesBuffer);
   glBindBuffer( GL_ARRAY_BUFFER, axesBuffer);
   glBufferData( GL_ARRAY_BUFFER, sizeof(float) * axes.size(), &axes[0], GL_STATIC_DRAW);
+
+  simpleShader.load("shaders/shader.vert", "shaders/shader.frag");
 }
 
 void CglicAxis::display()
@@ -86,17 +88,17 @@ void CglicAxis::display()
   glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
 
   //Initialization
-  glUseProgram(shader.mProgramID);
-  GLuint MatrixID = glGetUniformLocation(shader.mProgramID, "MVP");
-  GLuint colorID  = glGetUniformLocation(shader.mProgramID, "COL");
+  glUseProgram(simpleShader.mProgramID);
   glEnableVertexAttribArray( 0);
+  GLuint MatrixID = glGetUniformLocation(simpleShader.mProgramID, "MVP");
+  GLuint colorID  = glGetUniformLocation(simpleShader.mProgramID, "COL");
   glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
   //GRID
   glLineWidth(1.0);
   glBindBuffer(              GL_ARRAY_BUFFER, gridBuffer);
   glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      shader.mProgramID, 0, "vertex_position");
+  glBindAttribLocation(      simpleShader.mProgramID, 0, "vertex_position");
   uniformVec3(colorID, grid_color);
   glPolygonMode(GL_FRONT, GL_LINE);
   glDrawArrays(GL_LINES, 0, grid.size()/3);
@@ -105,7 +107,7 @@ void CglicAxis::display()
   glLineWidth(2.0);
   glBindBuffer(              GL_ARRAY_BUFFER, axesBuffer);
   glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      shader.mProgramID, 0, "vertex_position");
+  glBindAttribLocation(      simpleShader.mProgramID, 0, "vertex_position");
   glPolygonMode(GL_FRONT, GL_LINE);
   //X
   uniformVec3(colorID, R);
@@ -140,5 +142,4 @@ void CglicAxis::display()
   glColor3f(B.x, B.y, B.z);
   glRasterPos3f(newPos.x, newPos.y, newPos.z);
   glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, 'Z');
-
 }

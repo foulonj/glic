@@ -22,7 +22,6 @@ public:
   CglicTransform transform;
 
 public:
-  SHADER shader;
   void uniformVec3(int ID, glm::vec3 v);
 
   glm::vec3 R, G, B, WHITE, BLACK;

@@ -17,10 +17,10 @@
 class GLIC_API CglicAxis : public CglicObject
 {
 public:
+  SHADER simpleShader;
   GLuint cubeBuffer;
   GLuint gridBuffer;
   GLuint axesBuffer;
-  SHADER shader;
 
   vector<float> colo;
   vector<float> grid;

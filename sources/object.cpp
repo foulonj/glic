@@ -38,8 +38,6 @@ CglicObject::CglicObject():transform()
   glm::vec3 rand = glm::vec3(a,b,c);
   face_color = glm::vec3(0.5f) + 0.5f * rand;
   edge_color = 0.5f * rand;
-
-
 }
 
 
