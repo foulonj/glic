@@ -5,6 +5,7 @@ CglicScene::CglicScene():transform(){
   state = TO_SEL;
   m_up = glm::vec3(0., 1., 0.);
   m_cam = glm::vec3(0,0,2);
+  center = glm::vec3(0,0,0);
 }
 CglicScene::~CglicScene(){}
 
@@ -35,15 +36,22 @@ void CglicScene::display()
 
 void CglicScene::applyTransformation()
 {
+  glm::mat4 ID = glm::mat4(1.0f);
+  center += transform.tr;
+  m_cam =  glm::vec3(  glm::translate(ID, center) * transform.hRot * transform.vRot * glm::translate(ID, -center) * glm::vec4(m_cam,1)  );
+  transform.reset();
+  /*
+  glm::mat4 ID = glm::mat4(1.0f);
   m_cam = glm::vec3( transform.hRot * transform.vRot * glm::vec4(m_cam,1));
   m_cam  += transform.tr;
   center += transform.tr;
   transform.reset();
+  */
 }
 
 void CglicScene::update_matrices()
 {
-  m_look = -m_cam;
+  m_look = -m_cam + 2.0f * center;
   m_right = glm::cross(m_look, m_up);
   VIEW = glm::lookAt(m_cam, m_look, m_up);
   PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);

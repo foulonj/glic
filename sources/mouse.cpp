@@ -58,9 +58,9 @@ void CglicMouse::motion(int x, int y)
     //Si la scène est sélectionnée
     if (scene->state == CglicScene::TO_SEL){
       //Calcul des matrices de rotation
-      glm::quat hQuat  = glm::angleAxis(-d.x, scene->m_up);
+      glm::quat hQuat  = glm::angleAxis(- 2.0f * d.x, scene->m_up);
       glm::mat4 hRot   = glm::toMat4(hQuat);
-      glm::quat vQuat  = glm::angleAxis(d.y, scene->m_right);
+      glm::quat vQuat  = glm::angleAxis(2.0f * d.y, scene->m_right);
       glm::mat4 vRot   = glm::toMat4(vQuat);
       scene->transform.setRotation(hRot, vRot);
     }
@@ -68,9 +68,9 @@ void CglicMouse::motion(int x, int y)
     else{
       for (unsigned int i = 0; i < scene->listObject.size(); i++){
         if (scene->listObject[i]->state == CglicCube::TO_SEL){
-          glm::quat hQuat  = glm::angleAxis(2.0f * d.x, scene->m_up);
+          glm::quat hQuat  = glm::angleAxis(2.0f * d.x,  scene->m_up);
           glm::mat4 hRot   = glm::toMat4(hQuat);
-          glm::quat vQuat  = glm::angleAxis(-2.0f*d.y, scene->m_right);
+          glm::quat vQuat  = glm::angleAxis(-2.0f * d.y, scene->m_right);
           glm::mat4 vRot   = glm::toMat4(vQuat);
           scene->listObject[i]->transform.setRotation(hRot, vRot);
         }

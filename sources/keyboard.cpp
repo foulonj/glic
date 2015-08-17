@@ -74,7 +74,7 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   // ZOOM
   if((key == 'z') || (key == 'Z')){
     double zoomFactor = 0.1;
-    glm::vec3 zoom = (scene->m_cam);
+    glm::vec3 zoom = -scene->m_look + scene->center;
     zoom *= zoomFactor;
     if (key == 'z' ){
       cout << "ZOOM IN \n";
@@ -101,5 +101,14 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
       if( scene->listObject[i]->state == CglicObject::TO_SEL)
         scene->listObject[i]->useSmoothShading = !scene->listObject[i]->useSmoothShading;
+  }
+
+  //Look at center of selected object
+  if (key == 'c'){
+    for (unsigned int i = 0; i < scene->listObject.size(); i++)
+      if( scene->listObject[i]->state == CglicObject::TO_SEL){
+        scene->center = scene->listObject[i]->center;
+        scene->listObject[2]->center = scene->center;//On centre l'axe
+      }
   }
 }

@@ -85,7 +85,7 @@ CglicAxis::CglicAxis(){
 
 void CglicAxis::display()
 {
-  glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
+  glm::mat4 MVP = glm::translate( *pPROJ * *pVIEW * MODEL, center);
 
   //Initialization
   glUseProgram(simpleShader.mProgramID);
@@ -127,6 +127,7 @@ void CglicAxis::display()
 
   //Labels des axes
   float offset = 2.2f;
+  glTranslatef(-center.x, -center.y, -center.z);
   //X
   glm::vec3 newPos = glm::vec3( MVP * glm::vec4(offset*R, 0) );
   glColor3f(R.x, R.y, R.z);
@@ -142,4 +143,5 @@ void CglicAxis::display()
   glColor3f(B.x, B.y, B.z);
   glRasterPos3f(newPos.x, newPos.y, newPos.z);
   glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, 'Z');
+  glTranslatef(center.x, center.y, center.z);
 }
