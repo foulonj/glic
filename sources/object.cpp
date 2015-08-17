@@ -71,3 +71,23 @@ void CglicObject::applyTransformation()
   MODEL =  glm::translate(ID, center) * transform.hRot * transform.vRot * glm::translate(ID, -center) * glm::translate(ID, transform.tr) * MODEL;
   transform.reset();
 }
+
+void CglicObject::pickingDisplay(){
+  int shaderID = pickingShader.mProgramID;
+  glUseProgram(shaderID);
+  int MatrixID = glGetUniformLocation(shaderID, "MVP");
+  int colorID  = glGetUniformLocation(shaderID, "COL");
+  glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
+  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+  //Mesh buffer binding
+  glEnableVertexAttribArray( 0);
+  glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
+  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(      shaderID, 0, "vertex_position");
+  //Indices buffer binding
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+  //Faces
+  uniformVec3(colorID, pickingColor);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
+}

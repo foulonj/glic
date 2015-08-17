@@ -13,8 +13,12 @@ CglicScene::~CglicScene(){}
 void CglicScene::addObject(pCglicObject object)
 {
   listObject.push_back(object);
+
   object->pPROJ = &PROJ;
   object->pVIEW = &VIEW;
+  object->pickingID = listObject.size();
+  object->pickingColor = glm::vec3(object->pickingID/255.0f, 0, 0);
+  object->pickingShader.load("shaders/shader.vert", "shaders/shader.frag");
   if(listObject.size()==1){
     axis = new CglicAxis();
     axis->pPROJ = &PROJ;

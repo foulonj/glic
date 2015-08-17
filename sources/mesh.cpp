@@ -133,6 +133,8 @@ CglicMesh::CglicMesh(char *name)
   //TYPE DE RENDU ET SHADER
   useSmoothShading = true;
   smoothShader.load("shaders/smooth_shader.vert", "shaders/smooth_shader.frag");
+  //ceci pour le picking
+  nPicking = 3 * tria.size();
 }
 
 void CglicMesh::meshInfo(const int& verbose, ostream& outstr)
@@ -232,6 +234,7 @@ void CglicMesh::getBBOX()
 }
 
 
+
 void CglicMesh::display()
 {
   /////////////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +321,7 @@ void CglicMesh::display()
   //Indices buffer binding
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
-    if(useSmoothShading){
+  if(useSmoothShading){
     GLuint MID      = glGetUniformLocation(shaderID, "M");
     GLuint VID      = glGetUniformLocation(shaderID, "V");
     glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);

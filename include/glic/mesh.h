@@ -53,9 +53,6 @@ public:
   SHADER simpleShader;
   SHADER smoothShader;
 
-  //Buffers identifiers
-  GLuint meshBuffer;
-  GLuint indicesBuffer;
   GLuint bboxBuffer;
   GLuint bboxIndBuffer;
   GLuint normalBuffer;

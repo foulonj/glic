@@ -27,10 +27,16 @@ public:
   glm::vec3 R, G, B, WHITE, BLACK;
   glm::vec3 grid_color, face_color, edge_color, sele_color, idle_color;
 
+  int pickingID;
+  SHADER pickingShader;
+  glm::vec3 pickingColor;
+  GLuint meshBuffer;
+  GLuint indicesBuffer;
+  int nPicking;
+
   glm::mat4 MODEL;
   glm::mat4 *pVIEW;
   glm::mat4 *pPROJ;
-
   bool useSmoothShading;
 
 public:
@@ -43,6 +49,7 @@ public:
   virtual ~CglicObject();
   virtual void display(){};
 
+  void pickingDisplay();
   void applyTransformation();
   void activeBB();
   void activeMesh();

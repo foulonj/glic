@@ -48,13 +48,10 @@ void CglicMouse::motion(int x, int y)
 
   glm::vec2 diffPos = glm::vec2(x,y) - lastPos;
 
-  if ( m_button[0] )
-  {
+  if ( m_button[0] ){
     v = projsph(diffPos);
     glm::vec3 d = v - m_pos;
     m_pos = v;
-
-    //On différencie car la modif de la camera et de la matrice MODEL est inversée en angles nécessaires
     //Si la scène est sélectionnée
     if (scene->state == CglicScene::TO_SEL){
       //Calcul des matrices de rotation
@@ -76,9 +73,7 @@ void CglicMouse::motion(int x, int y)
         }
       }
     }
-
   }
-
 }
 
 
@@ -107,15 +102,7 @@ void CglicMouse::mouse(int b, int s, int x, int y)
       };
 
 
-      GLint viewport[4];
-      GLubyte pixel[3];
-      //GLubyte item[3];
 
-      glGetIntegerv(GL_VIEWPORT,viewport);
-
-      glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
-
-      //printf("\n\n\tRead Pixel color: %d %d %d\n\n\n",pixel[0],pixel[1],pixel[2]);
 
       break;
 
@@ -126,6 +113,36 @@ void CglicMouse::mouse(int b, int s, int x, int y)
 
     case GLUT_RIGHT_BUTTON:
       m_button[2] = ((GLUT_DOWN==s)?1:0);
+      pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+      for(int i = 0 ; i < scene->listObject.size() ; i++)
+        scene->listObject[i]->pickingDisplay();
+      unsigned char pixel[3];
+      GLint viewport[4];
+      glGetIntegerv(GL_VIEWPORT,viewport);
+      glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
+      int pickedID = pixel[0];// + pixel[1]*256 + pixel[2]*256*256;
+      //cout << "Pixel:\n" << pixel[0] << endl << pixel[1] << endl << pixel[2] << endl;
+      glFlush();
+      cout << "Picked: " << pickedID << endl;
+      bool match = false;
+
+      for(int i = 0 ; i < scene->listObject.size() ; i++){
+        if(pickedID == scene->listObject[i]->pickingID){
+          scene->listObject[i]->state = CglicCube::TO_SEL;
+          match = true;
+          scene->state = CglicScene::TO_ON;
+        }
+      }
+      if(match){
+        for(int i = 0 ; i < scene->listObject.size() ; i++)
+          if(pickedID!=scene->listObject[i]->pickingID)
+            scene->listObject[i]->state = CglicObject::TO_OFF;
+      }
+      else{
+        for(int i = 0 ; i < scene->listObject.size() ; i++)
+          scene->listObject[i]->state = CglicObject::TO_OFF;
+        scene->state = CglicScene::TO_SEL;
+      }
       break;
 
   }
