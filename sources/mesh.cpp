@@ -20,9 +20,11 @@ CglicMesh::CglicMesh(char *name)
     exit(0);
   }
 
-  np = GmfStatKwd(inm,GmfVertices);
-  nt = GmfStatKwd(inm,GmfTriangles);
-  nn = GmfStatKwd(inm,GmfNormals);
+  np    = GmfStatKwd(inm, GmfVertices);
+  nt    = GmfStatKwd(inm, GmfTriangles);
+  nn    = GmfStatKwd(inm, GmfNormals);
+  //Normals At vertices
+  nNAtV = GmfStatKwd(inm, GmfNormalAtVertices);
 
   if ( !np ){
     cout << "  ** MISSING DATA\n";
@@ -52,7 +54,6 @@ CglicMesh::CglicMesh(char *name)
   }
 
   normal.resize(np+1);
-
   if ( nn ) {
     GmfGotoKwd(inm,GmfNormals);
     for (k=0; k<nn; k++) {
@@ -77,7 +78,6 @@ CglicMesh::CglicMesh(char *name)
 
   //Préparation des buffers
   std::vector<float> vertices;
-  std::vector<float> normals;
   std::vector<int>   indices;
 
   //Buffer des vertices
@@ -88,14 +88,6 @@ CglicMesh::CglicMesh(char *name)
   glBindBuffer( GL_ARRAY_BUFFER, meshBuffer);
   glBufferData( GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
-  //Buffer des normales
-  for (int i = 0 ; i < normal.size() ; i++)
-    for(int j = 0 ; j < 3 ; j++)
-      normals.push_back(normal[i].n[j]);
-  glGenBuffers( 1,               &normalBuffer);
-  glBindBuffer( GL_ARRAY_BUFFER, normalBuffer);
-  glBufferData( GL_ARRAY_BUFFER, sizeof(float) * normals.size(), &normals[0], GL_STATIC_DRAW);
-
   //Buffer des indices
   for (int i = 0 ; i < tria.size() ; i++)
     for(int j = 0 ; j < 3 ; j++)
@@ -104,11 +96,42 @@ CglicMesh::CglicMesh(char *name)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
+
+  //Lecture des NormalsAtVertices pour faire les normales
+  NormalAtVertices.resize(nNAtV + 1);
+  //Lecture du .mesh
+  if ( nNAtV ) {
+    GmfGotoKwd(inm,GmfNormalAtVertices);
+    for (k=0; k<nNAtV; k++)
+      GmfGetLin(inm,GmfNormalAtVertices,
+                &NormalAtVertices[k].inds[0],
+                &NormalAtVertices[k].inds[1]);
+  }
+  //Initialisation des normals à 0 pour les vertices n'ayant pas de normales
+  std::vector<float> normals;
+  for(int i = 0 ; i < vertices.size() ; i++)
+    normals.push_back(0.0f);
+  //Remplissage du vector 1D "normals", envoyé plus tard aux buffers
+  for(int i = 0 ; i < NormalAtVertices.size() - 1 ; i++){
+    for(int j = 0 ; j <3 ; j++){
+      int indV = NormalAtVertices[i].inds[0] - 1;
+      int indN = NormalAtVertices[i].inds[1] - 1;
+      //cout << i << endl;
+      normals[3 * indV + j] = normal[indN].n[j];
+
+    }
+  }
+  //Buffer des normales
+  glGenBuffers( 1,               &normalBuffer);
+  glBindBuffer( GL_ARRAY_BUFFER, normalBuffer);
+  glBufferData( GL_ARRAY_BUFFER, sizeof(float) * normals.size(), &normals[0], GL_STATIC_DRAW);
+
+
   //face_color = glm::vec3(0.8, 0.8, 1);
   //edge_color = glm::vec3(0,0,1);
 
   //TYPE DE RENDU ET SHADER
-  renderType = "FLAT";
+  renderType = "SMOOTH";
   if(renderType=="FLAT")
     shader.load("shaders/shader.vert", "shaders/shader.frag");
   if(renderType=="SMOOTH")

@@ -29,6 +29,10 @@ typedef struct {
 } Normal;
 //typedef Normal * pNormal;
 
+typedef struct {
+  int inds[2];
+} NormalAtVertex;
+
 
 class GLIC_API CglicMesh : public CglicObject
 {
@@ -38,6 +42,11 @@ private:
   vector<Point>    point;
   vector<Tria>     tria;
   vector<Normal>   normal;
+private:
+  //Normals at vertices
+  vector<NormalAtVertex> NormalAtVertices;
+  int nNAtV;
+
 
 public:
   //type de rendu: "SMOOTH" ou "FLAT" pour différencier les shaders

@@ -17,14 +17,17 @@ void main(){
 
   vec3 Position_worldspace = (M * vec4(vertex_position,1)).xyz;
 
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                        Préparation                                          //
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
   vec3 LightColor            = vec3(1,1,0.8);//Lumière un peu jaune
   vec3 MaterialDiffuseColor  = COL;
   vec3 MaterialSpecularColor = vec3(1.0, 1.0, 1.0);
-  float LightPower           = 1.0f;
+  float LightPower           = 10.0f;
   vec3 MaterialAmbientColor  = vec3(0.1,0.1,0.1) * MaterialDiffuseColor;
-
   vec3 LightPosition_worldspace = vec3(2,2,2);
-
   float distance = length(LightPosition_worldspace - gl_Position.xyz);
 
 
@@ -51,13 +54,8 @@ void main(){
   // Direction de la lumière (du fragment vers la lumière)
   vec3 l = normalize( LightDirection_cameraspace );
 
-  // Le cosinus de l'angle entre la normale et le rayon de lumière est
-  // toujours supérieur à 0
-  //  - la lumière est verticale par rapport au triangle  -> 1
-  //  - la lumière est perpendiculaire au triangle -> 0
-  //  - la lumière est derrière le triangle -> 0
+  // Le cosinus de l'angle entre la normale et le rayon de lumière est toujours supérieur à 0
   float cosTheta = clamp( dot( n,l ), 0,1 );
-
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,21 +68,14 @@ void main(){
   // Direction dans laquelle le triangle reflète la lumière
   vec3 R = reflect(-l,n);
 
-  // Cosinus de l'angle entre le vecteur œil et le vecteur de reflexion
-  // limité à 0
-  //  - Looking into the reflection -> 1
-  //  - Looking elsewhere -> < 1
+  // Cosinus de l'angle entre le vecteur œil et le vecteur de reflexion limité à 0
   float cosAlpha = clamp( dot( E,R ), 0,1 );
-
-
-
-
 
 
   //Sortie finale de couleur
   vec3 color = MaterialAmbientColor +
                MaterialDiffuseColor  * LightColor * LightPower * cosTheta        / (distance*distance);// +
-               //MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance) ;  //pow(...) = largeur du lobe speculaire
+               MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance) ;  //pow(...) = largeur du lobe speculaire
   fragmentColor = color;
 }
 
