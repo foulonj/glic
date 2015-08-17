@@ -52,7 +52,6 @@ public:
   //type de rendu: "SMOOTH" ou "FLAT" pour différencier les shaders
   SHADER simpleShader;
   SHADER smoothShader;
-  string renderType;
 
   //Buffers identifiers
   GLuint meshBuffer;

@@ -95,4 +95,11 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
       scene->listObject[i]->activeMesh();
   };
+
+  //Smooth to flat shading
+  if (key == 'f'){
+    for (unsigned int i = 0; i < scene->listObject.size(); i++)
+      if( scene->listObject[i]->state == CglicObject::TO_SEL)
+        scene->listObject[i]->useSmoothShading = !scene->listObject[i]->useSmoothShading;
+  }
 }

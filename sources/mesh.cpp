@@ -131,7 +131,7 @@ CglicMesh::CglicMesh(char *name)
   //edge_color = glm::vec3(0,0,1);
 
   //TYPE DE RENDU ET SHADER
-  renderType = "SMOOTH";
+  useSmoothShading = true;
   smoothShader.load("shaders/smooth_shader.vert", "shaders/smooth_shader.frag");
 }
 
@@ -255,7 +255,7 @@ void CglicMesh::display()
       glLineWidth(1.0);
       uniformVec3(colorID, idle_color);
     }
-    glPolygonMode(GL_FRONT, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
@@ -274,9 +274,9 @@ void CglicMesh::display()
   //                                 Mesh Rendering                                      //
   /////////////////////////////////////////////////////////////////////////////////////////
   //Shader used as main rendering
-  if(renderType=="SMOOTH")
+  if(useSmoothShading)
     shaderID = smoothShader.mProgramID;
-  else if(renderType=="FLAT")
+  else
     shaderID = simpleShader.mProgramID;
 
   //Initialization
@@ -300,7 +300,16 @@ void CglicMesh::display()
   //Indices buffer binding
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
-  if(renderType == "FLAT"){
+    if(useSmoothShading){
+    GLuint MID      = glGetUniformLocation(shaderID, "M");
+    GLuint VID      = glGetUniformLocation(shaderID, "V");
+    glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
+    glUniformMatrix4fv( VID, 1, GL_FALSE, &(*pVIEW)[0][0]);
+    uniformVec3(colorID, face_color);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+  }
+  else{
     //Faces
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(1,0);
@@ -312,18 +321,6 @@ void CglicMesh::display()
     glPolygonMode(GL_FRONT, GL_LINE);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }
-
-  else if(renderType == "SMOOTH"){
-    GLuint MID      = glGetUniformLocation(shaderID, "M");
-    GLuint VID      = glGetUniformLocation(shaderID, "V");
-    glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
-    glUniformMatrix4fv( VID, 1, GL_FALSE, &(*pVIEW)[0][0]);
-    uniformVec3(colorID, face_color);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-  }
-
-
 
 
   //Closing and freeing ressources

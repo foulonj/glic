@@ -31,6 +31,8 @@ public:
   glm::mat4 *pVIEW;
   glm::mat4 *pPROJ;
 
+  bool useSmoothShading;
+
 public:
   char state;
   char box;
