@@ -108,7 +108,7 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
       if( scene->listObject[i]->state == CglicObject::TO_SEL){
         scene->center = scene->listObject[i]->center;
-        scene->listObject[2]->center = scene->center;//On centre l'axe
+        scene->axis->center = scene->center;//On centre l'axe
       }
   }
 }

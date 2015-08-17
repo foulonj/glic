@@ -106,8 +106,8 @@ int main(int argc, char **argv){
       ido = cv.glicObject(mesh[i]);
       cv.glicSetObject(ido, ids);
     }
-    ido = cv.glicObject(new CglicAxis());
-    cv.glicSetObject(ido, ids);
+    //ido = cv.glicObject(new CglicAxis());
+    //cv.glicSetObject(ido, ids);
 
 
     /*

@@ -15,6 +15,11 @@ void CglicScene::addObject(pCglicObject object)
   listObject.push_back(object);
   object->pPROJ = &PROJ;
   object->pVIEW = &VIEW;
+  if(listObject.size()==1){
+    axis = new CglicAxis();
+    axis->pPROJ = &PROJ;
+    axis->pVIEW = &VIEW;
+  }
 }
 
 
@@ -23,6 +28,9 @@ void CglicScene::display()
 {
   applyTransformation();
   update_matrices();
+
+  axis->applyTransformation();
+  axis->display();
 
   for (int iObj = 0; iObj < listObject.size(); iObj++){
     listObject[iObj]->applyTransformation();
