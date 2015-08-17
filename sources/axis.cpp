@@ -125,7 +125,7 @@ void CglicAxis::display()
   glPolygonMode(GL_FRONT, GL_FILL);
 
   //Labels des axes
-  float offset = 2.2f;
+  float offset = 20.0f;
   glTranslatef(-center.x, -center.y, -center.z);
   //X
   glm::vec3 newPos = glm::vec3( MVP * glm::vec4(offset*R, 0) );

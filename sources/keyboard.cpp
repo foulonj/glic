@@ -105,10 +105,17 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
 
   //Look at center of selected object
   if (key == 'c'){
-    for (unsigned int i = 0; i < scene->listObject.size(); i++)
+    bool noneSelected = true;
+    glm::vec3 newCenter;
+    for (unsigned int i = 0; i < scene->listObject.size(); i++){
       if( scene->listObject[i]->state == CglicObject::TO_SEL){
-        scene->center = scene->listObject[i]->center;
-        scene->axis->center = scene->center;//On centre l'axe
+        noneSelected = false;
+        newCenter = scene->listObject[i]->center;
       }
+    }
+    if(noneSelected)
+      newCenter = glm::vec3(0,0,0);
+    scene->center = newCenter;
+    scene->axis->center = newCenter;
   }
 }

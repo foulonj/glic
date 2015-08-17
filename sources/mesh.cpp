@@ -180,6 +180,24 @@ void CglicMesh::getBBOX()
     p0->c[2] -= tra.z;
   }
 
+  //scale to 1
+  for (int k=0; k<np; k++) {
+    p0 = &point[k];
+    glm::vec3 s = 2.0f * (bbmax - bbmin);
+    p0->c[0] /= s.x;
+    p0->c[1] /= s.y;
+    p0->c[2] /= s.z;
+  }
+
+  //Correct bbox
+  glm::vec3 s = 2.0f * (bbmax - bbmin);
+  bbmin.x/=s.x;
+  bbmin.y/=s.y;
+  bbmin.z/=s.z;
+  bbmax.x/=s.x;
+  bbmax.y/=s.y;
+  bbmax.z/=s.z;
+
   //Bounding box buffer
   float cube[] = {
     -0.5, -0.5, -0.5,
