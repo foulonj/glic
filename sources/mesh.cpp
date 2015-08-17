@@ -345,6 +345,7 @@ void CglicMesh::display()
 
 
   //Closing and freeing ressources
+  glDisable(GL_POLYGON_OFFSET_FILL);
   glDisableVertexAttribArray( 0);
   glDisableVertexAttribArray( 1);
   glUseProgram(0);

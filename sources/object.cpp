@@ -88,6 +88,6 @@ void CglicObject::pickingDisplay(){
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
   //Faces
   uniformVec3(colorID, pickingColor);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glPolygonMode(GL_FRONT, GL_FILL);
   glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
 }

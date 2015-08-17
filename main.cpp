@@ -91,10 +91,9 @@ int main(int argc, char **argv){
   {
     idw = cv.glicWindow(0,0,1000,1000);
     ids = cv.glicScene();
-
     cv.glicSetScene(ids, idw);
-
     cv.window[idw].show();
+    cout << idw << " " << ids << endl;
 
     InitGlew();
 
@@ -106,17 +105,18 @@ int main(int argc, char **argv){
       ido = cv.glicObject(mesh[i]);
       cv.glicSetObject(ido, ids);
     }
-    //ido = cv.glicObject(new CglicAxis());
-    //cv.glicSetObject(ido, ids);
 
-
-    /*
-    idw = cv.glicWindow(1000,0,1000,1000);
+/*
     ids = cv.glicScene();
+    idw = cv.glicWindow(1500,0,800,800);
     cv.glicSetScene(ids, idw);
     cv.window[idw].show();
-    ido = cv.glicObject(new CglicAxis());
-    cv.glicSetObject(ido, ids);
+    cout << idw << " " << ids << endl;
+
+    for (int i=0; i < argc - 1; i++){
+      ido = cv.glicObject(mesh[i]);
+      cv.glicSetObject(ido, ids);
+    }
     */
   }
 

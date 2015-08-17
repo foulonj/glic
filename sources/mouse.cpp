@@ -101,9 +101,6 @@ void CglicMouse::mouse(int b, int s, int x, int y)
         pcv->glicPickObject(x, y);
       };
 
-
-
-
       break;
 
 
@@ -113,38 +110,45 @@ void CglicMouse::mouse(int b, int s, int x, int y)
 
     case GLUT_RIGHT_BUTTON:
       m_button[2] = ((GLUT_DOWN==s)?1:0);
-      pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
-      for(int i = 0 ; i < scene->listObject.size() ; i++)
-        scene->listObject[i]->pickingDisplay();
-      unsigned char pixel[3];
-      GLint viewport[4];
-      glGetIntegerv(GL_VIEWPORT,viewport);
-      glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
-      int pickedID = pixel[0];// + pixel[1]*256 + pixel[2]*256*256;
-      //cout << "Pixel:\n" << pixel[0] << endl << pixel[1] << endl << pixel[2] << endl;
-      glFlush();
-      cout << "Picked: " << pickedID << endl;
-      bool match = false;
+      if(s==GLUT_UP){
+        pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+        for(int i = 0 ; i < scene->listObject.size() ; i++)
+          scene->listObject[i]->pickingDisplay();
+        unsigned char pixel[3];
+        GLint viewport[4];
+        glGetIntegerv(GL_VIEWPORT,viewport);
+        glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
+        int pickedID = pixel[0];
+        glFlush();
 
-      for(int i = 0 ; i < scene->listObject.size() ; i++){
-        if(pickedID == scene->listObject[i]->pickingID){
-          scene->listObject[i]->state = CglicCube::TO_SEL;
-          match = true;
-          scene->state = CglicScene::TO_ON;
+        cout << "Picked: " << pickedID << endl;
+        bool match = false;
+
+        for(int i = 0 ; i < scene->listObject.size() ; i++){
+          if(pickedID == scene->listObject[i]->pickingID){
+            scene->listObject[i]->state = CglicCube::TO_SEL;
+            match = true;
+            scene->state = CglicScene::TO_ON;
+          }
         }
-      }
-      if(match){
-        for(int i = 0 ; i < scene->listObject.size() ; i++)
-          if(pickedID!=scene->listObject[i]->pickingID)
-            scene->listObject[i]->state = CglicObject::TO_OFF;
-      }
-      else{
-        for(int i = 0 ; i < scene->listObject.size() ; i++)
-          scene->listObject[i]->state = CglicObject::TO_OFF;
-        scene->state = CglicScene::TO_SEL;
-      }
-      break;
 
+        if(match){
+          for(int i = 0 ; i < scene->listObject.size() ; i++)
+            if(pickedID!=scene->listObject[i]->pickingID)
+              scene->listObject[i]->state = CglicObject::TO_OFF;
+        }
+
+        else{
+          for(int i = 0 ; i < scene->listObject.size() ; i++)
+            scene->listObject[i]->state = CglicObject::TO_OFF;
+          scene->state = CglicScene::TO_SEL;
+        }
+
+        if(match)
+          scene->reOrderObjects();
+      }
+
+      break;
   }
 }
 

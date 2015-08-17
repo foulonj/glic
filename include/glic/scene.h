@@ -48,6 +48,7 @@ public:
   void applyTransformation();
   void update_matrices();
   void debug();
+  void reOrderObjects();
 
 protected:
   virtual void glicInit();

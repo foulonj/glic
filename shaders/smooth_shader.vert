@@ -25,11 +25,11 @@ void main(){
   vec3 LightColor            = vec3(1,1,0.8);//Lumière un peu jaune
   vec3 MaterialDiffuseColor  = COL;
   vec3 MaterialSpecularColor = vec3(1.0, 1.0, 1.0);
-  float LightPower           = 10.0f;
+  float LightPower           = 8.0f;
   vec3 MaterialAmbientColor  = vec3(0.1,0.1,0.1) * MaterialDiffuseColor;
   vec3 LightPosition_worldspace = vec3(2,2,2);
   float distance = length(LightPosition_worldspace - gl_Position.xyz);
-  float lobeSize = 2.0f;//Taille du lobe spéculaire
+  float lobeSize = 5.0f;//Taille du lobe spéculaire
 
 
 
@@ -75,7 +75,7 @@ void main(){
 
   //Sortie finale de couleur
   vec3 color = MaterialAmbientColor +
-               MaterialDiffuseColor  * LightColor * LightPower * cosTheta        / (distance*distance);// +
+               MaterialDiffuseColor  * LightColor * LightPower * cosTheta        / (distance*distance) +
                MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,lobeSize) / (distance*distance) ;  //pow(...) = largeur du lobe speculaire
   fragmentColor = color;
 }

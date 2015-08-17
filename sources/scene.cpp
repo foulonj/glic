@@ -27,7 +27,6 @@ void CglicScene::addObject(pCglicObject object)
 }
 
 
-
 void CglicScene::display()
 {
   applyTransformation();
@@ -40,10 +39,31 @@ void CglicScene::display()
     listObject[iObj]->applyTransformation();
     listObject[iObj]->display();
   }
-
   //debug();
 }
 
+
+void CglicScene::reOrderObjects(){
+  //Init
+  std::vector<pCglicObject> temp;
+  temp.resize(1);
+  int selInd = NULL;
+  //Get element to become first
+  for(int i = 0 ; i < listObject.size() ; i++){
+    if(listObject[i]->state != CglicObject::TO_OFF){
+      temp[0] = listObject[i];
+      selInd = i;
+    }
+  }
+  //Get other elements
+  for(int i = 0 ; i < listObject.size() ; i++)
+    if(i != selInd)
+      temp.push_back(listObject[i]);
+
+  if(temp.size() == listObject.size())
+    for(int i = 0 ; i < listObject.size() ; i++)
+      listObject[i] = temp[i];
+}
 
 
 void CglicScene::applyTransformation()
