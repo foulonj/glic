@@ -19,11 +19,12 @@ public:
   enum TobjState {TO_OFF, TO_ON, TO_SEL, TO_DYN};
   glm::vec4 color, mat_diffuse;
   glm::vec3 center;
+
+//Modifier par un accesseur public set Transform
+public:
   CglicTransform transform;
 
 public:
-  void uniformVec3(int ID, glm::vec3 v);
-
   glm::vec3 R, G, B, WHITE, BLACK;
   glm::vec3 grid_color, face_color, edge_color, sele_color, idle_color;
 
@@ -47,6 +48,7 @@ public:
 public:
   CglicObject();
   virtual ~CglicObject();
+
   virtual void display(){};
 
   void pickingDisplay();
@@ -54,7 +56,7 @@ public:
   void activeBB();
   void activeMesh();
 
-
+  void uniformVec3(int ID, glm::vec3 v);
 
 protected:
   virtual void glicInit();

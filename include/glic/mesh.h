@@ -38,26 +38,17 @@ class GLIC_API CglicMesh : public CglicObject
 {
 
 private:
-  int np,nt,nn,dim,ver;
+  int np,nt,nn,dim,ver, nNAtV;
+  //Pas nécessaire de les conserver en mémoire si uniquement du display, on peut garder le système de buffer
   vector<Point>    point;
   vector<Tria>     tria;
   vector<Normal>   normal;
-private:
-  //Normals at vertices
   vector<NormalAtVertex> NormalAtVertices;
-  int nNAtV;
-
-
-public:
-  //type de rendu: "SMOOTH" ou "FLAT" pour différencier les shaders
   SHADER simpleShader;
   SHADER smoothShader;
-
   GLuint bboxBuffer;
   GLuint bboxIndBuffer;
   GLuint normalBuffer;
-
-public:
   glm::vec3 bbmin, bbmax;
   glm::vec3 tra;
 

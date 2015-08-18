@@ -7,13 +7,8 @@ extern CglicCanvas *pcv;
 CglicMouse::CglicMouse()
 {
   memset((void*)this, 0, sizeof(*this));
-  m_ang = 0.0;
-  m_trx  = m_try  = 0.0;
-  m_otrx = m_otry = 0.0;
-  m_button[0] = m_button[1] = m_button[2] = 0;
-  m_zoom  = 0.0;
-  m_pos[0] = m_pos[1] = m_pos[2] = 0.0;
-  m_axe[0] = m_axe[1] = m_axe[2] = 0.0;
+  m_button[0] = m_button[1] = m_button[2] = false;
+  m_pos = glm::vec3(0.0f);
   m_key = TM_NONE;
 }
 
@@ -109,6 +104,7 @@ void CglicMouse::mouse(int b, int s, int x, int y)
       break;
 
     case GLUT_RIGHT_BUTTON:
+      //Remplacer
       m_button[2] = ((GLUT_DOWN==s)?1:0);
       if(s==GLUT_UP){
         pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];

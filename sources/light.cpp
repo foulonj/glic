@@ -1,5 +1,6 @@
 #include <glic/light.h>
 #include <glic/material.h>
+#include <glm/ext.hpp>
 
 
 // light constructor

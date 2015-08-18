@@ -5,14 +5,14 @@
 
 class SHADER
 {
- public:
+private:
   std::string mVertex_file_path;
   std::string mFragment_file_path;
-  GLuint      mProgramID;
 
+public:
+  GLuint      mProgramID;
   SHADER();
   void load(std::string vert_path, std::string frag_path);
-
 };
 
 #endif
