@@ -112,11 +112,14 @@ void CglicMouse::mouse(int b, int s, int x, int y)
       m_button[2] = ((GLUT_DOWN==s)?1:0);
       if(s==GLUT_UP){
         pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
-        for(int i = 0 ; i < scene->listObject.size() ; i++)
-          scene->listObject[i]->pickingDisplay();
         unsigned char pixel[3];
         GLint viewport[4];
         glGetIntegerv(GL_VIEWPORT,viewport);
+
+        for(int i = 0 ; i < scene->listObject.size() ; i++)
+          if(scene->listObject[i]->state != CglicObject::TO_SEL)
+            scene->listObject[i]->pickingDisplay();
+
         glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
         int pickedID = pixel[0];
         glFlush();

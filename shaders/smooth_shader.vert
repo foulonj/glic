@@ -26,7 +26,7 @@ void main(){
   vec3 MaterialDiffuseColor  = COL;
   vec3 MaterialSpecularColor = vec3(1.0, 1.0, 1.0);
   float LightPower           = 8.0f;
-  vec3 MaterialAmbientColor  = vec3(0.1,0.1,0.1) * MaterialDiffuseColor;
+  vec3 MaterialAmbientColor  = vec3(0.05,0.05,0.05) * MaterialDiffuseColor;
   vec3 LightPosition_worldspace = vec3(2,2,2);
   float distance = length(LightPosition_worldspace - gl_Position.xyz);
   float lobeSize = 5.0f;//Taille du lobe spéculaire

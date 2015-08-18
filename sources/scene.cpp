@@ -29,16 +29,19 @@ void CglicScene::addObject(pCglicObject object)
 
 void CglicScene::display()
 {
+
   applyTransformation();
   update_matrices();
-
-  axis->applyTransformation();
-  axis->display();
 
   for (int iObj = 0; iObj < listObject.size(); iObj++){
     listObject[iObj]->applyTransformation();
     listObject[iObj]->display();
   }
+
+  axis->applyTransformation();
+  axis->display();
+
+
   //debug();
 }
 
