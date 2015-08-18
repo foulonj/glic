@@ -26,6 +26,9 @@ void SHADER::load(string vert_path, string frag_path){
       VertexShaderCode += "\n" + Line;
     VertexShaderStream.close();
   }
+  else{
+    exit(144);
+  }
 
   // Lit le code du fragment shader à partir du fichier
   std::string FragmentShaderCode;
@@ -35,6 +38,9 @@ void SHADER::load(string vert_path, string frag_path){
     while(getline(FragmentShaderStream, Line))
       FragmentShaderCode += "\n" + Line;
     FragmentShaderStream.close();
+  }
+  else{
+    exit(145);
   }
 
   GLint Result = GL_FALSE;
