@@ -10,6 +10,7 @@ CglicMouse::CglicMouse()
   m_button[0] = m_button[1] = m_button[2] = false;
   m_pos = glm::vec3(0.0f);
   m_key = TM_NONE;
+  isPressed = isReleased = false;
 }
 
 /* project point onto hemi-sphere */
@@ -48,48 +49,66 @@ void CglicMouse::motion(int x, int y)
     glm::vec3 d = v - m_pos;
     m_pos = v;
     glm::mat4 ID = glm::mat4(1.0f);
+    glm::mat4 ROT = glm::rotate(ID, 2.0f * d.x, scene->m_up) * glm::rotate(ID, - 2.0f * d.y, scene->m_right);
+    //glm::quat QUAT = glm::angleAxis(2.0f * d.x, scene->m_up) * glm::angleAxis(- 2.0f * d.y, scene->m_right);
+
     //Si la scène est sélectionnée
-    if (scene->state == CglicScene::TO_SEL){
-      glm::mat4 ROT = glm::rotate(ID, - 2.0f * d.x, scene->m_up) * glm::rotate(ID, 2.0f * d.y, scene->m_right);
+    if (scene->state == CglicScene::TO_SEL)
+      //scene->transform.setQuaternion(QUAT);
       scene->transform.setRotation(ROT);
-    }
     //Si un objet est sélectionné
     else{
       for (unsigned int i = 0; i < scene->listObject.size(); i++){
         if (scene->listObject[i]->state == CglicCube::TO_SEL){
-          glm::mat4 ROT = glm::rotate(ID, 2.0f * d.x, scene->m_up) * glm::rotate(ID, - 2.0f * d.y, scene->m_right);
+          if(scene->listObject[i]->transform.lastMatrices.size()>0){
+            int ind = scene->listObject[i]->transform.lastMatrices.size() - 1;
+            scene->listObject[i]->transform.lastMatrices[ind] = scene->listObject[i]->MODEL;
+            cout << ind << endl;
+          }
+          //Stockage de l'état initial
+          if(isPressed){
+            cout << "toto!!!" << endl;
+            isPressed = false;
+            scene->listObject[i]->transform.lastMatrices.push_back(scene->listObject[i]->MODEL);
+          }
           scene->listObject[i]->transform.setRotation(ROT);
+          //On actualise la dernière matrice
         }
       }
     }
+    cout << isPressed << endl;
   }
 }
 
 
 void CglicMouse::mouse(int b, int s, int x, int y)
 {
+  pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+
   GLint  key;
   m_tm = glutGet(GLUT_ELAPSED_TIME);
   lastPos = glm::vec2(x,y);
+
+
 
   switch(b)
   {
     case GLUT_LEFT_BUTTON:
       m_button[0] = ((GLUT_DOWN==s)?1:0);
+      if(m_button[0]){
+        isPressed = true;
+        cout << "eeeeeek" << endl;
+      }
 
       currPos = glm::vec2( glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT) );
-
       m_pos = projsph(glm::vec2(0.));
       key = glutGetModifiers();
-      //cout << "\n\n\tno active shift \n\n";
       m_key = TM_NONE;
       if ( glutGetModifiers() & GLUT_ACTIVE_SHIFT){cout << "\n\n\t Active shift \n\n"; m_key = TM_SHIFT;};
       if (glutGetModifiers() & GLUT_ACTIVE_CTRL){
-        //cout << "\n GLUT Actve CTRL\n" << endl;
         m_key = TM_CTRL;
         pcv->glicPickObject(x, y);
       };
-
       break;
 
 

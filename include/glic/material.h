@@ -1,31 +1,14 @@
-/****************************************************************
- *
- * GLIC: ICS Graphics Library
- *
- * Original Authors:
- *   J. Foulon, P. Frey
- *
- ****************************************************************/
-#ifndef __GLIC_MATERIAL_H_
-#define __GLIC_MATERIAL_H_
-
-#include <glic/object.h>
+#ifndef MATERIAL_H
+#define MATERIAL_H
 
 
-class GLIC_API CglicMaterial : public CglicObject
+class material
 {
-public:
-  enum TcolType {TC_AMB, TC_DIF, TC_SPE};
-  
-private:
-  
-public:
-  CglicMaterial();
-  virtual ~CglicMaterial();
-  
-protected:
-  virtual void glicInit();
+  public:
+    material();
+    virtual ~material();
+  protected:
+  private:
 };
 
-
-#endif  /* __glicmaterial_h_ */
+#endif // MATERIAL_H

@@ -23,6 +23,8 @@ private:
   unsigned int m_tm;
   glm::vec3 projsph(glm::vec2 diff);
 
+  bool isPressed, isReleased;
+
 public:
   CglicMouse();
   virtual ~CglicMouse(){};

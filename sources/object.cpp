@@ -65,7 +65,6 @@ void CglicObject::activeMesh()
 
 void CglicObject::applyTransformation()
 {
-  //Attention au pb de rescale quand on tourne trop vite
   glm::mat4 ID = glm::mat4(1.0f);
   center += transform.tr;
   MODEL =  glm::translate(ID, center) * transform.rot * glm::translate(ID, -center) * glm::translate(ID, transform.tr) * MODEL;
@@ -77,7 +76,9 @@ void CglicObject::pickingDisplay(){
   glUseProgram(shaderID);
   int MatrixID = glGetUniformLocation(shaderID, "MVP");
   int colorID  = glGetUniformLocation(shaderID, "COL");
-  glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
+
+  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * MODEL;
+
   glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
   //Mesh buffer binding
   glEnableVertexAttribArray( 0);

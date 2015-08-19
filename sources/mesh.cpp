@@ -241,11 +241,12 @@ void CglicMesh::display()
   //                                 Display artifacts                                   //
   /////////////////////////////////////////////////////////////////////////////////////////
   //Initialization
+  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * MODEL;
+
   int shaderID = simpleShader.mProgramID;
   glUseProgram(shaderID);
   int MatrixID = glGetUniformLocation(shaderID, "MVP");
   int colorID  = glGetUniformLocation(shaderID, "COL");
-  glm::mat4 MVP = *pPROJ * *pVIEW * MODEL;
   glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
   //Mesh buffer binding
@@ -324,6 +325,7 @@ void CglicMesh::display()
   if(useSmoothShading){
     GLuint MID      = glGetUniformLocation(shaderID, "M");
     GLuint VID      = glGetUniformLocation(shaderID, "V");
+    //TODO
     glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
     glUniformMatrix4fv( VID, 1, GL_FALSE, &(*pVIEW)[0][0]);
     uniformVec3(colorID, face_color);

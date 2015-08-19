@@ -41,26 +41,26 @@ void CglicCanvas::glicLight()
   //cout << "   Sun " << endl;
    light.push_back(CglicLight(0));
    light[0].setPos(0., 0., 1., 1.);
-   light[0].setCol(CglicMaterial::TC_DIF, 1., 0., 0., 0.5);
+   //light[0].setCol(CglicMaterial::TC_DIF, 1., 0., 0., 0.5);
    //cout << "   Sun  end" << endl;
 
   //cout << "   Light 1 " << endl;
   light.push_back(CglicLight(0));
   light[0].setPos(-1.0, 0., 0.5, 1.);
-  light[0].setCol(CglicMaterial::TC_DIF, 1., 0., 0., 0.5);
+  //light[0].setCol(CglicMaterial::TC_DIF, 1., 0., 0., 0.5);
   //cout << "   Light 1  end" << endl;
 
   //cout << "   Light 2 " << endl;
   light.push_back(CglicLight(1));
   //cout << "   Light 2 bis" << endl;
   light[1].setPos(1.0, 0., 0.5, 1.);
-  light[1].setCol(CglicMaterial::TC_DIF,0., 1., 0., 0.5);
+  //light[1].setCol(CglicMaterial::TC_DIF,0., 1., 0., 0.5);
 
   //cout << "   Light 3 " << endl;
   light.push_back(CglicLight(2));
   //cout << "   Light 3 bis" << endl;
   light[2].setPos(0., 1., 0.5, 1.);
-  light[2].setCol(CglicMaterial::TC_DIF, 0., 0., 1., 1.);
+  //light[2].setCol(CglicMaterial::TC_DIF, 0., 0., 1., 1.);
 }
 
 int CglicCanvas::glicObject(pCglicObject obj)

@@ -31,12 +31,12 @@ void CglicView::reshape(int w, int h)
 {
   //cout << "   -- reshapeView " << w << " " << h << endl;
   glViewport(0,0,(GLsizei)w,(GLsizei)h);
-  glMatrixMode(GL_PROJECTION);
+  //glMatrixMode(GL_PROJECTION);
   //glMatrixMode(GL_PERSPECTIVE_CORRECTION_HINT);
-  glLoadIdentity();
+  //glLoadIdentity();
   ratio = (double)w/h;
-  gluPerspective(m_fovy, ratio, m_znear, m_zfar);
-  glTranslatef(0.0, 0.0, -0.5 * m_zfar);
+  //gluPerspective(m_fovy, ratio, m_znear, m_zfar);
+  //glTranslatef(0.0, 0.0, -0.5 * m_zfar);
   //glTranslatef(0.0, 0.0, -0.5 * (m_znear + m_zfar));
 }
 

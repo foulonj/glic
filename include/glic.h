@@ -39,6 +39,8 @@
 #include <glic/axis.h>
 #include <glic/transform.h>
 #include <glic/shader.h>
+#include <glic/material.h>
+#include <glic/profile.h>
 
 
 /*-- The major/minor/patch version. ---------------------------*/

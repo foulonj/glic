@@ -4,8 +4,9 @@
 CglicScene::CglicScene():transform(){
   state = TO_SEL;
   m_up = glm::vec3(0., 1., 0.);
-  m_cam = glm::vec3(0,0,2);
+  m_cam = glm::vec3(0,0.2,1.1);
   center = glm::vec3(0,0,0);
+  VIEW = glm::lookAt(m_cam, m_look, m_up);
 }
 CglicScene::~CglicScene(){}
 
@@ -16,6 +17,8 @@ void CglicScene::addObject(pCglicObject object)
 
   object->pPROJ = &PROJ;
   object->pVIEW = &VIEW;
+  object->pMODEL= &MODEL;
+  object->sceneCenter = &center;
   object->pickingID = listObject.size();
   object->pickingColor = glm::vec3(object->pickingID/255.0f, 0, 0);
   object->pickingShader.load("shaders/shader.vert", "shaders/shader.frag");
@@ -23,15 +26,16 @@ void CglicScene::addObject(pCglicObject object)
     axis = new CglicAxis();
     axis->pPROJ = &PROJ;
     axis->pVIEW = &VIEW;
+    axis->pMODEL= &MODEL;
+    axis->sceneCenter = &center;
   }
 }
 
 
 void CglicScene::display()
 {
-
-  applyTransformation();
   update_matrices();
+  applyTransformation();
 
   for (int iObj = 0; iObj < listObject.size(); iObj++){
     listObject[iObj]->applyTransformation();
@@ -41,8 +45,7 @@ void CglicScene::display()
   axis->applyTransformation();
   axis->display();
 
-
-  //debug();
+  debug();
 }
 
 
@@ -73,23 +76,22 @@ void CglicScene::applyTransformation()
 {
   glm::mat4 ID = glm::mat4(1.0f);
   center += transform.tr;
-  m_cam =  glm::vec3(  glm::translate(ID, center) * transform.rot * glm::translate(ID, -center) * glm::vec4(m_cam,1)  );
+  glm::mat4 TRANS;
+  TRANS = glm::translate(ID, -center) * transform.rot * glm::translate(ID, center) * glm::translate(ID, transform.tr);
+
+  MODEL = MODEL * TRANS;
+  m_cam = glm::vec3(glm::inverse(TRANS) * glm::vec4(m_cam,1));
+  m_up = glm::vec3(glm::inverse(TRANS) * glm::vec4(m_up,1));
+
   transform.reset();
-  /*
-  glm::mat4 ID = glm::mat4(1.0f);
-  m_cam = glm::vec3( transform.hRot * transform.vRot * glm::vec4(m_cam,1));
-  m_cam  += transform.tr;
-  center += transform.tr;
-  transform.reset();
-  */
 }
 
 void CglicScene::update_matrices()
 {
+  //VIEW = glm::lookAt(m_cam, m_look, m_up);
+  PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
   m_look = -m_cam + 2.0f * center;
   m_right = glm::cross(m_look, m_up);
-  VIEW = glm::lookAt(m_cam, m_look, m_up);
-  PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
 }
 
 void CglicScene::debug(){
@@ -98,6 +100,9 @@ void CglicScene::debug(){
   cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
   cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
   cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
+  cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
+
+  /*
   //Matrices
   cout << endl;
   cout << " MODEL " << endl;
@@ -120,6 +125,7 @@ void CglicScene::debug(){
   for(int i = 0 ; i < 4 ; i++)
     cout << X[i][0] << " " << X[i][1] << " " << X[i][2] << " " << X[i][3] << endl;
   cout << endl;
+  */
 }
 
 

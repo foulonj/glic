@@ -36,6 +36,8 @@ public:
   int nPicking;
 
   glm::mat4 MODEL;
+  glm::vec3 *sceneCenter;
+  glm::mat4 *pMODEL;
   glm::mat4 *pVIEW;
   glm::mat4 *pPROJ;
   bool useSmoothShading;

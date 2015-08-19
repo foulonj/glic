@@ -1,16 +1,11 @@
-#include <glic/material.h>
+#include "glic/material.h"
 
-
-// object constructor
-CglicMaterial::CglicMaterial()
+material::material()
 {
-  //cout << "  --- - [create CglicMaterial]" << endl;
+  //ctor
 }
 
-CglicMaterial::~CglicMaterial()
+material::~material()
 {
-  //cout << "  --- - [destroy CglicMaterial]" << endl;
+  //dtor
 }
-
-void CglicMaterial::glicInit()
-{}

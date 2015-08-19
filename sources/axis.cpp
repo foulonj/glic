@@ -4,51 +4,6 @@
 
 
 CglicAxis::CglicAxis(){
-
-  float cube[] = {
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f
-  };
-  for(int i = 0 ; i < 108 ; i++)
-    cube[i] = 0.05 * cube[i];
-  glGenBuffers( 1,               &cubeBuffer);
-  glBindBuffer( GL_ARRAY_BUFFER, cubeBuffer);
-  glBufferData( GL_ARRAY_BUFFER, 3 * sizeof(float) * 36, cube, GL_STATIC_DRAW);
-
   float dash_size = 0.05;
   std::vector<glm::vec3> tGrid;
   for(float x = -1. ; x <= 1. ; x+=0.05){
@@ -74,7 +29,7 @@ CglicAxis::CglicAxis(){
                                   glm::vec3(0,0,-1)};
   for(int i = 0 ; i < tAxes.size() ; i++)
     for(int j = 0 ; j < 3 ; j++)
-      axes.push_back(tAxes[i][j]);
+      axes.push_back(0.4*tAxes[i][j]);
   glGenBuffers( 1,               &axesBuffer);
   glBindBuffer( GL_ARRAY_BUFFER, axesBuffer);
   glBufferData( GL_ARRAY_BUFFER, sizeof(float) * axes.size(), &axes[0], GL_STATIC_DRAW);
@@ -84,16 +39,16 @@ CglicAxis::CglicAxis(){
 
 void CglicAxis::display()
 {
-  glm::mat4 MVP = glm::translate( *pPROJ * *pVIEW * MODEL, center);
-
   //Initialization
   glUseProgram(simpleShader.mProgramID);
   glEnableVertexAttribArray( 0);
   GLuint MatrixID = glGetUniformLocation(simpleShader.mProgramID, "MVP");
   GLuint colorID  = glGetUniformLocation(simpleShader.mProgramID, "COL");
-  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-  //GRID
+
+  //Fixed GRID
+  glm::mat4 MVP = glm::translate( *pPROJ * *pVIEW  * MODEL, center);
+  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
   glLineWidth(1.0);
   glBindBuffer(              GL_ARRAY_BUFFER, gridBuffer);
   glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
@@ -102,7 +57,13 @@ void CglicAxis::display()
   glPolygonMode(GL_FRONT, GL_LINE);
   glDrawArrays(GL_LINES, 0, grid.size()/3);
 
+
   //Axes
+  glDisable(GL_DEPTH_TEST);
+  glViewport(0,0,150,150);
+  //Allows for axes to stay centered
+  MVP = glm::translate(*pPROJ * *pVIEW * *pMODEL * MODEL, -*sceneCenter);
+  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
   glLineWidth(2.0);
   glBindBuffer(              GL_ARRAY_BUFFER, axesBuffer);
   glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
@@ -117,13 +78,6 @@ void CglicAxis::display()
   //Z
   uniformVec3(colorID, B);
   glDrawArrays(GL_LINES, 4, 6);
-
-  //Ressources freeing
-  glDisableVertexAttribArray(0);
-  glLineWidth(1.0);
-  glUseProgram(0);
-  glPolygonMode(GL_FRONT, GL_FILL);
-
   //Labels des axes
   float offset = 20.0f;
   glTranslatef(-center.x, -center.y, -center.z);
@@ -143,4 +97,13 @@ void CglicAxis::display()
   glRasterPos3f(newPos.x, newPos.y, newPos.z);
   glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, 'Z');
   glTranslatef(center.x, center.y, center.z);
+
+
+  //Ressources freeing
+  glEnable(GL_DEPTH_TEST);
+  glViewport(0,0,1000,1000);
+  glDisableVertexAttribArray(0);
+  glLineWidth(1.0);
+  glUseProgram(0);
+  glPolygonMode(GL_FRONT, GL_FILL);
 }

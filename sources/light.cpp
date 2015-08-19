@@ -10,9 +10,9 @@ CglicLight::CglicLight(const int& i)
   ltyp = TL_DIRECTION;
   lid = i;
 
-  setCol(CglicMaterial::TC_AMB, 0.0, 0.0, 0.0, 1.0);
-  setCol(CglicMaterial::TC_DIF, 1.0, 1.0, 1.0, 1.0);
-  setCol(CglicMaterial::TC_SPE, 1.0, 1.0, 1.0, 1.0);
+  //setCol(CglicMaterial::TC_AMB, 0.0, 0.0, 0.0, 1.0);
+  //setCol(CglicMaterial::TC_DIF, 1.0, 1.0, 1.0, 1.0);
+  //setCol(CglicMaterial::TC_SPE, 1.0, 1.0, 1.0, 1.0);
 
   setPos(0, 0, 0, 1);
   setAtt(1, 0, 0);
@@ -32,7 +32,7 @@ CglicLight::~CglicLight()
 {
   //cout << "  --- - [destroy CglicLight]" << endl;
 }
-
+/*
 void CglicLight::setCol(CglicMaterial::TcolType typ, const float r, const float g,const float b, const float a)
 {
   switch (typ) {
@@ -59,7 +59,7 @@ void CglicLight::setCol(CglicMaterial::TcolType typ, const float r, const float 
       break;
   }
 }
-
+*/
 
 void CglicLight::setPos(const float x, const float y, const float z, const float w)
 {
@@ -96,7 +96,7 @@ void CglicLight::setSpot(float cutoff, float sx, float sy, float sz, float expo)
   spotExp       = expo;
 }
 
-
+/*
 void CglicLight::getCol(CglicMaterial::TcolType typ, float &r, float &g, float &b, float &a) const
 {
   switch (typ) {
@@ -123,7 +123,7 @@ void CglicLight::getCol(CglicMaterial::TcolType typ, float &r, float &g, float &
       break;
   }
 }
-
+*/
 
 void CglicLight::getPos(float &x, float &y, float &z, float &w ) const
 {

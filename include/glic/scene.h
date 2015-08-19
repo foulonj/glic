@@ -34,6 +34,7 @@ public:
   glm::vec3 m_look, m_cam, m_up, m_look_offset;
   glm::vec3 m_right;
 
+  glm::mat4 MODEL;
   glm::mat4 VIEW;
   glm::mat4 PROJ;
 
