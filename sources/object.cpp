@@ -68,7 +68,7 @@ void CglicObject::applyTransformation()
   //Attention au pb de rescale quand on tourne trop vite
   glm::mat4 ID = glm::mat4(1.0f);
   center += transform.tr;
-  MODEL =  glm::translate(ID, center) * transform.hRot * transform.vRot * glm::translate(ID, -center) * glm::translate(ID, transform.tr) * MODEL;
+  MODEL =  glm::translate(ID, center) * transform.rot * glm::translate(ID, -center) * glm::translate(ID, transform.tr) * MODEL;
   transform.reset();
 }
 

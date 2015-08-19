@@ -73,7 +73,7 @@ void CglicScene::applyTransformation()
 {
   glm::mat4 ID = glm::mat4(1.0f);
   center += transform.tr;
-  m_cam =  glm::vec3(  glm::translate(ID, center) * transform.hRot * transform.vRot * glm::translate(ID, -center) * glm::vec4(m_cam,1)  );
+  m_cam =  glm::vec3(  glm::translate(ID, center) * transform.rot * glm::translate(ID, -center) * glm::vec4(m_cam,1)  );
   transform.reset();
   /*
   glm::mat4 ID = glm::mat4(1.0f);
