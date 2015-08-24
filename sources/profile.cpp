@@ -1,11 +1,11 @@
 #include "glic/profile.h"
 
-profile::profile()
+CglicProfile::CglicProfile()
 {
   //ctor
 }
 
-profile::~profile()
+CglicProfile::~CglicProfile()
 {
   //dtor
 }

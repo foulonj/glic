@@ -23,12 +23,13 @@ public:
 
   CglicTransform transform;
   CglicAxis      *axis;
+  CglicView      *view;
 
   glm::vec3 center;
 
 
 public:
-  pCglicView view;
+
 
 public:
   glm::vec3 m_look, m_cam, m_up, m_look_offset;

@@ -2,11 +2,11 @@
 #define PROFILE_H
 
 
-class profile
+class CglicProfile
 {
   public:
-    profile();
-    virtual ~profile();
+    CglicProfile();
+    ~CglicProfile();
   protected:
   private:
 };

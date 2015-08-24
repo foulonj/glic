@@ -1,4 +1,5 @@
 #include <glic/canvas.h>
+#include <glic/profile.h>
 
 CglicCanvas *pcv;
 

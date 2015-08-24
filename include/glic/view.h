@@ -18,6 +18,7 @@ public:
 	double    m_znear,m_zfar;
 	double    m_fovy;
 	double    ratio;
+	int width, height;
 
 private:
   bool      m_stereo;

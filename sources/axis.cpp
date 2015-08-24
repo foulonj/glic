@@ -1,8 +1,5 @@
 #include <glic/axis.h>
 
-
-
-
 CglicAxis::CglicAxis(){
   float dash_size = 0.05;
   std::vector<glm::vec3> tGrid;
@@ -101,7 +98,7 @@ void CglicAxis::display()
 
   //Ressources freeing
   glEnable(GL_DEPTH_TEST);
-  glViewport(0,0,1000,1000);
+  view->reshape(view->width,view->height);
   glDisableVertexAttribArray(0);
   glLineWidth(1.0);
   glUseProgram(0);

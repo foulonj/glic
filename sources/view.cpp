@@ -38,6 +38,8 @@ void CglicView::reshape(int w, int h)
   //gluPerspective(m_fovy, ratio, m_znear, m_zfar);
   //glTranslatef(0.0, 0.0, -0.5 * m_zfar);
   //glTranslatef(0.0, 0.0, -0.5 * (m_znear + m_zfar));
+  width  = w;
+  height = h;
 }
 
 

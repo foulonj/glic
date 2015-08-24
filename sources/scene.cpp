@@ -28,6 +28,7 @@ void CglicScene::addObject(pCglicObject object)
     axis->pVIEW = &VIEW;
     axis->pMODEL= &MODEL;
     axis->sceneCenter = &center;
+    axis->view  = view;
   }
 }
 
