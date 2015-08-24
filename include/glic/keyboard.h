@@ -14,7 +14,7 @@
 class GLIC_API CglicKeyboard
 {
 public:
-  CglicKeyboard():selection(-1){};
+  CglicKeyboard(){selection=-1; lastKey='ff';};
   virtual ~CglicKeyboard(){};
   void keyboard(unsigned char key, int x, int y);
   void special(unsigned char key, int x, int y);

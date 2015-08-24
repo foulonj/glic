@@ -235,6 +235,39 @@ void CglicMesh::getBBOX()
 
 
 
+
+
+
+
+
+//Light[3] = 0 si directionelle
+glm::mat4 shadowMatrix(glm::vec4 ground, glm::vec4 light){
+    float  dot;
+    glm::mat4 shadowMat;
+    dot = ground[0] * light[0] +
+          ground[1] * light[1] +
+          ground[2] * light[2] +
+          ground[3] * light[3];
+    shadowMat[0][0] = dot - light[0] * ground[0];
+    shadowMat[1][0] = 0.0 - light[0] * ground[1];
+    shadowMat[2][0] = 0.0 - light[0] * ground[2];
+    shadowMat[3][0] = 0.0 - light[0] * ground[3];
+    shadowMat[0][1] = 0.0 - light[1] * ground[0];
+    shadowMat[1][1] = dot - light[1] * ground[1];
+    shadowMat[2][1] = 0.0 - light[1] * ground[2];
+    shadowMat[3][1] = 0.0 - light[1] * ground[3];
+    shadowMat[0][2] = 0.0 - light[2] * ground[0];
+    shadowMat[1][2] = 0.0 - light[2] * ground[1];
+    shadowMat[2][2] = dot - light[2] * ground[2];
+    shadowMat[3][2] = 0.0 - light[2] * ground[3];
+    shadowMat[0][3] = 0.0 - light[3] * ground[0];
+    shadowMat[1][3] = 0.0 - light[3] * ground[1];
+    shadowMat[2][3] = 0.0 - light[3] * ground[2];
+    shadowMat[3][3] = dot - light[3] * ground[3];
+    return shadowMat;
+}
+
+
 void CglicMesh::display()
 {
   /////////////////////////////////////////////////////////////////////////////////////////
@@ -295,6 +328,7 @@ void CglicMesh::display()
   /////////////////////////////////////////////////////////////////////////////////////////
   //                                 Mesh Rendering                                      //
   /////////////////////////////////////////////////////////////////////////////////////////
+
   //Shader used as main rendering
   if(useSmoothShading)
     shaderID = smoothShader.mProgramID;
@@ -325,10 +359,18 @@ void CglicMesh::display()
   if(useSmoothShading){
     GLuint MID      = glGetUniformLocation(shaderID, "M");
     GLuint VID      = glGetUniformLocation(shaderID, "V");
-    //TODO
     glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
     glUniformMatrix4fv( VID, 1, GL_FALSE, &(*pVIEW)[0][0]);
     uniformVec3(colorID, face_color);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+
+    //OMBRES
+    glUseProgram(simpleShader.mProgramID);
+    MVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix(glm::vec4(*sceneUp,0.49), glm::vec4(3.0f * *sceneUp,1)) * MODEL;
+    GLuint ID      = glGetUniformLocation(simpleShader.mProgramID, "MVP");
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    uniformVec3(colorID, 0.6f * grid_color);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }

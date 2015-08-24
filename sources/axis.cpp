@@ -44,7 +44,7 @@ void CglicAxis::display()
 
 
   //Fixed GRID
-  glm::mat4 MVP = glm::translate( *pPROJ * *pVIEW  * MODEL, center);
+  glm::mat4 MVP = glm::translate( *pPROJ * *pVIEW * glm::translate(MODEL, glm::vec3(0, -0.5, 0)), center);
   glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
   glLineWidth(1.0);
   glBindBuffer(              GL_ARRAY_BUFFER, gridBuffer);

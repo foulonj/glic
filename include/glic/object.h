@@ -37,6 +37,7 @@ public:
 
   glm::mat4 MODEL;
   glm::vec3 *sceneCenter;
+  glm::vec3 *sceneUp;
   glm::mat4 *pMODEL;
   glm::mat4 *pVIEW;
   glm::mat4 *pPROJ;

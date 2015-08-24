@@ -10,7 +10,7 @@ CglicView::CglicView()
   m_eyesep = 1.0;
   m_eye    = TV_LEFT;
   m_ctyp   = TV_DEF;
-  setPersp(70.0, 0.01, 200.0);
+  setPersp(70.0, 0.01, 5.0);
 }
 
 
@@ -31,13 +31,7 @@ void CglicView::reshape(int w, int h)
 {
   //cout << "   -- reshapeView " << w << " " << h << endl;
   glViewport(0,0,(GLsizei)w,(GLsizei)h);
-  //glMatrixMode(GL_PROJECTION);
-  //glMatrixMode(GL_PERSPECTIVE_CORRECTION_HINT);
-  //glLoadIdentity();
   ratio = (double)w/h;
-  //gluPerspective(m_fovy, ratio, m_znear, m_zfar);
-  //glTranslatef(0.0, 0.0, -0.5 * m_zfar);
-  //glTranslatef(0.0, 0.0, -0.5 * (m_znear + m_zfar));
   width  = w;
   height = h;
 }

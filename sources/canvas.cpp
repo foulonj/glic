@@ -9,7 +9,7 @@ CglicCanvas::CglicCanvas(int argc, char **argv)
   pcv = this;
 
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL);
 
   glicLight();
 }

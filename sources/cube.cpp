@@ -16,9 +16,6 @@ CglicCube::~CglicCube()
 void CglicCube::display()
 {
 
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  //glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-
   if (state == TO_SEL ){
     glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(mat_diffuse));
   }

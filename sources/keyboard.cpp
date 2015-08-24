@@ -24,19 +24,24 @@ void setTranslation(glm::vec3 tr, int &state){
 void CglicKeyboard::special(unsigned char key, int x, int y)
 {
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+
   if(key!=lastKey){
+    if (scene->state == CglicObject::TO_SEL){
+      scene->transform.lastMatrices.push_back(scene->MODEL);
+    }
     for (unsigned int i = 0; i < scene->listObject.size(); i++){
       CglicObject *obj = scene->listObject[i];
       if (obj->state == CglicCube::TO_SEL){
         obj->transform.lastMatrices.push_back(obj->MODEL);
       }
     }
-    cout << "Different translation!!" << endl;
     lastKey = key;
   }
 
-  glm::vec3 moveX(0.005, 0., 0.);
-  glm::vec3 moveZ(0., 0., 0.005);
+  //glm::vec3 moveX(0.005, 0., 0.);
+  //glm::vec3 moveZ(0., 0., 0.005);
+  glm::vec3 moveX = 0.01f * scene->m_right;
+  glm::vec3 moveZ = 0.01f * scene->m_up;
   int state = 0;
   switch (key) {
     case GLUT_KEY_LEFT:
@@ -86,16 +91,15 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   // ZOOM
   if((key == 'z') || (key == 'Z')){
     double zoomFactor = 0.1;
-    glm::vec3 zoom = -scene->m_look + scene->center;
-    zoom *= zoomFactor;
-    if (key == 'z' ){
-      cout << "ZOOM IN \n";
-      scene->m_cam -= zoom;
-    }
-    else if (key == 'Z' ){
-      cout << "ZOOM OUT \n";
-      scene->m_cam += zoom;
-    };
+    //glm::vec3 zoom = -scene->m_look + scene->center;
+    //zoom *= zoomFactor;
+    float zoom = 0;
+    if (key == 'z' )
+      zoom = 1.0f + zoomFactor;
+    else if (key == 'Z' )
+      zoom = 1.0f - zoomFactor;
+    scene->m_cam *= (float)(1.0f/zoom);
+    scene->MODEL = glm::scale(scene->MODEL, glm::vec3(zoom));
   }
 
   // BB and WIREFRAME
@@ -133,16 +137,21 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
 
   //Reset rotations of objects
   if (key == 'r'){
+    //Si la scène est sélectionnée
+    if(scene->state == CglicObject::TO_SEL){
+      if(scene->transform.lastMatrices.size()>0){
+        scene->MODEL = scene->transform.lastMatrices.back();
+        scene->center = glm::vec3(glm::vec4(scene->MODEL[3]));
+        scene->transform.lastMatrices.pop_back();
+      }
+    }
     for(int i = 0 ; i < scene->listObject.size() ; i++){
       pCglicObject obj = scene->listObject[i];
       if(obj->state == CglicObject::TO_SEL){
-        cout << "undo" << endl;
         if(obj->transform.lastMatrices.size()>0){
-          //scene->listObject[i]->MODEL *= glm::inverse(scene->listObject[i]->transform.lastMatrices.back());
           obj->MODEL = obj->transform.lastMatrices.back();
           obj->center = glm::vec3(glm::vec4(obj->MODEL[3]));
           obj->transform.lastMatrices.pop_back();
-          //cout << obj->transform.lastMatrices.size() << endl;
         }
       }
     }

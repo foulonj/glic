@@ -4,7 +4,7 @@
 CglicScene::CglicScene():transform(){
   state = TO_SEL;
   m_up = glm::vec3(0., 1., 0.);
-  m_cam = glm::vec3(0,0.2,1.1);
+  m_cam = glm::vec3(0,0.2,1.4);
   center = glm::vec3(0,0,0);
   VIEW = glm::lookAt(m_cam, m_look, m_up);
 }
@@ -19,6 +19,7 @@ void CglicScene::addObject(pCglicObject object)
   object->pVIEW = &VIEW;
   object->pMODEL= &MODEL;
   object->sceneCenter = &center;
+  object->sceneUp     = &m_up;
   object->pickingID = listObject.size();
   object->pickingColor = glm::vec3(object->pickingID/255.0f, 0, 0);
   object->pickingShader.load("shaders/shader.vert", "shaders/shader.frag");
@@ -97,17 +98,11 @@ void CglicScene::update_matrices()
 
 void CglicScene::debug(){
   //Vectors
-  //cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
-  //cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
-  //cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
-  //cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
-  //cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
-
-  cout << " MODEL " << endl;
-  CglicObject obj = *listObject[0];
-  for(int i = 0 ; i < 4 ; i++)
-    cout << obj.MODEL[i][0] << " " << obj.MODEL[i][1] << " " << obj.MODEL[i][2] << " " << obj.MODEL[i][3] << endl;
-  cout << endl;
+  cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
+  cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
+  cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
+  cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
+  cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
 
   /*
   //Matrices

@@ -74,9 +74,10 @@ void main(){
 
 
   //Sortie finale de couleur
-  vec3 color = MaterialAmbientColor +
-               MaterialDiffuseColor  * LightColor * LightPower * cosTheta        / (distance*distance) +
-               MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,lobeSize) / (distance*distance) ;  //pow(...) = largeur du lobe speculaire
+  vec3 color = MaterialAmbientColor
+             + MaterialDiffuseColor  * LightColor * LightPower * cosTheta        / (distance*distance)
+             //+ MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,lobeSize) / (distance*distance)  //pow(...) = largeur du lobe speculaire
+             ;
   fragmentColor = color;
 }
 

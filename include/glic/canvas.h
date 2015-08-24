@@ -15,8 +15,8 @@
 #include <glic/keyboard.h>
 #include <glic/scene.h>
 #include <glic/window.h>
-
 #include <glic/transform.h>
+#include <glic/profile.h>
 
 class GLIC_API CglicCanvas
 {
@@ -25,8 +25,9 @@ public:
   std::vector<pCglicScene>   scene;
   std::vector<CglicWindow>  window;
   std::vector<pCglicObject>  object;
-  CglicMouse   mice;
+  CglicMouse    mice;
   CglicKeyboard keyboard;
+  CglicProfile  profile;
 
   //private:
   int winid();
