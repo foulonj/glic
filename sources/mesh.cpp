@@ -127,11 +127,12 @@ CglicMesh::CglicMesh(char *name)
   glBufferData( GL_ARRAY_BUFFER, sizeof(float) * normals.size(), &normals[0], GL_STATIC_DRAW);
 
 
-  //face_color = glm::vec3(0.8, 0.8, 1);
+  //face_color = glm::vec3(0, 0, 1);
   //edge_color = glm::vec3(0,0,1);
 
   //TYPE DE RENDU ET SHADER
   useSmoothShading = true;
+  useShadows       = true;
   smoothShader.load("shaders/smooth_shader.vert", "shaders/smooth_shader.frag");
   //ceci pour le picking
   nPicking = 3 * tria.size();
@@ -275,13 +276,11 @@ void CglicMesh::display()
   /////////////////////////////////////////////////////////////////////////////////////////
   //Initialization
   glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * MODEL;
-
   int shaderID = simpleShader.mProgramID;
   glUseProgram(shaderID);
   int MatrixID = glGetUniformLocation(shaderID, "MVP");
   int colorID  = glGetUniformLocation(shaderID, "COL");
   glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
   //Mesh buffer binding
   glEnableVertexAttribArray( 0);
   glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
@@ -290,7 +289,7 @@ void CglicMesh::display()
   //Indices buffer binding
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
-  //Contour if selected
+  //Contour
   if(state == TO_SEL){
     glLineWidth(10.0);
     uniformVec3(colorID, sele_color);
@@ -300,6 +299,7 @@ void CglicMesh::display()
     glEnable(GL_DEPTH_TEST);
     glLineWidth(1.0);
   }
+
   //Box
   if(box == TO_ON){
     if(state==TO_SEL){
@@ -356,6 +356,8 @@ void CglicMesh::display()
   //Indices buffer binding
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(1,0);
   if(useSmoothShading){
     GLuint MID      = glGetUniformLocation(shaderID, "M");
     GLuint VID      = glGetUniformLocation(shaderID, "V");
@@ -364,29 +366,31 @@ void CglicMesh::display()
     uniformVec3(colorID, face_color);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-
-    //OMBRES
-    glUseProgram(simpleShader.mProgramID);
-    MVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix(glm::vec4(*sceneUp,0.49), glm::vec4(3.0f * *sceneUp,1)) * MODEL;
-    GLuint ID      = glGetUniformLocation(simpleShader.mProgramID, "MVP");
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    uniformVec3(colorID, 0.6f * grid_color);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }
   else{
     //Faces
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(1,0);
     uniformVec3(colorID, face_color);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+  }
+
+  if(line==TO_ON){
     //Edges
     uniformVec3(colorID, edge_color);
     glPolygonMode(GL_FRONT, GL_LINE);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }
 
+  //OMBRES
+  if(useShadows){
+    glUseProgram(simpleShader.mProgramID);
+    MVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix(glm::vec4(*sceneUp,0.49), glm::vec4(*sceneUp,0)) * MODEL;
+    GLuint ID      = glGetUniformLocation(simpleShader.mProgramID, "MVP");
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    uniformVec3(colorID, 0.15f * face_color);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+  }
 
   //Closing and freeing ressources
   glDisable(GL_POLYGON_OFFSET_FILL);

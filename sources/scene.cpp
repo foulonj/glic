@@ -4,7 +4,7 @@
 CglicScene::CglicScene():transform(){
   state = TO_SEL;
   m_up = glm::vec3(0., 1., 0.);
-  m_cam = glm::vec3(0,0.2,1.4);
+  m_cam = glm::vec3(0,0.3,1.2);
   center = glm::vec3(0,0,0);
   VIEW = glm::lookAt(m_cam, m_look, m_up);
 }
@@ -29,6 +29,7 @@ void CglicScene::addObject(pCglicObject object)
     axis->pVIEW = &VIEW;
     axis->pMODEL= &MODEL;
     axis->sceneCenter = &center;
+    axis->sceneUp     = &m_up;
     axis->view  = view;
   }
 }

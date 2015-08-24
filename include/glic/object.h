@@ -42,6 +42,7 @@ public:
   glm::mat4 *pVIEW;
   glm::mat4 *pPROJ;
   bool useSmoothShading;
+  bool useShadows;
 
 public:
   char state;

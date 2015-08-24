@@ -36,8 +36,8 @@ CglicObject::CglicObject():transform()
   double b = (rand()/(double)(RAND_MAX + 1)) + 1;
   double c = (rand()/(double)(RAND_MAX + 1)) + 1;
   glm::vec3 rand = glm::vec3(a,b,c);
-  face_color = glm::vec3(0.5f) + 0.5f * rand;
-  edge_color = 0.5f * rand;
+  face_color = glm::vec3(0.7f) + 0.3f * rand;
+  edge_color = 0.7f * rand;
 }
 
 

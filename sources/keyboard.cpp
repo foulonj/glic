@@ -90,27 +90,28 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
 
   // ZOOM
   if((key == 'z') || (key == 'Z')){
-    double zoomFactor = 0.1;
-    //glm::vec3 zoom = -scene->m_look + scene->center;
-    //zoom *= zoomFactor;
+    double *fov = &scene->view->m_fovy;
+    double zoomFactor = 0.02;
+    //glm::vec3 zoom = (-scene->m_look + scene->center) * zoomFactor;
     float zoom = 0;
     if (key == 'z' )
-      zoom = 1.0f + zoomFactor;
+      *fov -= zoomFactor;
     else if (key == 'Z' )
-      zoom = 1.0f - zoomFactor;
-    scene->m_cam *= (float)(1.0f/zoom);
-    scene->MODEL = glm::scale(scene->MODEL, glm::vec3(zoom));
+      *fov += zoomFactor;
+    if(*fov<69.2){*fov=69.2;}
+    if(*fov>70.5){*fov=70.5;}
   }
 
   // BB and WIREFRAME
   if (key == 'b' ){
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
       scene->listObject[i]->activeBB();
-  };
+  }
+
   if (key == 'm' ){
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
       scene->listObject[i]->activeMesh();
-  };
+  }
 
   //Smooth to flat shading
   if (key == 'f'){

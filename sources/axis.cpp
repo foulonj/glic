@@ -1,19 +1,25 @@
 #include <glic/axis.h>
 
 CglicAxis::CglicAxis(){
-  float dash_size = 0.05;
+  float size       = 2;
+  float resolution = 20;
+  float dash_size = size/resolution;
+
   std::vector<glm::vec3> tGrid;
-  for(float x = -1. ; x <= 1. ; x+=0.05){
-    for(float z = -1. ; z <= 1. ; z+=0.05){
+  for(float x = -size/2 ; x <= size/2 ; x+=dash_size){
+    for(float z = -size/2 ; z <= size/2 ; z+=dash_size){
       tGrid.push_back(glm::vec3(x-dash_size/2, 0., z));
       tGrid.push_back(glm::vec3(x+dash_size/2, 0., z));
       tGrid.push_back(glm::vec3(x, 0., z-dash_size/2));
       tGrid.push_back(glm::vec3(x, 0., z+dash_size/2));
     }
   }
-  for(int i = 0 ; i < tGrid.size() ; i++)
+  for(int i = 0 ; i < tGrid.size() ; i++){
+    tGrid[i] = glm::rotate( glm::angleAxis((float)3.14159/4, glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(tGrid[i]));
+    tGrid[i] = glm::vec3(glm::translate(glm::mat4(1.0f),glm::vec3(0,-0.5,0)) * glm::vec4(tGrid[i], 1));
     for(int j = 0 ; j < 3 ; j++)
       grid.push_back(tGrid[i][j]);
+  }
   glGenBuffers( 1,               &gridBuffer);
   glBindBuffer( GL_ARRAY_BUFFER, gridBuffer);
   glBufferData( GL_ARRAY_BUFFER, sizeof(float) * grid.size(), &grid[0], GL_STATIC_DRAW);
@@ -44,7 +50,7 @@ void CglicAxis::display()
 
 
   //Fixed GRID
-  glm::mat4 MVP = glm::translate( *pPROJ * *pVIEW * glm::translate(MODEL, glm::vec3(0, -0.5, 0)), center);
+  glm::mat4 MVP = glm::translate( *pPROJ * *pVIEW * MODEL, center);
   glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
   glLineWidth(1.0);
   glBindBuffer(              GL_ARRAY_BUFFER, gridBuffer);
@@ -59,7 +65,8 @@ void CglicAxis::display()
   glDisable(GL_DEPTH_TEST);
   glViewport(0,0,150,150);
   //Allows for axes to stay centered
-  MVP = glm::translate(*pPROJ * *pVIEW * *pMODEL * MODEL, -*sceneCenter);
+  glm::mat4 neutralProj = glm::perspective(70.0, view->ratio, view->m_znear, view->m_zfar);
+  MVP = glm::translate(neutralProj * *pVIEW * *pMODEL * MODEL, -*sceneCenter);
   glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
   glLineWidth(2.0);
   glBindBuffer(              GL_ARRAY_BUFFER, axesBuffer);
@@ -75,6 +82,7 @@ void CglicAxis::display()
   //Z
   uniformVec3(colorID, B);
   glDrawArrays(GL_LINES, 4, 6);
+  /*
   //Labels des axes
   float offset = 20.0f;
   glTranslatef(-center.x, -center.y, -center.z);
@@ -93,7 +101,7 @@ void CglicAxis::display()
   glColor3f(B.x, B.y, B.z);
   glRasterPos3f(newPos.x, newPos.y, newPos.z);
   glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, 'Z');
-  glTranslatef(center.x, center.y, center.z);
+  glTranslatef(center.x, center.y, center.z);*/
 
 
   //Ressources freeing
