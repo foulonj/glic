@@ -145,7 +145,12 @@ void CglicCanvas::keyWrap(unsigned char key, int x, int y)
   pcv->keyboard.keyboard(key, x, y);
   glutPostRedisplay();
 }
-
+void CglicCanvas::keyUpWrap(unsigned char key, int x, int y)
+{
+  //cout << " [keyboardWrap]" << endl;
+  pcv->keyboard.keyboardUp(key, x, y);
+  glutPostRedisplay();
+}
 
 void CglicCanvas::specialWrap(int key, int x, int y)
 {

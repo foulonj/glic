@@ -35,7 +35,6 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
         obj->transform.lastMatrices.push_back(obj->MODEL);
       }
     }
-    lastKey = key;
   }
 
   //glm::vec3 moveX(0.005, 0., 0.);
@@ -49,7 +48,7 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
       setTranslation(-moveX, state);
       break;
     case GLUT_KEY_RIGHT:
-      cout << "GLUT_KEY_RIGHT TRANSFORM SCENE" << endl;
+      cout << "GLUT_KEY_RIGHT" << endl;
       setTranslation(moveX, state);
       break;
     case GLUT_KEY_DOWN:
@@ -63,11 +62,13 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
     default:
       break;
   }
+  lastKey = key;
 }
 
 void CglicKeyboard::keyboard(unsigned char key, int x, int y)
 {
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+
   // QUIT
   if ( key == 'q' || key == 27 )
     exit(0);
@@ -102,12 +103,13 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     if(*fov>70.5){*fov=70.5;}
   }
 
-  // BB and WIREFRAME
+  // BB
   if (key == 'b' ){
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
       scene->listObject[i]->activeBB();
   }
 
+  // Wireframe
   if (key == 'm' ){
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
       scene->listObject[i]->activeMesh();
@@ -157,4 +159,16 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
       }
     }
   }
+
+  if(lastKey=='t'){
+    if(key=='x'){
+      cout << "constrainRotation to x" << endl;
+    }
+  }
+
+  lastKey = key;
+
 }
+
+void CglicKeyboard::keyboardUp(unsigned char key, int x, int y){}
+

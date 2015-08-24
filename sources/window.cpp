@@ -41,6 +41,7 @@ void CglicWindow::show()
   glutDisplayFunc(pcv->displayWrap);
   glutMouseFunc(pcv->mouseWrap);
   glutKeyboardFunc(pcv->keyWrap);
+  glutKeyboardUpFunc(pcv->keyUpWrap);
   glutMotionFunc(pcv->motionWrap);
   glutSpecialFunc(pcv->specialWrap);
 

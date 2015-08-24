@@ -17,6 +17,7 @@ public:
   CglicKeyboard(){selection=-1; lastKey='ff';};
   virtual ~CglicKeyboard(){};
   void keyboard(unsigned char key, int x, int y);
+  void keyboardUp(unsigned char key, int x, int y);
   void special(unsigned char key, int x, int y);
 
 private:
