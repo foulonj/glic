@@ -54,30 +54,18 @@ void CglicMouse::motion(int x, int y)
 
     //Si la scène est sélectionnée
     if (scene->state == CglicScene::TO_SEL)
-      //scene->transform.setQuaternion(QUAT);
       scene->transform.setRotation(ROT);
     //Si un objet est sélectionné
     else{
       for (unsigned int i = 0; i < scene->listObject.size(); i++){
         if (scene->listObject[i]->state == CglicCube::TO_SEL){
-          if(scene->listObject[i]->transform.lastMatrices.size()>0){
-            int ind = scene->listObject[i]->transform.lastMatrices.size() - 1;
-            scene->listObject[i]->transform.lastMatrices[ind] = scene->listObject[i]->MODEL;
-            cout << ind << endl;
-          }
-          //Stockage de l'état initial
-          if(isPressed){
-            cout << "toto!!!" << endl;
-            isPressed = false;
-            scene->listObject[i]->transform.lastMatrices.push_back(scene->listObject[i]->MODEL);
-          }
           scene->listObject[i]->transform.setRotation(ROT);
-          //On actualise la dernière matrice
         }
       }
     }
-    cout << isPressed << endl;
+
   }
+
 }
 
 
@@ -89,28 +77,37 @@ void CglicMouse::mouse(int b, int s, int x, int y)
   m_tm = glutGet(GLUT_ELAPSED_TIME);
   lastPos = glm::vec2(x,y);
 
-
+  //Sauvegarde des opérations
+  isPressed  = (s == GLUT_DOWN);
+  isReleased = (s == GLUT_UP  );
 
   switch(b)
   {
     case GLUT_LEFT_BUTTON:
       m_button[0] = ((GLUT_DOWN==s)?1:0);
-      if(m_button[0]){
-        isPressed = true;
-        cout << "eeeeeek" << endl;
+
+      //A l'appui, on enregistre le MODEL
+      if(isPressed){
+        for (unsigned int i = 0; i < scene->listObject.size(); i++){
+          CglicObject *obj = scene->listObject[i];
+          if (obj->state == CglicCube::TO_SEL){
+            obj->transform.lastMatrices.push_back(obj->MODEL);
+          }
+        }
       }
 
       currPos = glm::vec2( glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT) );
       m_pos = projsph(glm::vec2(0.));
       key = glutGetModifiers();
       m_key = TM_NONE;
-      if ( glutGetModifiers() & GLUT_ACTIVE_SHIFT){cout << "\n\n\t Active shift \n\n"; m_key = TM_SHIFT;};
+      if ( glutGetModifiers() & GLUT_ACTIVE_SHIFT){
+        cout << "\n\n\t Active shift \n\n"; m_key = TM_SHIFT;
+      }
       if (glutGetModifiers() & GLUT_ACTIVE_CTRL){
         m_key = TM_CTRL;
         pcv->glicPickObject(x, y);
-      };
+      }
       break;
-
 
     case GLUT_MIDDLE_BUTTON:
       m_button[1] = ((GLUT_DOWN==s)?1:0);

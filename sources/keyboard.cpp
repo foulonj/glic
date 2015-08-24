@@ -122,11 +122,14 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   //Reset rotations of objects
   if (key == 'r'){
     for(int i = 0 ; i < scene->listObject.size() ; i++){
-      if(scene->listObject[i]->state == CglicObject::TO_SEL){
+      pCglicObject obj = scene->listObject[i];
+      if(obj->state == CglicObject::TO_SEL){
         cout << "undo" << endl;
-        if(scene->listObject[i]->transform.lastMatrices.size()>0){
-          scene->listObject[i]->MODEL *= glm::inverse(scene->listObject[i]->transform.lastMatrices.back());
-          scene->listObject[i]->transform.lastMatrices.pop_back();
+        if(obj->transform.lastMatrices.size()>0){
+          //scene->listObject[i]->MODEL *= glm::inverse(scene->listObject[i]->transform.lastMatrices.back());
+          obj->MODEL = obj->transform.lastMatrices.back();
+          obj->transform.lastMatrices.pop_back();
+          //cout << obj->transform.lastMatrices.size() << endl;
         }
       }
     }
