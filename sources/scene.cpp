@@ -96,11 +96,17 @@ void CglicScene::update_matrices()
 
 void CglicScene::debug(){
   //Vectors
-  cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
-  cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
-  cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
-  cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
-  cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
+  //cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
+  //cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
+  //cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
+  //cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
+  //cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
+
+  cout << " MODEL " << endl;
+  CglicObject obj = *listObject[0];
+  for(int i = 0 ; i < 4 ; i++)
+    cout << obj.MODEL[i][0] << " " << obj.MODEL[i][1] << " " << obj.MODEL[i][2] << " " << obj.MODEL[i][3] << endl;
+  cout << endl;
 
   /*
   //Matrices

@@ -23,6 +23,18 @@ void setTranslation(glm::vec3 tr, int &state){
 
 void CglicKeyboard::special(unsigned char key, int x, int y)
 {
+  pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+  if(key!=lastKey){
+    for (unsigned int i = 0; i < scene->listObject.size(); i++){
+      CglicObject *obj = scene->listObject[i];
+      if (obj->state == CglicCube::TO_SEL){
+        obj->transform.lastMatrices.push_back(obj->MODEL);
+      }
+    }
+    cout << "Different translation!!" << endl;
+    lastKey = key;
+  }
+
   glm::vec3 moveX(0.005, 0., 0.);
   glm::vec3 moveZ(0., 0., 0.005);
   int state = 0;
@@ -128,6 +140,7 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
         if(obj->transform.lastMatrices.size()>0){
           //scene->listObject[i]->MODEL *= glm::inverse(scene->listObject[i]->transform.lastMatrices.back());
           obj->MODEL = obj->transform.lastMatrices.back();
+          obj->center = glm::vec3(glm::vec4(obj->MODEL[3]));
           obj->transform.lastMatrices.pop_back();
           //cout << obj->transform.lastMatrices.size() << endl;
         }

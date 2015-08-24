@@ -20,6 +20,7 @@ public:
   void special(unsigned char key, int x, int y);
 
 private:
+  unsigned char lastKey;
   int selection;
   void keyColor(unsigned char key,int x,int y);
 };
