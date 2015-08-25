@@ -28,6 +28,8 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
   if(key!=lastKey){
     if (scene->state == CglicObject::TO_SEL){
       scene->transform.lastMatrices.push_back(scene->MODEL);
+      scene->transform.lastUps.push_back(scene->m_up);
+      scene->transform.lastCams.push_back(scene->m_cam);
     }
     for (unsigned int i = 0; i < scene->listObject.size(); i++){
       CglicObject *obj = scene->listObject[i];
@@ -145,7 +147,11 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
       if(scene->transform.lastMatrices.size()>0){
         scene->MODEL = scene->transform.lastMatrices.back();
         scene->center = glm::vec3(glm::vec4(scene->MODEL[3]));
+        scene->m_up = scene->transform.lastUps.back();
+        scene->m_cam = scene->transform.lastCams.back();
         scene->transform.lastMatrices.pop_back();
+        scene->transform.lastUps.pop_back();
+        scene->transform.lastCams.pop_back();
       }
     }
     for(int i = 0 ; i < scene->listObject.size() ; i++){

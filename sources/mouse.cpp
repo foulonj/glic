@@ -90,6 +90,8 @@ void CglicMouse::mouse(int b, int s, int x, int y)
       if(isPressed){
         if (scene->state == CglicObject::TO_SEL)
           scene->transform.lastMatrices.push_back(scene->MODEL);
+          scene->transform.lastUps.push_back(scene->m_up);
+          scene->transform.lastCams.push_back(scene->m_cam);
         for (unsigned int i = 0; i < scene->listObject.size(); i++){
           CglicObject *obj = scene->listObject[i];
           if (obj->state == CglicCube::TO_SEL){

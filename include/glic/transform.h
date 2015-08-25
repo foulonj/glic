@@ -16,16 +16,17 @@ class GLIC_API CglicTransform
 public:
   glm::vec3 tr;
   glm::mat4 rot;
-  glm::quat quat;
+  //glm::quat quat;
 
   //Retour en arrière
-  glm::mat4 lastMatrix;
   std::vector<glm::mat4> lastMatrices;
+  std::vector<glm::vec3> lastUps;
+  std::vector<glm::vec3> lastCams;
 
   CglicTransform(){};
   ~CglicTransform(){};
   void setRotation(glm::mat4 M);
-  void setQuaternion(glm::quat Q);
+  //void setQuaternion(glm::quat Q);
   void setTranslation(glm::vec3 translation);
   void print();
   void reset();

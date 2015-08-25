@@ -387,7 +387,7 @@ void CglicMesh::display()
     MVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix(glm::vec4(*sceneUp,0.49), glm::vec4(*sceneUp,0)) * MODEL;
     GLuint ID      = glGetUniformLocation(simpleShader.mProgramID, "MVP");
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    uniformVec3(colorID, 0.15f * face_color);
+    uniformVec3(colorID, 0.10f * face_color);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }
