@@ -1,4 +1,6 @@
 #include <glic/axis.h>
+#include <glic/canvas.h>
+extern CglicCanvas *pcv;
 
 CglicAxis::CglicAxis(){
   float size       = 2;
@@ -56,40 +58,43 @@ void CglicAxis::display()
   GLuint MatrixID = glGetUniformLocation(simpleShader.mProgramID, "MVP");
   GLuint colorID  = glGetUniformLocation(simpleShader.mProgramID, "COL");
 
-
-  //Fixed GRID
-  glm::mat4 MVP = glm::translate( *pPROJ * *pVIEW * MODEL, center);
-  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-  glLineWidth(1.0);
-  glBindBuffer(              GL_ARRAY_BUFFER, gridBuffer);
-  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      simpleShader.mProgramID, 0, "vertex_position");
-  uniformVec3(colorID, grid_color);
-  glPolygonMode(GL_FRONT, GL_LINE);
-  glDrawArrays(GL_LINES, 0, grid.size()/3);
-
+  //GRID
+  if(pcv->profile.displayBottomGrid){
+    glm::mat4 MVP = glm::translate( *pPROJ * *pVIEW * MODEL, center);
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glLineWidth(1.0);
+    glBindBuffer(              GL_ARRAY_BUFFER, gridBuffer);
+    glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(      simpleShader.mProgramID, 0, "vertex_position");
+    uniformVec3(colorID, pcv->profile.grid_color);
+    glPolygonMode(GL_FRONT, GL_LINE);
+    glDrawArrays(GL_LINES, 0, grid.size()/3);
+  }
 
   //Axes
-  glDisable(GL_DEPTH_TEST);
-  glViewport(0,0,150,150);
-  //Allows for axes to stay centered
-  glm::mat4 neutralProj = glm::perspective(70.0, view->ratio, view->m_znear, view->m_zfar);
-  MVP = glm::translate(neutralProj * *pVIEW * *pMODEL * MODEL, -*sceneCenter);
-  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-  glLineWidth(2.0);
-  glBindBuffer(              GL_ARRAY_BUFFER, axesBuffer);
-  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      simpleShader.mProgramID, 0, "vertex_position");
-  glPolygonMode(GL_FRONT, GL_LINE);
-  //X
-  uniformVec3(colorID, R);
-  glDrawArrays(GL_LINES, 0, 2);
-  //Y
-  uniformVec3(colorID, G);
-  glDrawArrays(GL_LINES, 2, 4);
-  //Z
-  uniformVec3(colorID, B);
-  glDrawArrays(GL_LINES, 4, 6);
+  if(pcv->profile.displayAxes){
+    glDisable(GL_DEPTH_TEST);
+    glViewport(0,0,150,150);
+    //Allows for axes to stay centered
+    glm::mat4 neutralProj = glm::perspective(70.0, view->ratio, view->m_znear, view->m_zfar);
+    glm::mat4 MVP = glm::translate(neutralProj * *pVIEW * *pMODEL * MODEL, -*sceneCenter);
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glLineWidth(2.0);
+    glBindBuffer(              GL_ARRAY_BUFFER, axesBuffer);
+    glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(      simpleShader.mProgramID, 0, "vertex_position");
+    glPolygonMode(GL_FRONT, GL_LINE);
+    //X
+    uniformVec3(colorID, R);
+    glDrawArrays(GL_LINES, 0, 2);
+    //Y
+    uniformVec3(colorID, G);
+    glDrawArrays(GL_LINES, 2, 4);
+    //Z
+    uniformVec3(colorID, B);
+    glDrawArrays(GL_LINES, 4, 6);
+  }
+
   /*
   //Labels des axes
   float offset = 20.0f;

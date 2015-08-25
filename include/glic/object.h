@@ -26,7 +26,7 @@ public:
 
 public:
   glm::vec3 R, G, B, WHITE, BLACK;
-  glm::vec3 grid_color, face_color, edge_color, sele_color, idle_color;
+  glm::vec3 face_color, edge_color;
 
   int pickingID;
   SHADER pickingShader;

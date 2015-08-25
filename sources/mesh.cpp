@@ -288,7 +288,7 @@ void CglicMesh::display()
   //Contour
   if(state == TO_SEL){
     glLineWidth(10.0);
-    uniformVec3(colorID, sele_color);
+    uniformVec3(colorID, pcv->profile.sele_color);
     glDisable(GL_DEPTH_TEST);
     glPolygonMode(GL_FRONT, GL_LINE);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
@@ -300,11 +300,11 @@ void CglicMesh::display()
   if(box == TO_ON){
     if(state==TO_SEL){
       glLineWidth(2.0);
-      uniformVec3(colorID, sele_color);
+      uniformVec3(colorID, pcv->profile.sele_color);
     }
     else{
       glLineWidth(1.0);
-      uniformVec3(colorID, idle_color);
+      uniformVec3(colorID, pcv->profile.idle_color);
     }
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
@@ -378,7 +378,7 @@ void CglicMesh::display()
   }
 
   //OMBRES
-  if(pcv->profile.useShadows){
+  if(pcv->profile.displayShadows){
     glUseProgram(simpleShader.mProgramID);
     MVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix( glm::vec4(*sceneUp, 0.495), glm::vec4(*sceneUp, 0) ) * MODEL;
     GLuint ID      = glGetUniformLocation(simpleShader.mProgramID, "MVP");

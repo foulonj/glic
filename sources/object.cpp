@@ -25,11 +25,8 @@ CglicObject::CglicObject():transform()
   R          = glm::vec3(1,   0,   0);
   G          = glm::vec3(0,   1,   0);
   B          = glm::vec3(0,   0,   1);
-  grid_color = glm::vec3(0.5, 0.5, 0.5);
   //face_color = glm::vec3(0.8, 0,   0.2);
   //edge_color = glm::vec3(0.5, 0 ,  0.2);
-  sele_color = glm::vec3(1,   0.6, 0);
-  idle_color = glm::vec3(0.8, 0.8, 0.8);
 
   //New random implementation
   double a = (rand()/(double)(RAND_MAX + 1)) + 1;

@@ -60,17 +60,12 @@ void CglicMouse::motion(int x, int y)
       if (obj->state == CglicCube::TO_SEL){
         if(obj->isRotationConstrained)
           obj->transform.setRotation(glm::rotate(ID, 5.0f * (d.y), obj->constrainedRotationAxis));
-        else if(obj->isTranslationConstrained){
+        else if(obj->isTranslationConstrained)
           obj->transform.tr += 1.0f * (d.y) * obj->constrainedTranslationAxis;
-          cout << "toto!!!" << endl;
-        }
         else
           obj->transform.setRotation(ROT);
-
-
       }
     }
-
   }
 
 }
