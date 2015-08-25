@@ -2,7 +2,9 @@
 extern "C" {
 #include <libmesh5.h>
 }
+#include <glic/canvas.h>
 
+extern CglicCanvas *pcv;
 
 CglicMesh::CglicMesh(char *name)
 {
@@ -235,12 +237,6 @@ void CglicMesh::getBBOX()
 }
 
 
-
-
-
-
-
-
 //Light[3] = 0 si directionelle
 glm::mat4 shadowMatrix(glm::vec4 ground, glm::vec4 light){
     float  dot;
@@ -382,9 +378,11 @@ void CglicMesh::display()
   }
 
   //OMBRES
-  if(useShadows){
+  if(pcv->profile.useShadows){
     glUseProgram(simpleShader.mProgramID);
-    MVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix(glm::vec4(*sceneUp,0.49), glm::vec4(*sceneUp,0)) * MODEL;
+    MVP =  *pPROJ * *pVIEW * *pMODEL *  shadowMatrix( glm::vec4(*sceneUp, 0.49 ),   // Plan de projection, défini par une normale
+                                                      glm::vec4(*sceneUp + *sceneCenter,0))           // Position de la lumière, 0 si directionelle
+                                                    * MODEL;
     GLuint ID      = glGetUniformLocation(simpleShader.mProgramID, "MVP");
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
     uniformVec3(colorID, 0.10f * face_color);

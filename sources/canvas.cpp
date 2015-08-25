@@ -1,8 +1,6 @@
 #include <glic/canvas.h>
-#include <glic/profile.h>
 
 CglicCanvas *pcv;
-
 
 CglicCanvas::CglicCanvas(int argc, char **argv)
 {
@@ -12,6 +10,9 @@ CglicCanvas::CglicCanvas(int argc, char **argv)
   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL);
 
   glicLight();
+
+  //Construct profile from a configuration file
+  profile = CglicProfile();
 }
 
 

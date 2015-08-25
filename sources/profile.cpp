@@ -2,7 +2,9 @@
 
 CglicProfile::CglicProfile()
 {
-  //ctor
+  //ctor from file
+  useShadows    = true;
+  useBottomGrid = true;
 }
 
 CglicProfile::~CglicProfile()
