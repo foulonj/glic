@@ -17,17 +17,19 @@
 #include <glic/window.h>
 #include <glic/transform.h>
 #include <glic/profile.h>
+#include <glic/shader.h>
 
 class GLIC_API CglicCanvas
 {
 public:
-  std::vector<CglicLight>   light;
+  std::vector<CglicLight>    light;
   std::vector<pCglicScene>   scene;
-  std::vector<CglicWindow>  window;
+  std::vector<CglicWindow>   window;
   std::vector<pCglicObject>  object;
   CglicMouse    mice;
   CglicKeyboard keyboard;
   CglicProfile  profile;
+  SHADER        simpleShader, smoothShader;
 
   //private:
   int winid();

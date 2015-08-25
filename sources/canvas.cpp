@@ -7,7 +7,8 @@ CglicCanvas::CglicCanvas(int argc, char **argv)
   pcv = this;
 
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL);
+
+  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
   glicLight();
 
@@ -163,6 +164,8 @@ void CglicCanvas::specialWrap(int key, int x, int y)
 
 void CglicCanvas::glicMainLoop()
 {
+  simpleShader.load("shaders/shader.vert", "shaders/shader.frag");
+  smoothShader.load("shaders/smooth_shader.vert", "shaders/smooth_shader.frag");
   glutMainLoop();
 }
 

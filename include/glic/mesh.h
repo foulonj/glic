@@ -44,8 +44,6 @@ private:
   vector<Tria>     tria;
   vector<Normal>   normal;
   vector<NormalAtVertex> NormalAtVertices;
-  SHADER simpleShader;
-  SHADER smoothShader;
   GLuint bboxBuffer;
   GLuint bboxIndBuffer;
   GLuint normalBuffer;

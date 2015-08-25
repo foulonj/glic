@@ -1,4 +1,6 @@
 #include <glic/object.h>
+#include <glic/canvas.h>
+extern CglicCanvas *pcv;
 
 void CglicObject::uniformVec3(int ID, glm::vec3 v){
   glUniform3f(ID, v.x, v.y, v.z);
@@ -69,7 +71,7 @@ void CglicObject::applyTransformation()
 }
 
 void CglicObject::pickingDisplay(){
-  int shaderID = pickingShader.mProgramID;
+  int shaderID = pcv->simpleShader.mProgramID;
   glUseProgram(shaderID);
   int MatrixID = glGetUniformLocation(shaderID, "MVP");
   int colorID  = glGetUniformLocation(shaderID, "COL");

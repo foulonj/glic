@@ -25,8 +25,6 @@ int main(int argc, char **argv){
 
   int   idw,ids,ido;
 
-
-
   CglicCanvas cv(argc,argv);
 
   if (argc <=1){
@@ -40,6 +38,8 @@ int main(int argc, char **argv){
 
 
     cv.window[idw].show();
+    InitGlew();
+
 
     //cv.window[idw].glicAddLight(&cv.light[0]);
     //cv.window[idw].glicAddLight(&cv.light[1]);
@@ -81,10 +81,6 @@ int main(int argc, char **argv){
 
     //ido = cv.glicObject(new CglicCube());
     //cv.glicSetObject(ido, ids);
-
-
-    InitGlew();
-
   }
 
   else
@@ -93,9 +89,10 @@ int main(int argc, char **argv){
     ids = cv.glicScene();
     cv.glicSetScene(ids, idw);
     cv.window[idw].show();
-    cout << idw << " " << ids << endl;
 
     InitGlew();
+
+    cout << idw << " " << ids << endl;
 
     vector<CglicMesh*> mesh;
     for (int i=0; i < argc - 1; i++){
@@ -105,21 +102,9 @@ int main(int argc, char **argv){
       ido = cv.glicObject(mesh[i]);
       cv.glicSetObject(ido, ids);
     }
-
-/*
-    ids = cv.glicScene();
-    idw = cv.glicWindow(1500,0,800,800);
-    cv.glicSetScene(ids, idw);
-    cv.window[idw].show();
-    cout << idw << " " << ids << endl;
-
-    for (int i=0; i < argc - 1; i++){
-      ido = cv.glicObject(mesh[i]);
-      cv.glicSetObject(ido, ids);
-    }
-    */
   }
 
   cv.glicMainLoop();
+
   return(EXIT_SUCCESS);
 }

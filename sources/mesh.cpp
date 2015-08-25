@@ -134,9 +134,6 @@ CglicMesh::CglicMesh(char *name)
 
   //TYPE DE RENDU ET SHADER
   useSmoothShading = true;
-  //useShadows       = true;
-  smoothShader.load("shaders/smooth_shader.vert", "shaders/smooth_shader.frag");
-  //ceci pour le picking
   nPicking = 3 * tria.size();
 }
 
@@ -229,7 +226,7 @@ void CglicMesh::getBBOX()
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-  simpleShader.load("shaders/shader.vert", "shaders/shader.frag");
+
 
   //Freeing ressources
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -272,16 +269,16 @@ void CglicMesh::display()
   /////////////////////////////////////////////////////////////////////////////////////////
   //Initialization
   glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * MODEL;
-  int shaderID = simpleShader.mProgramID;
+  int shaderID = pcv->simpleShader.mProgramID;
   glUseProgram(shaderID);
-  int MatrixID = glGetUniformLocation(shaderID, "MVP");
-  int colorID  = glGetUniformLocation(shaderID, "COL");
+  int MatrixID = glGetUniformLocation(pcv->simpleShader.mProgramID, "MVP");
+  int colorID  = glGetUniformLocation(pcv->simpleShader.mProgramID, "COL");
   glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
   //Mesh buffer binding
   glEnableVertexAttribArray( 0);
   glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
   glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      shaderID, 0, "vertex_position");
+  glBindAttribLocation(      pcv->simpleShader.mProgramID, 0, "vertex_position");
   //Indices buffer binding
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
@@ -327,9 +324,9 @@ void CglicMesh::display()
 
   //Shader used as main rendering
   if(useSmoothShading)
-    shaderID = smoothShader.mProgramID;
+    shaderID = pcv->smoothShader.mProgramID;
   else
-    shaderID = simpleShader.mProgramID;
+    shaderID = pcv->simpleShader.mProgramID;
 
   //Initialization
   glUseProgram(shaderID);
@@ -379,9 +376,9 @@ void CglicMesh::display()
 
   //OMBRES
   if(pcv->profile.displayShadows){
-    glUseProgram(simpleShader.mProgramID);
+    glUseProgram(pcv->simpleShader.mProgramID);
     MVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix( glm::vec4(*sceneUp, 0.495), glm::vec4(*sceneUp, 0) ) * MODEL;
-    GLuint ID      = glGetUniformLocation(simpleShader.mProgramID, "MVP");
+    GLuint ID      = glGetUniformLocation(pcv->simpleShader.mProgramID, "MVP");
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
     uniformVec3(colorID, 0.08f * face_color);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -400,12 +397,13 @@ void CglicMesh::display()
       pts.push_back( 10.0f * constrainedTranslationAxis + center);
     }
 
+    glUseProgram(pcv->simpleShader.mProgramID);
     GLuint axeBuffer;
     glGenBuffers(1, &axeBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, axeBuffer);
     glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), &pts[0][0], GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindAttribLocation(shaderID, 0, "vertex_position");
+    glBindAttribLocation(pcv->simpleShader.mProgramID, 0, "vertex_position");
 
     MVP = *pPROJ * *pVIEW * *pMODEL;// * glm::translate(MODEL, center);
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);

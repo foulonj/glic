@@ -46,17 +46,15 @@ CglicAxis::CglicAxis(){
   glGenBuffers( 1,               &axesBuffer);
   glBindBuffer( GL_ARRAY_BUFFER, axesBuffer);
   glBufferData( GL_ARRAY_BUFFER, sizeof(float) * axes.size(), &axes[0], GL_STATIC_DRAW);
-
-  simpleShader.load("shaders/shader.vert", "shaders/shader.frag");
 }
 
 void CglicAxis::display()
 {
   //Initialization
-  glUseProgram(simpleShader.mProgramID);
+  glUseProgram(pcv->simpleShader.mProgramID);
   glEnableVertexAttribArray( 0);
-  GLuint MatrixID = glGetUniformLocation(simpleShader.mProgramID, "MVP");
-  GLuint colorID  = glGetUniformLocation(simpleShader.mProgramID, "COL");
+  GLuint MatrixID = glGetUniformLocation(pcv->simpleShader.mProgramID, "MVP");
+  GLuint colorID  = glGetUniformLocation(pcv->simpleShader.mProgramID, "COL");
 
   //GRID
   if(pcv->profile.displayBottomGrid){
@@ -65,7 +63,7 @@ void CglicAxis::display()
     glLineWidth(1.0);
     glBindBuffer(              GL_ARRAY_BUFFER, gridBuffer);
     glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindAttribLocation(      simpleShader.mProgramID, 0, "vertex_position");
+    glBindAttribLocation(      pcv->simpleShader.mProgramID, 0, "vertex_position");
     uniformVec3(colorID, pcv->profile.grid_color);
     glPolygonMode(GL_FRONT, GL_LINE);
     glDrawArrays(GL_LINES, 0, grid.size()/3);
@@ -82,7 +80,7 @@ void CglicAxis::display()
     glLineWidth(2.0);
     glBindBuffer(              GL_ARRAY_BUFFER, axesBuffer);
     glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindAttribLocation(      simpleShader.mProgramID, 0, "vertex_position");
+    glBindAttribLocation(      pcv->simpleShader.mProgramID, 0, "vertex_position");
     glPolygonMode(GL_FRONT, GL_LINE);
     //X
     uniformVec3(colorID, R);

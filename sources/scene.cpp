@@ -24,7 +24,6 @@ void CglicScene::addObject(pCglicObject object)
   object->sceneUp     = &m_up;
   object->pickingID = listObject.size();
   object->pickingColor = glm::vec3(object->pickingID/255.0f, 0, 0);
-  object->pickingShader.load("shaders/shader.vert", "shaders/shader.frag");
   if(listObject.size()==1){
     axis = new CglicAxis();
     axis->pPROJ = &PROJ;
@@ -32,7 +31,7 @@ void CglicScene::addObject(pCglicObject object)
     axis->pMODEL= &MODEL;
     axis->sceneCenter = &center;
     axis->sceneUp     = &m_up;
-    axis->view  = view;
+    axis->view        = view;
   }
 }
 

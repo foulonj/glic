@@ -29,7 +29,6 @@ public:
   glm::vec3 face_color, edge_color;
 
   int pickingID;
-  SHADER pickingShader;
   glm::vec3 pickingColor;
   GLuint meshBuffer;
   GLuint indicesBuffer;
@@ -42,7 +41,6 @@ public:
   glm::mat4 *pVIEW;
   glm::mat4 *pPROJ;
   bool useSmoothShading;
-  //bool useShadows;
 
   bool      isRotationConstrained,   isTranslationConstrained;
   glm::vec3 constrainedRotationAxis, constrainedTranslationAxis;

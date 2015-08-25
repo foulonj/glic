@@ -26,7 +26,6 @@ private:
   vector<float> colo;
   vector<float> grid;
   vector<float> axes;
-  SHADER simpleShader;
   GLuint cubeBuffer;
   GLuint gridBuffer;
   GLuint axesBuffer;
