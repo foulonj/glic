@@ -134,7 +134,7 @@ CglicMesh::CglicMesh(char *name)
 
   //TYPE DE RENDU ET SHADER
   useSmoothShading = true;
-  useShadows       = true;
+  //useShadows       = true;
   smoothShader.load("shaders/smooth_shader.vert", "shaders/smooth_shader.frag");
   //ceci pour le picking
   nPicking = 3 * tria.size();
@@ -380,14 +380,42 @@ void CglicMesh::display()
   //OMBRES
   if(pcv->profile.useShadows){
     glUseProgram(simpleShader.mProgramID);
-    MVP =  *pPROJ * *pVIEW * *pMODEL *  shadowMatrix( glm::vec4(*sceneUp, 0.49 ),   // Plan de projection, défini par une normale
-                                                      glm::vec4(*sceneUp + *sceneCenter,0))           // Position de la lumière, 0 si directionelle
-                                                    * MODEL;
+    MVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix( glm::vec4(*sceneUp, 0.495), glm::vec4(*sceneUp, 0) ) * MODEL;
     GLuint ID      = glGetUniformLocation(simpleShader.mProgramID, "MVP");
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    uniformVec3(colorID, 0.10f * face_color);
+    uniformVec3(colorID, 0.08f * face_color);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+  }
+
+  //Axes avec contraintes
+  if((isRotationConstrained) || (isTranslationConstrained)){
+    std::vector<glm::vec3> pts;
+    if(isRotationConstrained){
+      pts.push_back(-10.0f * constrainedRotationAxis + center);
+      pts.push_back( 10.0f * constrainedRotationAxis + center);
+    }
+    else if(isTranslationConstrained){
+      pts.push_back(-10.0f * constrainedTranslationAxis + center);
+      pts.push_back( 10.0f * constrainedTranslationAxis + center);
+    }
+
+    GLuint axeBuffer;
+    glGenBuffers(1, &axeBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, axeBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), &pts[0][0], GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(shaderID, 0, "vertex_position");
+
+    MVP = *pPROJ * *pVIEW * *pMODEL;// * glm::translate(MODEL, center);
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    if(isRotationConstrained)
+      uniformVec3(colorID, constrainedRotationAxis);
+    else if(isTranslationConstrained)
+      uniformVec3(colorID, constrainedTranslationAxis);
+
+    glLineWidth(2.0f);
+    glDrawArrays(GL_LINES, 0, 2);
   }
 
   //Closing and freeing ressources

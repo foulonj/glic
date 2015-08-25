@@ -3,8 +3,10 @@
 // object constructor
 CglicScene::CglicScene():transform(){
   state = TO_SEL;
-  m_up = glm::vec3(0., 1., 0.);
   m_cam = glm::vec3(0,0.3,1.2);
+  m_look = -m_cam;
+  m_up = glm::vec3(0., 1., 0.);
+  m_right = glm::cross(m_look, m_up);
   center = glm::vec3(0,0,0);
   VIEW = glm::lookAt(m_cam, m_look, m_up);
 }
@@ -48,7 +50,7 @@ void CglicScene::display()
   axis->applyTransformation();
   axis->display();
 
-  debug();
+  //debug();
 }
 
 
@@ -78,23 +80,27 @@ void CglicScene::reOrderObjects(){
 void CglicScene::applyTransformation()
 {
   glm::mat4 ID = glm::mat4(1.0f);
-  center += transform.tr;
+  //center += transform.tr;
   glm::mat4 TRANS;
-  TRANS = glm::translate(ID, -center) * transform.rot * glm::translate(ID, center) * glm::translate(ID, transform.tr);
+  TRANS = glm::translate(ID, -center) * transform.rot * glm::translate(ID, center);
 
-  MODEL = MODEL * TRANS;
+  //MODEL = MODEL * TRANS;
+  for(int i = 0 ; i < listObject.size() ; i++){
+    listObject[i]->transform.tr += transform.tr;
+  }
+
   m_cam = glm::vec3(glm::inverse(TRANS) * glm::vec4(m_cam,1));
-  m_up = glm::vec3(glm::inverse(TRANS) * glm::vec4(m_up,1));
+  //m_up = glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_up,1)));
+  m_look = glm::normalize(-m_cam);
+  m_right = glm::normalize(glm::cross(m_look, m_up));
 
   transform.reset();
 }
 
 void CglicScene::update_matrices()
 {
-  //VIEW = glm::lookAt(m_cam, m_look, m_up);
+  VIEW = glm::lookAt(m_cam, m_look, m_up);
   PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
-  m_look = -m_cam + 2.0f * center;
-  m_right = glm::cross(m_look, m_up);
 }
 
 void CglicScene::debug(){
@@ -105,7 +111,6 @@ void CglicScene::debug(){
   cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
   cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
 
-  /*
   //Matrices
   cout << endl;
   cout << " MODEL " << endl;
@@ -128,7 +133,7 @@ void CglicScene::debug(){
   for(int i = 0 ; i < 4 ; i++)
     cout << X[i][0] << " " << X[i][1] << " " << X[i][2] << " " << X[i][3] << endl;
   cout << endl;
-  */
+
 }
 
 

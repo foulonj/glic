@@ -40,9 +40,11 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
   }
 
   //glm::vec3 moveX(0.005, 0., 0.);
-  //glm::vec3 moveZ(0., 0., 0.005);
+  //glm::vec3 moveZ(0., 0.005, 0.0);
   glm::vec3 moveX = 0.01f * scene->m_right;
   glm::vec3 moveZ = 0.01f * scene->m_up;
+
+
   int state = 0;
   switch (key) {
     case GLUT_KEY_LEFT:
@@ -76,8 +78,7 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     exit(0);
 
   // SELECT
-  if ( key =='s')
-  {
+  if ( key =='s'){
     selection+=1;
     if (selection >= scene->listObject.size())
       selection = -1;
@@ -92,7 +93,7 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   };
 
   // ZOOM
-  if((key == 'z') || (key == 'Z')){
+  if(((key == 'z') || (key == 'Z')) && (lastKey!='t') && (lastKey!='r')){
     double *fov = &scene->view->m_fovy;
     double zoomFactor = 0.02;
     //glm::vec3 zoom = (-scene->m_look + scene->center) * zoomFactor;
@@ -141,7 +142,7 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   }
 
   //Reset rotations of objects
-  if (key == 'r'){
+  if (key == 'e'){
     //Si la scène est sélectionnée
     if(scene->state == CglicObject::TO_SEL){
       CglicTransform *sc_tr = &scene->transform;
@@ -167,7 +168,7 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     }
   }
   //Resets everything to default
-  if (key == 'R'){
+  if (key == 'E'){
     CglicTransform *sc_tr = &scene->transform;
     if(sc_tr->lastMatrices.size()>0){
       scene->MODEL = sc_tr->lastMatrices[0];
@@ -188,10 +189,38 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     }
   }
 
-
+  //Constrained translation
   if(lastKey=='t'){
-    if(key=='x'){
-      cout << "constrainRotation to x" << endl;
+    cout << "constrain in Translation" << endl;
+    for(int i = 0 ; i < scene->listObject.size() ; i++){
+      pCglicObject obj = scene->listObject[i];
+      if(obj->state == CglicObject::TO_SEL){
+        if(key=='x')
+          obj->constrainedTranslationAxis = glm::vec3(1,0,0);
+        else if(key=='y')
+          obj->constrainedTranslationAxis = glm::vec3(0,1,0);
+        else if(key=='z')
+          obj->constrainedTranslationAxis = glm::vec3(0,0,1);
+        if(obj->constrainedTranslationAxis!=glm::vec3(0.0f))
+          obj->isTranslationConstrained = true;
+      }
+    }
+  }
+  //Constrained Rotation
+  if(lastKey=='r'){
+    cout << "constrain in Rotation" << endl;
+    for(int i = 0 ; i < scene->listObject.size() ; i++){
+      pCglicObject obj = scene->listObject[i];
+      if(obj->state == CglicObject::TO_SEL){
+        if(key=='x')
+          obj->constrainedRotationAxis = glm::vec3(1,0,0);
+        else if(key=='y')
+          obj->constrainedRotationAxis = glm::vec3(0,1,0);
+        else if(key=='z')
+          obj->constrainedRotationAxis = glm::vec3(0,0,1);
+        if(obj->constrainedRotationAxis!=glm::vec3(0.0f))
+          obj->isRotationConstrained = true;
+      }
     }
   }
 

@@ -42,7 +42,12 @@ public:
   glm::mat4 *pVIEW;
   glm::mat4 *pPROJ;
   bool useSmoothShading;
-  bool useShadows;
+  //bool useShadows;
+
+  bool      isRotationConstrained,   isTranslationConstrained;
+  glm::vec3 constrainedRotationAxis, constrainedTranslationAxis;
+
+
 
 public:
   char state;

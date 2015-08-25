@@ -50,17 +50,24 @@ void CglicMouse::motion(int x, int y)
     m_pos = v;
     glm::mat4 ID = glm::mat4(1.0f);
     glm::mat4 ROT = glm::rotate(ID, 2.0f * d.x, scene->m_up) * glm::rotate(ID, - 2.0f * d.y, scene->m_right);
-    //glm::quat QUAT = glm::angleAxis(2.0f * d.x, scene->m_up) * glm::angleAxis(- 2.0f * d.y, scene->m_right);
 
     //Si la scène est sélectionnée
     if (scene->state == CglicScene::TO_SEL)
       scene->transform.setRotation(ROT);
     //Si un objet est sélectionné
-    else{
-      for (unsigned int i = 0; i < scene->listObject.size(); i++){
-        if (scene->listObject[i]->state == CglicCube::TO_SEL){
-          scene->listObject[i]->transform.setRotation(ROT);
+    for (unsigned int i = 0; i < scene->listObject.size(); i++){
+      CglicObject *obj = scene->listObject[i];
+      if (obj->state == CglicCube::TO_SEL){
+        if(obj->isRotationConstrained)
+          obj->transform.setRotation(glm::rotate(ID, 5.0f * (d.y), obj->constrainedRotationAxis));
+        else if(obj->isTranslationConstrained){
+          obj->transform.tr += 1.0f * (d.y) * obj->constrainedTranslationAxis;
+          cout << "toto!!!" << endl;
         }
+        else
+          obj->transform.setRotation(ROT);
+
+
       }
     }
 
@@ -80,6 +87,20 @@ void CglicMouse::mouse(int b, int s, int x, int y)
   //Sauvegarde des opérations
   isPressed  = (s == GLUT_DOWN);
   isReleased = (s == GLUT_UP  );
+
+  if(isReleased){
+    for (unsigned int i = 0; i < scene->listObject.size(); i++){
+      CglicObject *obj = scene->listObject[i];
+      if (obj->isRotationConstrained){
+        obj->isRotationConstrained = false;
+        obj->constrainedRotationAxis = glm::vec3(0.0f);
+      }
+      if (obj->isTranslationConstrained){
+        obj->isTranslationConstrained = false;
+        obj->constrainedTranslationAxis = glm::vec3(0.0f);
+      }
+    }
+  }
 
   switch(b)
   {
