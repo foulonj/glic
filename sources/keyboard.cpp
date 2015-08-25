@@ -144,14 +144,15 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   if (key == 'r'){
     //Si la scène est sélectionnée
     if(scene->state == CglicObject::TO_SEL){
-      if(scene->transform.lastMatrices.size()>0){
-        scene->MODEL = scene->transform.lastMatrices.back();
+      CglicTransform *sc_tr = &scene->transform;
+      if(sc_tr->lastMatrices.size()>0){
+        scene->MODEL = sc_tr->lastMatrices.back();
         scene->center = glm::vec3(glm::vec4(scene->MODEL[3]));
-        scene->m_up = scene->transform.lastUps.back();
-        scene->m_cam = scene->transform.lastCams.back();
-        scene->transform.lastMatrices.pop_back();
-        scene->transform.lastUps.pop_back();
-        scene->transform.lastCams.pop_back();
+        scene->m_up = sc_tr->lastUps.back();
+        scene->m_cam = sc_tr->lastCams.back();
+        sc_tr->lastMatrices.pop_back();
+        sc_tr->lastUps.pop_back();
+        sc_tr->lastCams.pop_back();
       }
     }
     for(int i = 0 ; i < scene->listObject.size() ; i++){
@@ -165,6 +166,28 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
       }
     }
   }
+  //Resets everything to default
+  if (key == 'R'){
+    CglicTransform *sc_tr = &scene->transform;
+    if(sc_tr->lastMatrices.size()>0){
+      scene->MODEL = sc_tr->lastMatrices[0];
+      scene->center = glm::vec3(glm::vec4(scene->MODEL[3]));
+      scene->m_up = sc_tr->lastUps[0];
+      scene->m_cam = sc_tr->lastCams[0];
+      sc_tr->lastMatrices.clear();
+      sc_tr->lastUps.clear();
+      sc_tr->lastCams.clear();
+    }
+    for(int i = 0 ; i < scene->listObject.size() ; i++){
+      pCglicObject obj = scene->listObject[i];
+      if(obj->transform.lastMatrices.size()>0){
+        obj->MODEL = obj->transform.lastMatrices[0];
+        obj->center = glm::vec3(glm::vec4(obj->MODEL[3]));
+        obj->transform.lastMatrices.clear();
+      }
+    }
+  }
+
 
   if(lastKey=='t'){
     if(key=='x'){

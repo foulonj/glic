@@ -24,12 +24,20 @@ CglicAxis::CglicAxis(){
   glBindBuffer( GL_ARRAY_BUFFER, gridBuffer);
   glBufferData( GL_ARRAY_BUFFER, sizeof(float) * grid.size(), &grid[0], GL_STATIC_DRAW);
 
+  /*
   std::vector<glm::vec3> tAxes = {glm::vec3(-1,0,0),
                                   glm::vec3(1,0,0),
                                   glm::vec3(0,1,0),
                                   glm::vec3(0,-1,0),
                                   glm::vec3(0,0,1),
                                   glm::vec3(0,0,-1)};
+  */
+  std::vector<glm::vec3> tAxes = {glm::vec3(0,0,0),
+                                  glm::vec3(1,0,0),
+                                  glm::vec3(0,1,0),
+                                  glm::vec3(0,0,0),
+                                  glm::vec3(0,0,1),
+                                  glm::vec3(0,0,0)};
   for(int i = 0 ; i < tAxes.size() ; i++)
     for(int j = 0 ; j < 3 ; j++)
       axes.push_back(0.4*tAxes[i][j]);
