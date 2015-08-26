@@ -3,10 +3,10 @@
 extern CglicCanvas *pcv;
 
 CglicAxis::CglicAxis(){
+  //Grid creation
   float size       = 2;
   float resolution = 20;
   float dash_size = size/resolution;
-
   std::vector<glm::vec3> tGrid;
   for(float x = -size/2 ; x <= size/2 ; x+=dash_size){
     for(float z = -size/2 ; z <= size/2 ; z+=dash_size){
@@ -26,14 +26,7 @@ CglicAxis::CglicAxis(){
   glBindBuffer( GL_ARRAY_BUFFER, gridBuffer);
   glBufferData( GL_ARRAY_BUFFER, sizeof(float) * grid.size(), &grid[0], GL_STATIC_DRAW);
 
-  /*
-  std::vector<glm::vec3> tAxes = {glm::vec3(-1,0,0),
-                                  glm::vec3(1,0,0),
-                                  glm::vec3(0,1,0),
-                                  glm::vec3(0,-1,0),
-                                  glm::vec3(0,0,1),
-                                  glm::vec3(0,0,-1)};
-  */
+  //Axes creation
   std::vector<glm::vec3> tAxes = {glm::vec3(0,0,0),
                                   glm::vec3(1,0,0),
                                   glm::vec3(0,1,0),
@@ -73,7 +66,6 @@ void CglicAxis::display()
   if(pcv->profile.displayAxes){
     glDisable(GL_DEPTH_TEST);
     glViewport(0,0,150,150);
-    //Allows for axes to stay centered
     glm::mat4 neutralProj = glm::perspective(70.0, view->ratio, view->m_znear, view->m_zfar);
     glm::mat4 MVP = glm::translate(neutralProj * *pVIEW * *pMODEL * MODEL, -*sceneCenter);
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
@@ -92,28 +84,6 @@ void CglicAxis::display()
     uniformVec3(colorID, glm::vec3(0,0,1));
     glDrawArrays(GL_LINES, 4, 6);
   }
-
-  /*
-  //Labels des axes
-  float offset = 20.0f;
-  glTranslatef(-center.x, -center.y, -center.z);
-  //X
-  glm::vec3 newPos = glm::vec3( MVP * glm::vec4(offset*R, 0) );
-  glColor3f(R.x, R.y, R.z);
-  glRasterPos3f(newPos.x, newPos.y, newPos.z);
-  glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, 'X');
-  //Y
-  newPos = glm::vec3( MVP * glm::vec4(offset*G, 0) );
-  glColor3f(G.x, G.y, G.z);
-  glRasterPos3f(newPos.x, newPos.y, newPos.z);
-  glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, 'Y');
-  //Z
-  newPos = glm::vec3( MVP * glm::vec4(offset*B, 0) );
-  glColor3f(B.x, B.y, B.z);
-  glRasterPos3f(newPos.x, newPos.y, newPos.z);
-  glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, 'Z');
-  glTranslatef(center.x, center.y, center.z);*/
-
 
   //Ressources freeing
   glEnable(GL_DEPTH_TEST);

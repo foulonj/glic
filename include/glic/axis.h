@@ -22,12 +22,9 @@ public:
   void display();
   CglicView *view;
 
-
 private:
-  vector<float> colo;
   vector<float> grid;
   vector<float> axes;
-  GLuint cubeBuffer;
   GLuint gridBuffer;
   GLuint axesBuffer;
 };

@@ -13,11 +13,13 @@
 #include <glic/object.h>
 #include <glic/view.h>
 #include <glic/axis.h>
+#include <glic/group.h>
 
 class GLIC_API CglicScene
 {
 public:
   std::vector<pCglicObject> listObject;
+  std::vector<pCglicGroup>  listGroup;
   CglicTransform            transform;
   CglicAxis                 *axis;
   CglicView                 *view;
@@ -44,7 +46,8 @@ public:
   void saveTransformations();
   void update_matrices();
   void debug();
-  void reOrderObjects();
+  int  getPickedObjectID(int x, int y);
+  void reOrderObjects(int picked);
   void resetAll();
   void undoLast();
 

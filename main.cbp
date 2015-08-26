@@ -194,6 +194,8 @@
       </Unit>
       <Unit filename="/home/loic/dev/glic/sources/cube.cpp">
       </Unit>
+      <Unit filename="/home/loic/dev/glic/sources/group.cpp">
+      </Unit>
       <Unit filename="/home/loic/dev/glic/sources/keyboard.cpp">
       </Unit>
       <Unit filename="/home/loic/dev/glic/sources/light.cpp">
@@ -227,6 +229,8 @@
       <Unit filename="/home/loic/dev/glic/include/glic/cube.h">
       </Unit>
       <Unit filename="/home/loic/dev/glic/include/glic/defs.h">
+      </Unit>
+      <Unit filename="/home/loic/dev/glic/include/glic/group.h">
       </Unit>
       <Unit filename="/home/loic/dev/glic/include/glic/keyboard.h">
       </Unit>

@@ -15,7 +15,10 @@ class CglicProfile
     bool displayShadows;
     bool displayBottomGrid;
     bool displayAxes;
-    glm::vec3 back_color, grid_color, sele_color, idle_color;
+    bool displayAxesLabels;
+
+    glm::vec3 back_color, grid_color, idle_color;
+    glm::vec3 sele_color; //group_color;
 
   protected:
   private:

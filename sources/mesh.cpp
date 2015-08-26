@@ -225,8 +225,6 @@ void CglicMesh::getBBOX()
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-
-
   //Freeing ressources
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -260,12 +258,137 @@ glm::mat4 shadowMatrix(glm::vec4 ground, glm::vec4 light){
     return shadowMat;
 }
 
+void CglicMesh::shadowsDisplay(){
+  if(pcv->profile.displayShadows){
+    int shaderID = pcv->simpleShader.mProgramID;
+    glUseProgram(shaderID);
+    int MatrixID = glGetUniformLocation(shaderID, "MVP");
+    int colorID  = glGetUniformLocation(shaderID, "COL");
+
+    glEnableVertexAttribArray( 0);
+    glBindBuffer(GL_ARRAY_BUFFER, meshBuffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(shaderID, 0, "vertex_position");
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+
+    glm::mat4 shadowMVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix( glm::vec4(*sceneUp, 0.495), glm::vec4(*sceneUp, 0) ) * MODEL;
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &shadowMVP[0][0]);
+    uniformVec3(colorID, 0.08f * face_color);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+  }
+}
+
+void CglicMesh::artifactsDisplay(){
+  //Initialization
+  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * MODEL;
+  int shaderID = pcv->simpleShader.mProgramID;
+  glUseProgram(shaderID);
+  int MatrixID = glGetUniformLocation(shaderID, "MVP");
+  int colorID  = glGetUniformLocation(shaderID, "COL");
+  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+  //Mesh buffer binding
+  glEnableVertexAttribArray( 0);
+  glBindBuffer(GL_ARRAY_BUFFER, meshBuffer);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(shaderID, 0, "vertex_position");
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+
+  //Group identification
+  pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+  if (scene->listGroup.size() > 0){
+    for(int i = 0 ; i < scene->listGroup.size() ; i++){
+      for(int j = 0 ; j < scene->listGroup[i]->listObject.size() ; j++){
+        if(objectID==scene->listGroup[i]->listObject[j]->getID()){
+          idGroup = i;
+        }
+      }
+    }
+  }
+
+  glm::vec3 selection_color = ((idGroup==-1)?pcv->profile.sele_color:scene->listGroup[idGroup]->group_color);
+
+  //Contour
+  if(isSelected()){
+    glLineWidth(10.0);
+
+    uniformVec3(colorID, selection_color);
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    glDisable(GL_DEPTH_TEST);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+    glEnable(GL_DEPTH_TEST);
+
+    glLineWidth(1.0);
+  }
+
+  //Box
+  if(box){
+    glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
+
+    if(isSelected()){
+      glLineWidth(2.0);
+      uniformVec3(colorID, selection_color);}
+    else{
+      glLineWidth(1.0);
+      uniformVec3(colorID, pcv->profile.idle_color);}
+
+    glm::mat4 SCALE = glm::scale(MVP, 1.02f * (bbmax - bbmin));
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &SCALE[0][0]);
+
+    glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4*sizeof(GLushort)));
+    glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8*sizeof(GLushort)));
+
+    glLineWidth(1.0);
+  }
+
+  //Axes avec contraintes
+  if((isConstrainedInRotation()) || (isConstrainedInTranslation())){
+    std::vector<glm::vec3> pts;
+    if(isConstrainedInRotation()){
+      pts.push_back(-10.0f * constrainedRotationAxis + center);
+      pts.push_back( 10.0f * constrainedRotationAxis + center);
+    }
+    else if(isConstrainedInTranslation()){
+      pts.push_back(-10.0f * constrainedTranslationAxis + center);
+      pts.push_back( 10.0f * constrainedTranslationAxis + center);
+    }
+    glUseProgram(pcv->simpleShader.mProgramID);
+    GLuint axeBuffer;
+    glGenBuffers(1, &axeBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, axeBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), &pts[0][0], GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(pcv->simpleShader.mProgramID, 0, "vertex_position");
+    MVP = *pPROJ * *pVIEW * *pMODEL;// * glm::translate(MODEL, center);
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    if(isConstrainedInRotation())
+      uniformVec3(colorID, constrainedRotationAxis);
+    else if(isConstrainedInTranslation())
+      uniformVec3(colorID, constrainedTranslationAxis);
+    glLineWidth(2.0f);
+    glDrawArrays(GL_LINES, 0, 2);
+    glLineWidth(1.0);
+  }
+
+
+
+  //Closing and freeing ressources
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glDisableVertexAttribArray( 0);
+  glDisableVertexAttribArray( 1);
+  glUseProgram(0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
 
 void CglicMesh::display()
 {
-  /////////////////////////////////////////////////////////////////////////////////////////
-  //                                 Display artifacts                                   //
-  /////////////////////////////////////////////////////////////////////////////////////////
   //Initialization
   glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * MODEL;
   int shaderID = pcv->simpleShader.mProgramID;
@@ -280,46 +403,6 @@ void CglicMesh::display()
   glBindAttribLocation(      pcv->simpleShader.mProgramID, 0, "vertex_position");
   //Indices buffer binding
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
-
-  //Contour
-  if(isSelected()){
-    glLineWidth(10.0);
-    uniformVec3(colorID, pcv->profile.sele_color);
-    glDisable(GL_DEPTH_TEST);
-    glPolygonMode(GL_FRONT, GL_LINE);
-    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-    glEnable(GL_DEPTH_TEST);
-    glLineWidth(1.0);
-  }
-
-  //Box
-  if(box){
-    if(isSelected()){
-      glLineWidth(2.0);
-      uniformVec3(colorID, pcv->profile.sele_color);
-    }
-    else{
-      glLineWidth(1.0);
-      uniformVec3(colorID, pcv->profile.idle_color);
-    }
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
-    //scale and send MVP
-    glm::mat4 SCALE = glm::scale(MVP, 1.02f * (bbmax - bbmin));
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &SCALE[0][0]);
-    //Draw
-    glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
-    glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4*sizeof(GLushort)));
-    glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8*sizeof(GLushort)));
-    glLineWidth(1.0);
-  }
-
-
-  /////////////////////////////////////////////////////////////////////////////////////////
-  //                                 Mesh Rendering                                      //
-  /////////////////////////////////////////////////////////////////////////////////////////
 
   //Shader used as main rendering
   if(smooth)
@@ -360,60 +443,18 @@ void CglicMesh::display()
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }
   else{
-    //Faces
     uniformVec3(colorID, face_color);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }
 
   if(line){
-    //Edges
     uniformVec3(colorID, edge_color);
     glPolygonMode(GL_FRONT, GL_LINE);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }
 
-  //OMBRES
-  if(pcv->profile.displayShadows){
-    glUseProgram(pcv->simpleShader.mProgramID);
-    MVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix( glm::vec4(*sceneUp, 0.495), glm::vec4(*sceneUp, 0) ) * MODEL;
-    GLuint ID      = glGetUniformLocation(pcv->simpleShader.mProgramID, "MVP");
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    uniformVec3(colorID, 0.08f * face_color);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-  }
 
-  //Axes avec contraintes
-  if((isConstrainedInRotation()) || (isConstrainedInTranslation())){
-    std::vector<glm::vec3> pts;
-    if(isConstrainedInRotation()){
-      pts.push_back(-10.0f * constrainedRotationAxis + center);
-      pts.push_back( 10.0f * constrainedRotationAxis + center);
-    }
-    else if(isConstrainedInTranslation()){
-      pts.push_back(-10.0f * constrainedTranslationAxis + center);
-      pts.push_back( 10.0f * constrainedTranslationAxis + center);
-    }
-
-    glUseProgram(pcv->simpleShader.mProgramID);
-    GLuint axeBuffer;
-    glGenBuffers(1, &axeBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, axeBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), &pts[0][0], GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindAttribLocation(pcv->simpleShader.mProgramID, 0, "vertex_position");
-
-    MVP = *pPROJ * *pVIEW * *pMODEL;// * glm::translate(MODEL, center);
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    if(isConstrainedInRotation())
-      uniformVec3(colorID, constrainedRotationAxis);
-    else if(isConstrainedInTranslation())
-      uniformVec3(colorID, constrainedTranslationAxis);
-
-    glLineWidth(2.0f);
-    glDrawArrays(GL_LINES, 0, 2);
-  }
 
   //Closing and freeing ressources
   glDisable(GL_POLYGON_OFFSET_FILL);

@@ -173,6 +173,19 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     }
   }
 
+  //Group objects
+  if (key == 'g'){
+    std::vector<pCglicObject> objectsToGroup;
+    for(int i = 0 ; i < scene->listObject.size() ; i++){
+      if(scene->listObject[i]->isSelected()){
+        objectsToGroup.push_back(scene->listObject[i]);
+      }
+    }
+    if(objectsToGroup.size()>1){
+      scene->listGroup.push_back(new CglicGroup(objectsToGroup));
+    }
+  }
+
   lastKey = key;
 
 }

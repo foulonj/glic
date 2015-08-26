@@ -16,7 +16,6 @@ class GLIC_API CglicObject
 {
   public:
     CglicTransform transform;
-
   protected:
     //Matrices and vectors
     glm::mat4 MODEL;
@@ -34,8 +33,9 @@ class GLIC_API CglicObject
     GLuint meshBuffer;
     GLuint indicesBuffer;
     //Render parameters & selection
-    int pickingID;
+    int objectID;
     int nPicking;
+    int idGroup;
     bool selected;
     bool box;
     bool line;
@@ -49,8 +49,12 @@ class GLIC_API CglicObject
     CglicObject();
     virtual ~CglicObject();
     void linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::mat4 *PROJ, glm::vec3 *Center, glm::vec3 *Up, int ID);
+
     virtual void display(){};
+    virtual void artifactsDisplay(){};
+    virtual void shadowsDisplay(){};
     void pickingDisplay();
+
     void applyTransformation();
     void saveTransformations();
     void undoLast();
@@ -59,9 +63,11 @@ class GLIC_API CglicObject
 
   //Public Accessors
   public:
+    int getID();
     //Selection & picking
     bool isSelected();
     bool isPicked(int ID);
+    void toogleSelected();
     void select();
     void unSelect();
     //render modes

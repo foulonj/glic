@@ -27,6 +27,7 @@ CglicObject::CglicObject():transform()
   glm::vec3 rand = glm::vec3(a,b,c);
   face_color = glm::vec3(0.7f) + 0.3f * rand;
   edge_color = 0.7f * rand;
+  idGroup = -1;
 }
 
 CglicObject::~CglicObject(){}
@@ -37,8 +38,8 @@ void CglicObject::linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::ma
   pMODEL      = MODEL;
   sceneCenter = Center;
   sceneUp     = Up;
-  pickingID   = ID;
-  pickingColor = glm::vec3(pickingID/255.0f, 0, 0);
+  objectID   = ID;
+  pickingColor = glm::vec3(objectID/255.0f, 0, 0);
 }
 
 void CglicObject::glicInit()
@@ -88,6 +89,7 @@ void CglicObject::pickingDisplay(){
   glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
 }
 
+int  CglicObject::getID(){return objectID;}
 //Toogle render modes
 void CglicObject::toogleBBox()   {box        = !box;}
 void CglicObject::toogleMesh()   {line       = !line;}
@@ -95,7 +97,8 @@ void CglicObject::toogleSmooth() {smooth     = !smooth;}
 
 //Selection accessors
 bool CglicObject::isSelected(){return selected;}
-bool CglicObject::isPicked(int ID){return pickingID == ID;}
+bool CglicObject::isPicked(int ID){return objectID == ID;}
+void CglicObject::toogleSelected(){    selected = !selected;}
 void CglicObject::select(){    selected = true;}
 void CglicObject::unSelect(){  selected = false;}
 

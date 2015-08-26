@@ -41,6 +41,7 @@
 #include <glic/shader.h>
 #include <glic/material.h>
 #include <glic/profile.h>
+#include <glic/group.h>
 
 
 /*-- The major/minor/patch version. ---------------------------*/

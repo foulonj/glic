@@ -53,6 +53,8 @@ private:
 public:
   CglicMesh(char *name);
   void meshInfo(const int& verbose = 0, ostream& outstr = cout);
+  void shadowsDisplay();
+  void artifactsDisplay();
   void display();
   void getBBOX();
   void displayBBOX();

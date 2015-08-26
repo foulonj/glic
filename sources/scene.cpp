@@ -33,38 +33,39 @@ void CglicScene::display()
   update_matrices();
   applyTransformation();
 
-  for (int iObj = 0; iObj < listObject.size(); iObj++){
+  for (int iObj = 0; iObj < listObject.size(); iObj++)
     listObject[iObj]->applyTransformation();
+
+  for (int iObj = 0; iObj < listObject.size(); iObj++)
+    listObject[iObj]->shadowsDisplay();
+
+  for (int iObj = 0; iObj < listObject.size(); iObj++)
+    listObject[iObj]->artifactsDisplay();
+
+  for (int iObj = 0; iObj < listObject.size(); iObj++)
     listObject[iObj]->display();
-  }
 
   axis->applyTransformation();
   axis->display();
-
-  //debug();
 }
 
 
-void CglicScene::reOrderObjects(){
-  //Init
-  std::vector<pCglicObject> temp;
-  temp.resize(1);
-  int selInd = NULL;
-  //Get element to become first
-  for(int i = 0 ; i < listObject.size() ; i++){
-    if(listObject[i]->isSelected()){
-      temp[0] = listObject[i];
-      selInd = i;
-    }
-  }
-  //Get other elements
+int CglicScene::getPickedObjectID(int x, int y){
+  unsigned char pixel[3];
+  GLint viewport[4];
+  glGetIntegerv(GL_VIEWPORT,viewport);
   for(int i = 0 ; i < listObject.size() ; i++)
-    if(i != selInd)
-      temp.push_back(listObject[i]);
+    //if(!listObject[i]->isSelected())
+      listObject[i]->pickingDisplay();
+  glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
+  glFlush();
+  return pixel[0];
+}
 
-  if(temp.size() == listObject.size())
-    for(int i = 0 ; i < listObject.size() ; i++)
-      listObject[i] = temp[i];
+
+void CglicScene::reOrderObjects(int picked){
+  listObject.insert(listObject.begin(), listObject[picked]);
+  listObject.erase(listObject.begin() + picked + 1);
 }
 
 

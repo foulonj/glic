@@ -146,51 +146,60 @@ void CglicMouse::mouse(int b, int s, int x, int y)
       break;
 
     case GLUT_RIGHT_BUTTON:
-      //Remplacer
       m_button[2] = ((GLUT_DOWN==s)?1:0);
+
+      bool  ctrl = ((glutGetModifiers() && GLUT_ACTIVE_CTRL) ? 1:0);
+
       if(s==GLUT_UP){
         pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
-        unsigned char pixel[3];
-        GLint viewport[4];
-        glGetIntegerv(GL_VIEWPORT,viewport);
 
-        for(int i = 0 ; i < scene->listObject.size() ; i++)
-          if(!scene->listObject[i]->isSelected())
-            scene->listObject[i]->pickingDisplay();
-
-        glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
-        int pickedID = pixel[0];
-        glFlush();
-
-        cout << "Picked: " << pickedID << endl;
+        int pickedID = scene->getPickedObjectID(x, y);
         bool match = false;
+        int  IndPicked = -1;
 
+        //On récupère l'indice de l'objet pické
         for(int i = 0 ; i < scene->listObject.size() ; i++){
-          if(scene->listObject[i]->isPicked(pickedID)){
-            scene->listObject[i]->select();
-            scene->unSelect();
+          if (scene->listObject[i]->isPicked(pickedID)){
             match = true;
+            IndPicked = i;
           }
+        }
+        //Si on ne picke pas, on déselectionne tout et on sélectionne la scène
+        if(!match){
+          scene->select();
+          for(int i = 0 ; i < scene->listObject.size() ; i++)
+            scene->listObject[i]->unSelect();
         }
 
         if(match){
+           //On change l'état de sélection de l'objet pické
+          scene->listObject[IndPicked]->toogleSelected();
+
+          if(!ctrl){
+            //On déselectionne tous les autres objets
+            for(int i = 0 ; i < scene->listObject.size() ; i++)
+              if(i!=IndPicked)
+                scene->listObject[i]->unSelect();
+          }
+
+          //Si un selectionné, deselectionne la scène
+          bool someSelected = false;
           for(int i = 0 ; i < scene->listObject.size() ; i++)
-            if(!scene->listObject[i]->isPicked(pickedID))
-              scene->listObject[i]->unSelect();
-        }
+            if(scene->listObject[i]->isSelected())
+              someSelected = true;
+          if(someSelected)
+            scene->unSelect();
+          else
+            scene->select();
 
-        else{
-          for(int i = 0 ; i < scene->listObject.size() ; i++)
-            scene->listObject[i]->unSelect();
-          scene->select();
-        }
-
-        if(match)
-          scene->reOrderObjects();
-      }
-
+          //On met le dernier objet pické au dessus de tous les autres si il est sélectionné
+          if(scene->listObject[IndPicked]->isSelected())
+            scene->reOrderObjects(IndPicked);
+        }//End match
+      }//End GLUT_UP
       break;
-  }
+
+  }//End switch
 
   //ARCBALL
   if((b == GLUT_LEFT_BUTTON) && (s == GLUT_DOWN)){
