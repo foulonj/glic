@@ -2,7 +2,7 @@
 
 // object constructor
 CglicScene::CglicScene():transform(){
-  state = TO_SEL;
+  selected = true;
   m_cam = glm::vec3(0,0.3,1.2);
   m_look = -m_cam;
   m_up = glm::vec3(0., 1., 0.);
@@ -15,23 +15,15 @@ CglicScene::~CglicScene(){}
 
 void CglicScene::addObject(pCglicObject object)
 {
+  //Ajout de l'objet à la scène
   listObject.push_back(object);
+  object->linkSceneParameters(&MODEL, &VIEW, &PROJ, &center, &m_up, listObject.size());
 
-  object->pPROJ = &PROJ;
-  object->pVIEW = &VIEW;
-  object->pMODEL= &MODEL;
-  object->sceneCenter = &center;
-  object->sceneUp     = &m_up;
-  object->pickingID = listObject.size();
-  object->pickingColor = glm::vec3(object->pickingID/255.0f, 0, 0);
+  //Création des axes
   if(listObject.size()==1){
     axis = new CglicAxis();
-    axis->pPROJ = &PROJ;
-    axis->pVIEW = &VIEW;
-    axis->pMODEL= &MODEL;
-    axis->sceneCenter = &center;
-    axis->sceneUp     = &m_up;
-    axis->view        = view;
+    axis->linkSceneParameters(&MODEL, &VIEW, &PROJ, &center, &m_up, 0);
+    axis->view = view;
   }
 }
 
@@ -60,7 +52,7 @@ void CglicScene::reOrderObjects(){
   int selInd = NULL;
   //Get element to become first
   for(int i = 0 ; i < listObject.size() ; i++){
-    if(listObject[i]->state != CglicObject::TO_OFF){
+    if(listObject[i]->isSelected()){
       temp[0] = listObject[i];
       selInd = i;
     }
@@ -102,6 +94,32 @@ void CglicScene::update_matrices()
   PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
 }
 
+void CglicScene::saveTransformations(){
+  transform.lastMatrices.push_back(MODEL);
+  transform.lastUps.push_back(m_up);
+  transform.lastCams.push_back(m_cam);
+}
+
+void CglicScene::undoLast(){
+  if(transform.lastMatrices.size()>0){
+    MODEL = transform.lastMatrices.back();
+    center = glm::vec3(glm::vec4(MODEL[3]));
+    m_up = transform.lastUps.back();
+    m_cam = transform.lastCams.back();
+    transform.lastMatrices.pop_back();
+    transform.lastUps.pop_back();
+    transform.lastCams.pop_back();
+  }
+}
+
+void CglicScene::resetAll(){
+  while(transform.lastMatrices.size()>0)
+    undoLast();
+  for(int i = 0 ; i < listObject.size() ; i++)
+    listObject[i]->resetAll();
+}
+
+
 void CglicScene::debug(){
   //Vectors
   cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
@@ -110,6 +128,7 @@ void CglicScene::debug(){
   cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
   cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
 
+  /*
   //Matrices
   cout << endl;
   cout << " MODEL " << endl;
@@ -125,14 +144,7 @@ void CglicScene::debug(){
   for(int i = 0 ; i < 4 ; i++)
     cout << PROJ[i][0] << " " << PROJ[i][1] << " " << PROJ[i][2] << " " << PROJ[i][3] << endl;
   cout << endl;
-
-  glm::mat4 X = *obj.pPROJ;
-  cout << endl;
-  cout << " OBJ PROJ " << endl;
-  for(int i = 0 ; i < 4 ; i++)
-    cout << X[i][0] << " " << X[i][1] << " " << X[i][2] << " " << X[i][3] << endl;
-  cout << endl;
-
+  */
 }
 
 
@@ -142,3 +154,7 @@ void CglicScene::glicInit()
   // 	glEnable(GL_LIGHTING);	// Active l'éclairage
   // 	glEnable(GL_LIGHT0);
 }
+
+bool CglicScene::isSelected(){return selected;}
+void CglicScene::select(){  selected = true;}
+void CglicScene::unSelect(){selected = false;}

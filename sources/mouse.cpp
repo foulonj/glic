@@ -10,32 +10,12 @@ CglicMouse::CglicMouse()
   m_button[0] = m_button[1] = m_button[2] = false;
   //m_key = TM_NONE;
   isPressed = isReleased = false;
-
   arcball = false;
   currPos = glm::vec2(0);
   lastPos = glm::vec2(0);
   lastPassivePos = glm::vec2(0);
   m_pos   = glm::vec3(0);
 }
-
-/*
-glm::vec3 CglicMouse::projsph(glm::vec2 diff) {
-  double   d1,d2;
-  glm::vec3 v;
-  v.x =  2.0*(double)diff.x / (float)currPos.x;
-  v.y = -2.0*(double)diff.y / (float)currPos.y;
-  d1 = v.x*v.x + v.y*v.y;
-  if ( d1 > 0.0 ) {
-    d2 = sqrt(d1);
-    if ( d2 > 1.0 )
-      d2 = 1.0;
-    v.z = cos(M_PI_2 * d2);
-    v /= glm::length(v);
-  }
-  return v;
-}
-*/
-
 
 glm::vec3 get_arcball_vector(glm::vec2 cursor) {
   int W = pcv->window[pcv->winid()].view.width;
@@ -74,22 +54,14 @@ void CglicMouse::motion(int x, int y)
     glm::mat4 ID = glm::mat4(1.0f);
     glm::mat4 ROT = glm::rotate(ID, 5.0f * d.x, scene->m_up) * glm::rotate(ID, 5.0f * -d.y, scene->m_right);
 
-    //Si la scène est sélectionnée
-    if (scene->state == CglicScene::TO_SEL)
+    //On applique la rotation
+    if (scene->isSelected())
       scene->transform.setRotation(ROT);
-    //Si un objet est sélectionné
-    for (unsigned int i = 0; i < scene->listObject.size(); i++){
-      CglicObject *obj = scene->listObject[i];
-      if (obj->state == CglicCube::TO_SEL){
-        if(obj->isRotationConstrained)
-          obj->transform.setRotation(glm::rotate(ID, 5.0f * d.y, obj->constrainedRotationAxis));
-        else if(obj->isTranslationConstrained)
-          obj->transform.tr += 1.0f * (d.y) * obj->constrainedTranslationAxis;
-        else
-          obj->transform.setRotation(ROT);
-      }
-    }
-  lastPos = currPos;
+    for (unsigned int i = 0; i < scene->listObject.size(); i++)
+      if (scene->listObject[i]->isSelected())
+        scene->listObject[i]->transform.setRotation(ROT);
+
+    lastPos = currPos;
   }
   if ( m_button[0] ){}
 }
@@ -104,11 +76,11 @@ void CglicMouse::passiveMotion(int x, int y){
     //Si un objet est sélectionné
     for (unsigned int i = 0; i < scene->listObject.size(); i++){
       CglicObject *obj = scene->listObject[i];
-      if (obj->state == CglicCube::TO_SEL){
-        if(obj->isRotationConstrained)
-          obj->transform.setRotation(glm::rotate(glm::mat4(1), 5.0f * d.y, obj->constrainedRotationAxis));
-        else if(obj->isTranslationConstrained)
-          obj->transform.tr += 1.0f * (d.y) * obj->constrainedTranslationAxis;
+      if (obj->isSelected()){
+        if(obj->isConstrainedInRotation())
+          obj->setConstrainedRotation(5.0f * d.y);
+        else if(obj->isConstrainedInTranslation())
+          obj->setConstrainedTranslation(1.0f * (d.y));
       }
     }
     lastPassivePos = currPassivePos;
@@ -131,14 +103,8 @@ void CglicMouse::mouse(int b, int s, int x, int y)
   if(isReleased){
     for (unsigned int i = 0; i < scene->listObject.size(); i++){
       CglicObject *obj = scene->listObject[i];
-      if (obj->isRotationConstrained){
-        obj->isRotationConstrained = false;
-        obj->constrainedRotationAxis = glm::vec3(0.0f);
-      }
-      if (obj->isTranslationConstrained){
-        obj->isTranslationConstrained = false;
-        obj->constrainedTranslationAxis = glm::vec3(0.0f);
-      }
+      if ( (obj->isConstrainedInRotation()) || ((obj->isConstrainedInTranslation())) )
+        obj->unConstrain();
     }
   }
 
@@ -149,15 +115,13 @@ void CglicMouse::mouse(int b, int s, int x, int y)
 
       //A l'appui, on enregistre le MODEL
       if(isPressed){
-        if (scene->state == CglicObject::TO_SEL)
-          scene->transform.lastMatrices.push_back(scene->MODEL);
-          scene->transform.lastUps.push_back(scene->m_up);
-          scene->transform.lastCams.push_back(scene->m_cam);
+        if (scene->isSelected())
+          scene->saveTransformations();
         for (unsigned int i = 0; i < scene->listObject.size(); i++){
           CglicObject *obj = scene->listObject[i];
-          if (obj->state == CglicCube::TO_SEL){
-            if((!obj->isRotationConstrained) && (!obj->isTranslationConstrained))
-              obj->transform.lastMatrices.push_back(obj->MODEL);
+          if (obj->isSelected()){
+            if((!obj->isConstrainedInRotation()) && (!obj->isConstrainedInTranslation()))
+              obj->saveTransformations();
           }
         }
       }
@@ -191,7 +155,7 @@ void CglicMouse::mouse(int b, int s, int x, int y)
         glGetIntegerv(GL_VIEWPORT,viewport);
 
         for(int i = 0 ; i < scene->listObject.size() ; i++)
-          if(scene->listObject[i]->state != CglicObject::TO_SEL)
+          if(!scene->listObject[i]->isSelected())
             scene->listObject[i]->pickingDisplay();
 
         glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
@@ -202,23 +166,23 @@ void CglicMouse::mouse(int b, int s, int x, int y)
         bool match = false;
 
         for(int i = 0 ; i < scene->listObject.size() ; i++){
-          if(pickedID == scene->listObject[i]->pickingID){
-            scene->listObject[i]->state = CglicCube::TO_SEL;
+          if(scene->listObject[i]->isPicked(pickedID)){
+            scene->listObject[i]->select();
+            scene->unSelect();
             match = true;
-            scene->state = CglicScene::TO_ON;
           }
         }
 
         if(match){
           for(int i = 0 ; i < scene->listObject.size() ; i++)
-            if(pickedID!=scene->listObject[i]->pickingID)
-              scene->listObject[i]->state = CglicObject::TO_OFF;
+            if(!scene->listObject[i]->isPicked(pickedID))
+              scene->listObject[i]->unSelect();
         }
 
         else{
           for(int i = 0 ; i < scene->listObject.size() ; i++)
-            scene->listObject[i]->state = CglicObject::TO_OFF;
-          scene->state = CglicScene::TO_SEL;
+            scene->listObject[i]->unSelect();
+          scene->select();
         }
 
         if(match)

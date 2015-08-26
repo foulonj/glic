@@ -10,13 +10,10 @@ void CglicObject::uniformVec3(int ID, glm::vec3 v){
 CglicObject::CglicObject():transform()
 {
   //cout << "  --- [create CglicObject]" << endl;
-  state = TO_ON;
-  box = TO_OFF;
-  line = TO_OFF;
-  mat_diffuse[0] = 0.1f;
-  mat_diffuse[1] = 0.5f;
-  mat_diffuse[2] = 0.8f;
-  mat_diffuse[3] = 1.0f;
+  selected = false;
+  box    = false;
+  line   = false;
+  smooth = true;
 
   MODEL = glm::mat4(1.0f);
   center = glm::vec3(0.0f);
@@ -24,13 +21,6 @@ CglicObject::CglicObject():transform()
   pVIEW = NULL;
 
   //Colors
-  R          = glm::vec3(1,   0,   0);
-  G          = glm::vec3(0,   1,   0);
-  B          = glm::vec3(0,   0,   1);
-  //face_color = glm::vec3(0.8, 0,   0.2);
-  //edge_color = glm::vec3(0.5, 0 ,  0.2);
-
-  //New random implementation
   double a = (rand()/(double)(RAND_MAX + 1)) + 1;
   double b = (rand()/(double)(RAND_MAX + 1)) + 1;
   double c = (rand()/(double)(RAND_MAX + 1)) + 1;
@@ -39,28 +29,20 @@ CglicObject::CglicObject():transform()
   edge_color = 0.7f * rand;
 }
 
-
 CglicObject::~CglicObject(){}
+
+void CglicObject::linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::mat4 *PROJ, glm::vec3 *Center, glm::vec3 *Up, int ID){
+  pPROJ       = PROJ;
+  pVIEW       = VIEW;
+  pMODEL      = MODEL;
+  sceneCenter = Center;
+  sceneUp     = Up;
+  pickingID   = ID;
+  pickingColor = glm::vec3(pickingID/255.0f, 0, 0);
+}
 
 void CglicObject::glicInit()
 {}
-
-void CglicObject::activeBB()
-{
-  if (box == TO_OFF)
-    box = TO_ON;
-  else
-    box = TO_OFF;
-}
-
-void CglicObject::activeMesh()
-{
-  if (line == TO_OFF)
-    line = TO_ON;
-  else
-    line = TO_OFF;
-}
-
 
 void CglicObject::applyTransformation()
 {
@@ -68,6 +50,20 @@ void CglicObject::applyTransformation()
   center += transform.tr;
   MODEL =  glm::translate(ID, center) * transform.rot * glm::translate(ID, -center) * glm::translate(ID, transform.tr) * MODEL;
   transform.reset();
+}
+void CglicObject::saveTransformations(){
+  transform.lastMatrices.push_back(MODEL);
+}
+void CglicObject::undoLast(){
+  if(transform.lastMatrices.size()>0){
+    MODEL = transform.lastMatrices.back();
+    center = glm::vec3(glm::vec4(MODEL[3]));
+    transform.lastMatrices.pop_back();
+  }
+}
+void CglicObject::resetAll(){
+  while(transform.lastMatrices.size()>0)
+    undoLast();
 }
 
 void CglicObject::pickingDisplay(){
@@ -91,3 +87,32 @@ void CglicObject::pickingDisplay(){
   glPolygonMode(GL_FRONT, GL_FILL);
   glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
 }
+
+//Toogle render modes
+void CglicObject::toogleBBox()   {box        = !box;}
+void CglicObject::toogleMesh()   {line       = !line;}
+void CglicObject::toogleSmooth() {smooth     = !smooth;}
+
+//Selection accessors
+bool CglicObject::isSelected(){return selected;}
+bool CglicObject::isPicked(int ID){return pickingID == ID;}
+void CglicObject::select(){    selected = true;}
+void CglicObject::unSelect(){  selected = false;}
+
+//Constrained movements accessors
+bool CglicObject::isConstrainedInRotation(){return isRotationConstrained;}
+bool CglicObject::isConstrainedInTranslation(){return isTranslationConstrained;};
+void CglicObject::constrainRotation(glm::vec3 axis){
+  isRotationConstrained = true;
+  constrainedRotationAxis = axis;
+}
+void CglicObject::constrainTranslation(glm::vec3 axis){
+  isTranslationConstrained = true;
+  constrainedTranslationAxis = axis;
+}
+void CglicObject::unConstrain(){
+  isRotationConstrained = isTranslationConstrained = false;
+  constrainedRotationAxis = constrainedTranslationAxis = glm::vec3(0);
+};
+void CglicObject::setConstrainedRotation(float angle){transform.setRotation(glm::rotate(glm::mat4(1), angle, constrainedRotationAxis));}
+void CglicObject::setConstrainedTranslation(float tr){transform.tr += tr * constrainedTranslationAxis;}

@@ -11,59 +11,71 @@
 
 #include "defs.h"
 #include <glic/transform.h>
-#include <glic/shader.h>
 
 class GLIC_API CglicObject
 {
-public:
-  enum TobjState {TO_OFF, TO_ON, TO_SEL, TO_DYN};
-  glm::vec4 color, mat_diffuse;
-  glm::vec3 center;
+  public:
+    CglicTransform transform;
 
-//Modifier par un accesseur public set Transform
-public:
-  CglicTransform transform;
+  protected:
+    //Matrices and vectors
+    glm::mat4 MODEL;
+    glm::mat4 *pVIEW;
+    glm::mat4 *pPROJ;
+    glm::vec3 center;
+    //Scene parameters
+    glm::vec3 *sceneCenter;
+    glm::vec3 *sceneUp;
+    glm::mat4 *pMODEL;
+    //Colors
+    glm::vec3 face_color, edge_color;
+    glm::vec3 pickingColor;
+    //Buffers
+    GLuint meshBuffer;
+    GLuint indicesBuffer;
+    //Render parameters & selection
+    int pickingID;
+    int nPicking;
+    bool selected;
+    bool box;
+    bool line;
+    bool smooth;
+    //Constrained movements
+    bool      isRotationConstrained,   isTranslationConstrained;
+    glm::vec3 constrainedRotationAxis, constrainedTranslationAxis;
 
-public:
-  glm::vec3 R, G, B, WHITE, BLACK;
-  glm::vec3 face_color, edge_color;
+  //Public methods
+  public:
+    CglicObject();
+    virtual ~CglicObject();
+    void linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::mat4 *PROJ, glm::vec3 *Center, glm::vec3 *Up, int ID);
+    virtual void display(){};
+    void pickingDisplay();
+    void applyTransformation();
+    void saveTransformations();
+    void undoLast();
+    void resetAll();
+    void uniformVec3(int ID, glm::vec3 v);
 
-  int pickingID;
-  glm::vec3 pickingColor;
-  GLuint meshBuffer;
-  GLuint indicesBuffer;
-  int nPicking;
-
-  glm::mat4 MODEL;
-  glm::vec3 *sceneCenter;
-  glm::vec3 *sceneUp;
-  glm::mat4 *pMODEL;
-  glm::mat4 *pVIEW;
-  glm::mat4 *pPROJ;
-  bool useSmoothShading;
-
-  bool      isRotationConstrained,   isTranslationConstrained;
-  glm::vec3 constrainedRotationAxis, constrainedTranslationAxis;
-
-
-
-public:
-  char state;
-  char box;
-  char line;
-
-public:
-  CglicObject();
-  virtual ~CglicObject();
-
-  virtual void display(){};
-
-  void pickingDisplay();
-  void applyTransformation();
-  void activeBB();
-  void activeMesh();
-
-  void uniformVec3(int ID, glm::vec3 v);
+  //Public Accessors
+  public:
+    //Selection & picking
+    bool isSelected();
+    bool isPicked(int ID);
+    void select();
+    void unSelect();
+    //render modes
+    void toogleBBox();
+    void toogleMesh();
+    void toogleSmooth();
+    //Constrained movements
+    bool isConstrainedInRotation();
+    bool isConstrainedInTranslation();
+    void constrainRotation(glm::vec3 axis);
+    void constrainTranslation(glm::vec3 axis);
+    void setConstrainedRotation(float angle);
+    void setConstrainedTranslation(float tr);
+    void unConstrain();
 
 protected:
   virtual void glicInit();

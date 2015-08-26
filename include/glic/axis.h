@@ -22,6 +22,7 @@ public:
   void display();
   CglicView *view;
 
+
 private:
   vector<float> colo;
   vector<float> grid;

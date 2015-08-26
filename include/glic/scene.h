@@ -17,19 +17,12 @@
 class GLIC_API CglicScene
 {
 public:
-  enum TsceState {TO_OFF, TO_ON, TO_SEL, TO_DYN};
-  void resize(int width, int height);
   std::vector<pCglicObject> listObject;
-
-  CglicTransform transform;
-  CglicAxis      *axis;
-  CglicView      *view;
+  CglicTransform            transform;
+  CglicAxis                 *axis;
+  CglicView                 *view;
 
   glm::vec3 center;
-
-
-public:
-
 
 public:
   glm::vec3 m_look, m_cam, m_up, m_look_offset;
@@ -40,7 +33,7 @@ public:
   glm::mat4 PROJ;
 
 public:
-  char  state;
+  bool selected;
   int  ids;
 
   CglicScene();
@@ -48,9 +41,16 @@ public:
   void display();
   void addObject(pCglicObject object);
   void applyTransformation();
+  void saveTransformations();
   void update_matrices();
   void debug();
   void reOrderObjects();
+  void resetAll();
+  void undoLast();
+
+  bool isSelected();
+  void select();
+  void unSelect();
 
 protected:
   virtual void glicInit();

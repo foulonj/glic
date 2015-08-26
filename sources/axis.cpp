@@ -83,13 +83,13 @@ void CglicAxis::display()
     glBindAttribLocation(      pcv->simpleShader.mProgramID, 0, "vertex_position");
     glPolygonMode(GL_FRONT, GL_LINE);
     //X
-    uniformVec3(colorID, R);
+    uniformVec3(colorID, glm::vec3(1,0,0));
     glDrawArrays(GL_LINES, 0, 2);
     //Y
-    uniformVec3(colorID, G);
+    uniformVec3(colorID, glm::vec3(0,1,0));
     glDrawArrays(GL_LINES, 2, 4);
     //Z
-    uniformVec3(colorID, B);
+    uniformVec3(colorID, glm::vec3(0,0,1));
     glDrawArrays(GL_LINES, 4, 6);
   }
 

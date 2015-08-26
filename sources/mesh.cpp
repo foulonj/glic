@@ -133,7 +133,6 @@ CglicMesh::CglicMesh(char *name)
   //edge_color = glm::vec3(0,0,1);
 
   //TYPE DE RENDU ET SHADER
-  useSmoothShading = true;
   nPicking = 3 * tria.size();
 }
 
@@ -283,7 +282,7 @@ void CglicMesh::display()
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
   //Contour
-  if(state == TO_SEL){
+  if(isSelected()){
     glLineWidth(10.0);
     uniformVec3(colorID, pcv->profile.sele_color);
     glDisable(GL_DEPTH_TEST);
@@ -294,8 +293,8 @@ void CglicMesh::display()
   }
 
   //Box
-  if(box == TO_ON){
-    if(state==TO_SEL){
+  if(box){
+    if(isSelected()){
       glLineWidth(2.0);
       uniformVec3(colorID, pcv->profile.sele_color);
     }
@@ -323,7 +322,7 @@ void CglicMesh::display()
   /////////////////////////////////////////////////////////////////////////////////////////
 
   //Shader used as main rendering
-  if(useSmoothShading)
+  if(smooth)
     shaderID = pcv->smoothShader.mProgramID;
   else
     shaderID = pcv->simpleShader.mProgramID;
@@ -351,7 +350,7 @@ void CglicMesh::display()
 
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(1,0);
-  if(useSmoothShading){
+  if(smooth){
     GLuint MID      = glGetUniformLocation(shaderID, "M");
     GLuint VID      = glGetUniformLocation(shaderID, "V");
     glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
@@ -367,7 +366,7 @@ void CglicMesh::display()
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }
 
-  if(line==TO_ON){
+  if(line){
     //Edges
     uniformVec3(colorID, edge_color);
     glPolygonMode(GL_FRONT, GL_LINE);
@@ -386,13 +385,13 @@ void CglicMesh::display()
   }
 
   //Axes avec contraintes
-  if((isRotationConstrained) || (isTranslationConstrained)){
+  if((isConstrainedInRotation()) || (isConstrainedInTranslation())){
     std::vector<glm::vec3> pts;
-    if(isRotationConstrained){
+    if(isConstrainedInRotation()){
       pts.push_back(-10.0f * constrainedRotationAxis + center);
       pts.push_back( 10.0f * constrainedRotationAxis + center);
     }
-    else if(isTranslationConstrained){
+    else if(isConstrainedInTranslation()){
       pts.push_back(-10.0f * constrainedTranslationAxis + center);
       pts.push_back( 10.0f * constrainedTranslationAxis + center);
     }
@@ -407,9 +406,9 @@ void CglicMesh::display()
 
     MVP = *pPROJ * *pVIEW * *pMODEL;// * glm::translate(MODEL, center);
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    if(isRotationConstrained)
+    if(isConstrainedInRotation())
       uniformVec3(colorID, constrainedRotationAxis);
-    else if(isTranslationConstrained)
+    else if(isConstrainedInTranslation())
       uniformVec3(colorID, constrainedTranslationAxis);
 
     glLineWidth(2.0f);

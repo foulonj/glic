@@ -12,7 +12,7 @@ void setTranslation(glm::vec3 tr, int &state){
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
   for (unsigned int iObj = 0; iObj < scene->listObject.size(); iObj++){
     pCglicObject obj = scene->listObject[iObj];
-    if (obj->state == CglicCube::TO_SEL){
+    if (obj->isSelected()){
       obj->transform.setTranslation(tr);
       state = 1;
     }
@@ -26,16 +26,14 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
 
   if(key!=lastKey){
-    if (scene->state == CglicObject::TO_SEL){
-      scene->transform.lastMatrices.push_back(scene->MODEL);
-      scene->transform.lastUps.push_back(scene->m_up);
-      scene->transform.lastCams.push_back(scene->m_cam);
+    if (scene->isSelected()){
+      scene->saveTransformations();
     }
     for (unsigned int i = 0; i < scene->listObject.size(); i++){
       CglicObject *obj = scene->listObject[i];
-      if (obj->state == CglicCube::TO_SEL){
-        if((!obj->isRotationConstrained) && (!obj->isTranslationConstrained))
-          obj->transform.lastMatrices.push_back(obj->MODEL);
+      if (obj->isSelected()){
+        if(( !obj->isConstrainedInRotation()) && (!obj->isConstrainedInTranslation()) )
+          obj->saveTransformations();
       }
     }
   }
@@ -78,21 +76,6 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   if ( key == 'q' || key == 27 )
     exit(0);
 
-  // SELECT
-  if ( key =='s'){
-    selection+=1;
-    if (selection >= scene->listObject.size())
-      selection = -1;
-
-    for (unsigned int i = 0; i < scene->listObject.size(); i++)
-      scene->listObject[i]->state = CglicObject::TO_ON;
-    scene->state = CglicScene::TO_SEL;
-    if (selection >= 0){
-      scene->listObject[selection]->state = CglicObject::TO_SEL;
-      scene->state = CglicScene::TO_ON;
-    };
-  };
-
   // ZOOM
   if(((key == 'z') || (key == 'Z')) && (lastKey!='t') && (lastKey!='r')){
     double *fov = &scene->view->m_fovy;
@@ -110,84 +93,36 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   // BB
   if (key == 'b' ){
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
-      scene->listObject[i]->activeBB();
+      scene->listObject[i]->toogleBBox();
   }
 
   // Wireframe
   if (key == 'm' ){
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
-      scene->listObject[i]->activeMesh();
+      scene->listObject[i]->toogleMesh();
   }
 
   //Smooth to flat shading
   if (key == 'f'){
     for (unsigned int i = 0; i < scene->listObject.size(); i++)
-      if( scene->listObject[i]->state == CglicObject::TO_SEL)
-        scene->listObject[i]->useSmoothShading = !scene->listObject[i]->useSmoothShading;
+      if( scene->listObject[i]->isSelected())
+        scene->listObject[i]->toogleSmooth();
   }
 
-  //Look at center of selected object
-  if (key == 'c'){
-    bool noneSelected = true;
-    glm::vec3 newCenter;
-    for (unsigned int i = 0; i < scene->listObject.size(); i++){
-      if( scene->listObject[i]->state == CglicObject::TO_SEL){
-        noneSelected = false;
-        newCenter = scene->listObject[i]->center;
-      }
-    }
-    if(noneSelected)
-      newCenter = glm::vec3(0,0,0);
-    scene->center = newCenter;
-    scene->axis->center = newCenter;
-  }
-
-  //Reset rotations of objects
+  //Reset Transformations
   if (key == 'e'){
-    //Si la scène est sélectionnée
-    if(scene->state == CglicObject::TO_SEL){
-      CglicTransform *sc_tr = &scene->transform;
-      if(sc_tr->lastMatrices.size()>0){
-        scene->MODEL = sc_tr->lastMatrices.back();
-        scene->center = glm::vec3(glm::vec4(scene->MODEL[3]));
-        scene->m_up = sc_tr->lastUps.back();
-        scene->m_cam = sc_tr->lastCams.back();
-        sc_tr->lastMatrices.pop_back();
-        sc_tr->lastUps.pop_back();
-        sc_tr->lastCams.pop_back();
-      }
+    if(scene->isSelected()){
+      scene->undoLast();
     }
     for(int i = 0 ; i < scene->listObject.size() ; i++){
       pCglicObject obj = scene->listObject[i];
-      if(obj->state == CglicObject::TO_SEL){
-        if(obj->transform.lastMatrices.size()>0){
-          obj->MODEL = obj->transform.lastMatrices.back();
-          obj->center = glm::vec3(glm::vec4(obj->MODEL[3]));
-          obj->transform.lastMatrices.pop_back();
-        }
+      if(obj->isSelected()){
+        obj->undoLast();
       }
     }
   }
-  //Resets everything to default
   if (key == 'E'){
-    CglicTransform *sc_tr = &scene->transform;
-    if(sc_tr->lastMatrices.size()>0){
-      scene->MODEL = sc_tr->lastMatrices[0];
-      scene->center = glm::vec3(glm::vec4(scene->MODEL[3]));
-      scene->m_up = sc_tr->lastUps[0];
-      scene->m_cam = sc_tr->lastCams[0];
-      sc_tr->lastMatrices.clear();
-      sc_tr->lastUps.clear();
-      sc_tr->lastCams.clear();
-    }
-    for(int i = 0 ; i < scene->listObject.size() ; i++){
-      pCglicObject obj = scene->listObject[i];
-      if(obj->transform.lastMatrices.size()>0){
-        obj->MODEL = obj->transform.lastMatrices[0];
-        obj->center = glm::vec3(glm::vec4(obj->MODEL[3]));
-        obj->transform.lastMatrices.clear();
-      }
-    }
+    scene->resetAll();
   }
 
   //Constrained translation
@@ -195,15 +130,16 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     cout << "constrain in Translation" << endl;
     for(int i = 0 ; i < scene->listObject.size() ; i++){
       pCglicObject obj = scene->listObject[i];
-      if(obj->state == CglicObject::TO_SEL){
+      if(obj->isSelected()){
+        glm::vec3 constAxis;
         if(key=='x')
-          obj->constrainedTranslationAxis = glm::vec3(1,0,0);
+          constAxis = glm::vec3(1,0,0);
         else if(key=='y')
-          obj->constrainedTranslationAxis = glm::vec3(0,1,0);
+          constAxis = glm::vec3(0,1,0);
         else if(key=='z')
-          obj->constrainedTranslationAxis = glm::vec3(0,0,1);
-        if(obj->constrainedTranslationAxis!=glm::vec3(0.0f))
-          obj->isTranslationConstrained = true;
+          constAxis = glm::vec3(0,0,1);
+        if(constAxis!=glm::vec3(0))
+          obj->constrainTranslation(constAxis);
       }
     }
   }
@@ -212,15 +148,16 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     cout << "constrain in Rotation" << endl;
     for(int i = 0 ; i < scene->listObject.size() ; i++){
       pCglicObject obj = scene->listObject[i];
-      if(obj->state == CglicObject::TO_SEL){
+      if(obj->isSelected()){
+        glm::vec3 constAxis;
         if(key=='x')
-          obj->constrainedRotationAxis = glm::vec3(1,0,0);
+          constAxis = glm::vec3(1,0,0);
         else if(key=='y')
-          obj->constrainedRotationAxis = glm::vec3(0,1,0);
+          constAxis = glm::vec3(0,1,0);
         else if(key=='z')
-          obj->constrainedRotationAxis = glm::vec3(0,0,1);
-        if(obj->constrainedRotationAxis!=glm::vec3(0.0f))
-          obj->isRotationConstrained = true;
+          constAxis = glm::vec3(0,0,1);
+        if(constAxis!=glm::vec3(0))
+          obj->constrainRotation(constAxis);
       }
     }
   }
@@ -229,8 +166,8 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     if((key=='x') || (key=='y') || (key=='z')){
       for(int i = 0 ; i < scene->listObject.size() ; i++){
         pCglicObject obj = scene->listObject[i];
-        if(obj->state == CglicObject::TO_SEL){
-          obj->transform.lastMatrices.push_back(obj->MODEL);
+        if(obj->isSelected()){
+          obj->saveTransformations();
         }
       }
     }
