@@ -156,7 +156,8 @@ void CglicMouse::mouse(int b, int s, int x, int y)
         for (unsigned int i = 0; i < scene->listObject.size(); i++){
           CglicObject *obj = scene->listObject[i];
           if (obj->state == CglicCube::TO_SEL){
-            obj->transform.lastMatrices.push_back(obj->MODEL);
+            if((!obj->isRotationConstrained) && (!obj->isTranslationConstrained))
+              obj->transform.lastMatrices.push_back(obj->MODEL);
           }
         }
       }

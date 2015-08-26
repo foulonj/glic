@@ -34,7 +34,8 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
     for (unsigned int i = 0; i < scene->listObject.size(); i++){
       CglicObject *obj = scene->listObject[i];
       if (obj->state == CglicCube::TO_SEL){
-        obj->transform.lastMatrices.push_back(obj->MODEL);
+        if((!obj->isRotationConstrained) && (!obj->isTranslationConstrained))
+          obj->transform.lastMatrices.push_back(obj->MODEL);
       }
     }
   }
@@ -220,6 +221,17 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
           obj->constrainedRotationAxis = glm::vec3(0,0,1);
         if(obj->constrainedRotationAxis!=glm::vec3(0.0f))
           obj->isRotationConstrained = true;
+      }
+    }
+  }
+  //Saving the model
+  if((lastKey == 'r') || (lastKey == 't')){
+    if((key=='x') || (key=='y') || (key=='z')){
+      for(int i = 0 ; i < scene->listObject.size() ; i++){
+        pCglicObject obj = scene->listObject[i];
+        if(obj->state == CglicObject::TO_SEL){
+          obj->transform.lastMatrices.push_back(obj->MODEL);
+        }
       }
     }
   }
