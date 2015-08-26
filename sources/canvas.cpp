@@ -132,6 +132,13 @@ void CglicCanvas::motionWrap(int x, int y)
   glutPostRedisplay();
 }
 
+void CglicCanvas::passiveMotionWrap(int x, int y)
+{
+  //cout << " [motionWrap]" << endl;
+  pcv->mice.passiveMotion(x,y);
+  glutPostRedisplay();
+}
+
 
 void CglicCanvas::mouseWrap(int b, int s, int x, int y)
 {

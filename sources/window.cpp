@@ -43,19 +43,20 @@ void CglicWindow::show()
   glutKeyboardFunc(pcv->keyWrap);
   glutKeyboardUpFunc(pcv->keyUpWrap);
   glutMotionFunc(pcv->motionWrap);
+  glutPassiveMotionFunc(pcv->passiveMotionWrap);
   glutSpecialFunc(pcv->specialWrap);
 
   /* basic openGL calls */
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
-  glPolygonOffset(1.0, 1.0 / (float)0x10000);
+  //glPolygonOffset(1.0, 1.0 / (float)0x10000);
   //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-  glShadeModel(GL_SMOOTH);
-  glDisable(GL_NORMALIZE);
-  glDisable(GL_LINE_SMOOTH);
-  glDisable(GL_POINT_SMOOTH);
-  glEnable(GL_DITHER);
-  glDisable(GL_CULL_FACE);
+  //glShadeModel(GL_SMOOTH);
+  //glDisable(GL_NORMALIZE);
+  //glDisable(GL_LINE_SMOOTH);
+  //glDisable(GL_POINT_SMOOTH);
+  //glEnable(GL_DITHER);
+  //glDisable(GL_CULL_FACE);
 
   //view.setView();
 }
@@ -66,7 +67,7 @@ void CglicWindow::display()
   glDrawBuffer(GL_BACK_LEFT);
   glm::vec3 col = pcv->profile.back_color;
   glClearColor(col.x, col.y, col.z, 1.0);
-  glClearStencil(0);
+  //glClearStencil(0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   pcv->scene[ids]->display();

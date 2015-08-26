@@ -59,6 +59,7 @@ public:
   static void displayWrap();
   static void mouseWrap(int b, int s, int x, int y);
   static void motionWrap(int x, int y);
+  static void passiveMotionWrap(int x, int y);
   static void keyWrap(unsigned char key,int x,int y);
   static void keyUpWrap(unsigned char key,int x,int y);
   static void specialWrap(int key, int x, int y);
