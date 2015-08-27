@@ -8,6 +8,7 @@ CglicProfile::CglicProfile()
   displayAxes       = true;
   displayAxesLabels = true;
 
+  groupRotation     = true;
 
   //Colors
   back_color    = glm::vec3(1,   1,   0.97);        //Background

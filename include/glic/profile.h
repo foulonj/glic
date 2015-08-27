@@ -17,6 +17,8 @@ class CglicProfile
     bool displayAxes;
     bool displayAxesLabels;
 
+    bool groupRotation;
+
     glm::vec3 back_color, grid_color, idle_color;
     glm::vec3 sele_color; //group_color;
 

@@ -33,6 +33,9 @@ void CglicScene::display()
   update_matrices();
   applyTransformation();
 
+  for (int i = 0; i < listGroup.size(); i++)
+    listGroup[i]->compute();
+
   for (int iObj = 0; iObj < listObject.size(); iObj++)
     listObject[iObj]->applyTransformation();
 

@@ -49,7 +49,12 @@ void CglicObject::applyTransformation()
 {
   glm::mat4 ID = glm::mat4(1.0f);
   center += transform.tr;
-  MODEL =  glm::translate(ID, center) * transform.rot * glm::translate(ID, -center) * glm::translate(ID, transform.tr) * MODEL;
+
+  //Le rotation center est défini en fonction des groupes
+  if(idGroup==-1)
+    rotationCenter = &center;
+  MODEL =  glm::translate(ID, *rotationCenter) * transform.rot * glm::translate(ID, -*rotationCenter) * glm::translate(ID, transform.tr) * MODEL;
+
   transform.reset();
 }
 void CglicObject::saveTransformations(){
@@ -89,7 +94,15 @@ void CglicObject::pickingDisplay(){
   glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
 }
 
+
+void CglicObject::setRotationCenter(glm::vec3 &center){
+  rotationCenter = &center;
+}
+
+
 int  CglicObject::getID(){return objectID;}
+glm::vec3* CglicObject::getCenterPtr(){return &center;}
+
 //Toogle render modes
 void CglicObject::toogleBBox()   {box        = !box;}
 void CglicObject::toogleMesh()   {line       = !line;}

@@ -22,6 +22,7 @@ class GLIC_API CglicObject
     glm::mat4 *pVIEW;
     glm::mat4 *pPROJ;
     glm::vec3 center;
+    glm::vec3 *rotationCenter;
     //Scene parameters
     glm::vec3 *sceneCenter;
     glm::vec3 *sceneUp;
@@ -49,6 +50,7 @@ class GLIC_API CglicObject
     CglicObject();
     virtual ~CglicObject();
     void linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::mat4 *PROJ, glm::vec3 *Center, glm::vec3 *Up, int ID);
+    void setRotationCenter(glm::vec3 &center);
 
     virtual void display(){};
     virtual void artifactsDisplay(){};
@@ -64,6 +66,7 @@ class GLIC_API CglicObject
   //Public Accessors
   public:
     int getID();
+    glm::vec3* getCenterPtr();
     //Selection & picking
     bool isSelected();
     bool isPicked(int ID);

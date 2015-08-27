@@ -185,6 +185,16 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
       scene->listGroup.push_back(new CglicGroup(objectsToGroup));
     }
   }
+  //Ungroup
+  if (key == 'G'){
+    for(int iG = 0 ; iG < scene->listGroup.size() ; iG++){
+      if(scene->listGroup[iG]->isSelected()){
+        for(int iO = 0 ; iO < scene->listGroup[iG]->listObject.size() ; iO++)
+          scene->listGroup[iG]->listObject[iO]->unSelect();
+        scene->listGroup.erase(scene->listGroup.begin() + iG);
+      }
+    }
+  }
 
   lastKey = key;
 

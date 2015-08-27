@@ -307,6 +307,8 @@ void CglicMesh::artifactsDisplay(){
       }
     }
   }
+  else
+    idGroup = -1;
 
   glm::vec3 selection_color = ((idGroup==-1)?pcv->profile.sele_color:scene->listGroup[idGroup]->group_color);
 
@@ -351,12 +353,12 @@ void CglicMesh::artifactsDisplay(){
   if((isConstrainedInRotation()) || (isConstrainedInTranslation())){
     std::vector<glm::vec3> pts;
     if(isConstrainedInRotation()){
-      pts.push_back(-10.0f * constrainedRotationAxis + center);
-      pts.push_back( 10.0f * constrainedRotationAxis + center);
+      pts.push_back(-10.0f * constrainedRotationAxis + *rotationCenter);
+      pts.push_back( 10.0f * constrainedRotationAxis + *rotationCenter);
     }
     else if(isConstrainedInTranslation()){
-      pts.push_back(-10.0f * constrainedTranslationAxis + center);
-      pts.push_back( 10.0f * constrainedTranslationAxis + center);
+      pts.push_back(-10.0f * constrainedTranslationAxis + *rotationCenter);
+      pts.push_back( 10.0f * constrainedTranslationAxis + *rotationCenter);
     }
     glUseProgram(pcv->simpleShader.mProgramID);
     GLuint axeBuffer;
