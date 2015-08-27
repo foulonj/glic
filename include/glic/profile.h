@@ -2,6 +2,7 @@
 #define PROFILE_H
 
 #include "defs.h"
+#include "glic/colorgenerator.h"
 
 class CglicProfile
 {
@@ -9,9 +10,11 @@ class CglicProfile
     //Constructor from config file
     CglicProfile();
     ~CglicProfile();
-
+    glm::vec3 color();
 
   public:
+    CglicColorGenerator colorGenerator;
+
     bool displayShadows;
     bool displayBottomGrid;
     bool displayAxes;

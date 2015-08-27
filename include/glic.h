@@ -42,6 +42,7 @@
 #include <glic/material.h>
 #include <glic/profile.h>
 #include <glic/group.h>
+#include <glic/colorgenerator.h>
 
 
 /*-- The major/minor/patch version. ---------------------------*/

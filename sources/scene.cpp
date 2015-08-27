@@ -58,10 +58,9 @@ int CglicScene::getPickedObjectID(int x, int y){
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT,viewport);
   for(int i = 0 ; i < listObject.size() ; i++)
-    //if(!listObject[i]->isSelected())
       listObject[i]->pickingDisplay();
-  glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
   glFlush();
+  glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
   return pixel[0];
 }
 

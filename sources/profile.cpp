@@ -2,7 +2,6 @@
 
 CglicProfile::CglicProfile()
 {
-
   displayShadows    = true;
   displayBottomGrid = true;
   displayAxes       = true;
@@ -18,7 +17,8 @@ CglicProfile::CglicProfile()
   //group_color   = glm::vec3(0,   0.8, 0);           //Group selection
 }
 
-CglicProfile::~CglicProfile()
-{
-  //dtor
+CglicProfile::~CglicProfile(){}
+
+glm::vec3 CglicProfile::color(){
+  return colorGenerator.generateColor();
 }

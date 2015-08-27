@@ -21,12 +21,16 @@ CglicObject::CglicObject():transform()
   pVIEW = NULL;
 
   //Colors
+  /*
   double a = (rand()/(double)(RAND_MAX + 1)) + 1;
   double b = (rand()/(double)(RAND_MAX + 1)) + 1;
   double c = (rand()/(double)(RAND_MAX + 1)) + 1;
   glm::vec3 rand = glm::vec3(a,b,c);
   face_color = glm::vec3(0.7f) + 0.3f * rand;
   edge_color = 0.7f * rand;
+  */
+  face_color = pcv->profile.color();
+  edge_color = 0.5f * face_color;
   idGroup = -1;
 }
 
@@ -89,9 +93,11 @@ void CglicObject::pickingDisplay(){
   //Indices buffer binding
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
   //Faces
+  //glDisable(GL_DEPTH_TEST);
   uniformVec3(colorID, pickingColor);
   glPolygonMode(GL_FRONT, GL_FILL);
   glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
+  //glEnable(GL_DEPTH_TEST);
 }
 
 

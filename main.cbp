@@ -192,6 +192,8 @@
       </Unit>
       <Unit filename="/home/loic/dev/glic/sources/canvas.cpp">
       </Unit>
+      <Unit filename="/home/loic/dev/glic/sources/colorgenerator.cpp">
+      </Unit>
       <Unit filename="/home/loic/dev/glic/sources/cube.cpp">
       </Unit>
       <Unit filename="/home/loic/dev/glic/sources/group.cpp">
@@ -225,6 +227,8 @@
       <Unit filename="/home/loic/dev/glic/include/glic/axis.h">
       </Unit>
       <Unit filename="/home/loic/dev/glic/include/glic/canvas.h">
+      </Unit>
+      <Unit filename="/home/loic/dev/glic/include/glic/colorgenerator.h">
       </Unit>
       <Unit filename="/home/loic/dev/glic/include/glic/cube.h">
       </Unit>
