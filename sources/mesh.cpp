@@ -263,7 +263,8 @@ void CglicMesh::shadowsDisplay(){
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
     glm::mat4 shadowMVP =  *pPROJ * *pVIEW * *pMODEL *
-                           shadowMatrix( glm::vec4(*sceneUp, 0.495), glm::vec4(*sceneUp, 0) ) *
+                           shadowMatrix( glm::vec4(glm::vec3(0,1,0), pcv->profile.bottomDistance - 0.002), glm::vec4(glm::vec3(0,1,0), 0) ) *
+                           //shadowMatrix( glm::vec4(*sceneUp, 0.495), glm::vec4(*sceneUp, 0) ) *
                            glm::scale(MODEL, glm::vec3(scaleFactor));
 
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &shadowMVP[0][0]);
@@ -336,10 +337,13 @@ void CglicMesh::artifactsDisplay(){
     glm::mat4 SCALE = glm::scale(MVP, 1.02f * (bbmax - bbmin));
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &SCALE[0][0]);
 
+    glEnable(GL_POLYGON_OFFSET_LINE);
+    glPolygonOffset(10,0);
     glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
     glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4*sizeof(GLushort)));
     glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8*sizeof(GLushort)));
 
+    glDisable(GL_POLYGON_OFFSET_LINE);
     glLineWidth(1.0);
   }
 

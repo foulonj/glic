@@ -198,6 +198,19 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     }
   }
 
+  //Camera Presets
+  if (key == '1')
+    scene->m_cam = glm::vec3(0,0,1);
+  if (key == '3')
+    scene->m_cam = glm::vec3(1,0,0);
+  if ((key=='7') && (!pcv->profile.upView)){
+    scene->m_cam = glm::vec3(0,1,0);
+    scene->m_up  = glm::vec3(0,0,-1);
+  }
+  if ((key == '1') || (key == '3'))
+    scene->m_up = glm::vec3(0,1,0);
+
+
   lastKey = key;
 
 }

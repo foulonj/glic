@@ -7,12 +7,17 @@ CglicProfile::CglicProfile()
   displayAxes       = true;
   displayAxesLabels = true;
 
+  upView            = false;
+
   invertVertical    = true;
 
   independantScale  = false;
   globalScale       = true;
 
   groupRotation     = true;
+
+  bottomDistance    = 0.1;
+  bottomAngle       = 0;//(float)3.14159/4;
 
   //Colors
   back_color    = glm::vec3(1,   1,   0.97);        //Background

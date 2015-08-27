@@ -15,15 +15,19 @@ class CglicProfile
   public:
     CglicColorGenerator colorGenerator;
 
-    bool displayShadows;
-    bool displayBottomGrid;
-    bool displayAxes;
-    bool displayAxesLabels;
+    bool  displayShadows;
+    bool  displayBottomGrid;
+    bool  displayAxes;
+    bool  displayAxesLabels;
 
-    bool invertVertical;
-    bool independantScale;
-    bool globalScale;
-    bool groupRotation;
+    bool  upView;
+    float bottomDistance;
+    float bottomAngle;
+
+    bool  invertVertical;
+    bool  independantScale;
+    bool  globalScale;
+    bool  groupRotation;
 
     glm::vec3 back_color, grid_color, idle_color;
     glm::vec3 sele_color; //group_color;

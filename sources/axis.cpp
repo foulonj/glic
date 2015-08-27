@@ -17,8 +17,8 @@ CglicAxis::CglicAxis(){
     }
   }
   for(int i = 0 ; i < tGrid.size() ; i++){
-    tGrid[i] = glm::rotate( glm::angleAxis((float)3.14159/4, glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(tGrid[i]));
-    tGrid[i] = glm::vec3(glm::translate(glm::mat4(1.0f),glm::vec3(0,-0.5,0)) * glm::vec4(tGrid[i], 1));
+    tGrid[i] = glm::rotate( glm::angleAxis(pcv->profile.bottomAngle, glm::vec3(0, 1, 0)), glm::vec3(tGrid[i]));
+    tGrid[i] = glm::vec3(glm::translate(glm::mat4(1),glm::vec3(0,-pcv->profile.bottomDistance,0)) * glm::vec4(tGrid[i], 1));
     for(int j = 0 ; j < 3 ; j++)
       grid.push_back(tGrid[i][j]);
   }

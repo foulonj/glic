@@ -5,9 +5,9 @@ extern CglicCanvas *pcv;
 // object constructor
 CglicScene::CglicScene():transform(){
   selected = true;
-  m_cam = glm::vec3(0,0.3,1.2);
+  m_cam = glm::normalize(glm::vec3(1,1,1));
   m_look = -m_cam;
-  m_up = glm::vec3(0., 1., 0.);
+  m_up = glm::normalize(glm::vec3(-1, 1., -1));
   m_right = glm::cross(m_look, m_up);
   center = glm::vec3(0,0,0);
   VIEW = glm::lookAt(m_cam, m_look, m_up);
@@ -61,6 +61,8 @@ void CglicScene::display()
 
   axis->applyTransformation();
   axis->display();
+
+  debug();
 }
 
 
@@ -91,12 +93,12 @@ void CglicScene::applyTransformation()
 
   //MODEL = MODEL * TRANS;
   for(int i = 0 ; i < listObject.size() ; i++){
-    listObject[i]->transform.tr += transform.tr;
+    listObject[i]->transform.setTranslation(transform.tr);
   }
 
-  m_cam = glm::vec3(glm::inverse(TRANS) * glm::vec4(m_cam,1));
-  //m_up = glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_up,1)));
-  m_look = glm::normalize(-m_cam);
+  m_cam   = glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_cam,1)));
+  m_up    = glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_up,1)));
+  m_look  = glm::normalize(-m_cam);
   m_right = glm::normalize(glm::cross(m_look, m_up));
 
   transform.reset();

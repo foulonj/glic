@@ -1,7 +1,7 @@
 #include <glic/transform.h>
 
 void CglicTransform::setTranslation(glm::vec3 translation){
-  tr = translation;
+  tr += translation;
 }
 
 void CglicTransform::setRotation(glm::mat4 M){

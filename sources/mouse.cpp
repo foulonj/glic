@@ -42,28 +42,52 @@ void CglicMouse::motion(int x, int y)
   //if ( tm < m_tm + 40 )  return;
   //m_tm = tm;
 
-  if(arcball)
-    currPos = glm::vec2(x,y);
+  //if(arcball)
+  currPos = glm::vec2(x,y);
 
   if (currPos != lastPos) {
+
     glm::vec3 va = get_arcball_vector(lastPos);
     glm::vec3 vb = get_arcball_vector(currPos);
     glm::vec3 d  = vb-va;
     //float angle = acos(min(1.0f, glm::dot(va, vb)));
     //glm::vec3 axis = glm::cross(va, vb);
+
+    float dX = d.x;
+    float dY = d.y;
     glm::mat4 ID = glm::mat4(1.0f);
-    glm::mat4 ROT = glm::rotate(ID, 5.0f * d.x, scene->m_up) * glm::rotate(ID, 5.0f * -d.y, scene->m_right);
+
+
 
     //On applique la rotation
-    if (scene->isSelected())
-      scene->transform.setRotation(ROT);
-    for (unsigned int i = 0; i < scene->listObject.size(); i++)
-      if (scene->listObject[i]->isSelected())
-        scene->listObject[i]->transform.setRotation(ROT);
+    if(m_button[0]){
+      //On tourne par rapport à un axe vertical
+        glm::mat4 ROT = glm::mat4( glm::angleAxis(-5.0f * dY, scene->m_right) * glm::angleAxis(5.0f * dX, glm::vec3(0,1,0))  );
+        glm::mat4 ROTOBJECT = glm::mat4( glm::angleAxis(5.0f * dX, glm::vec3(0,1,0))  );
+      //On tourne par rapport à ce qu'on voit
+        //glm::mat4 ROT = glm::mat4( glm::angleAxis(-5.0f * dY, scene->m_right) * glm::angleAxis(5.0f * dX, scene->m_up)       );
+
+      if (scene->isSelected())
+        scene->transform.setRotation(ROT);
+      for (unsigned int i = 0; i < scene->listObject.size(); i++)
+        if (scene->listObject[i]->isSelected())
+          scene->listObject[i]->transform.setRotation(ROTOBJECT);
+    }
+
+    //cout << m_button[0] << m_button[1] << m_button[2] << endl;
+    if(m_button[1]){
+      glm::vec3 tr = 0.5f * (dX * glm::vec3(scene->m_right.x,0,scene->m_right.z) + dY * glm::vec3(scene->m_up.x,0,scene->m_up.z));
+      //glm::vec3 tr = 0.5f * (dX * glm::vec3(1,0,0) - dY * glm::vec3(0,0,1));
+      //glm::vec3 tr = dX * scene->m_right + dY * scene->m_up;
+      if (scene->isSelected())
+        scene->transform.setTranslation(tr);
+      for (unsigned int i = 0; i < scene->listObject.size(); i++)
+        if (scene->listObject[i]->isSelected())
+          scene->listObject[i]->transform.setTranslation(tr);
+    }
 
     lastPos = currPos;
   }
-  if ( m_button[0] ){}
 }
 
 void CglicMouse::passiveMotion(int x, int y){
@@ -107,6 +131,8 @@ void CglicMouse::mouse(int b, int s, int x, int y)
         obj->unConstrain();
     }
   }
+
+  m_button[0] = m_button[1] = m_button[2] = false;
 
   switch(b)
   {
@@ -201,14 +227,8 @@ void CglicMouse::mouse(int b, int s, int x, int y)
 
   }//End switch
 
-  //ARCBALL
-  if((b == GLUT_LEFT_BUTTON) && (s == GLUT_DOWN)){
-    arcball = true;
-    lastPos = currPos = glm::vec2(x,y);
-  }
-  else
-    arcball = false;
-
+  arcball = ((m_button[0])?1:0);
+  lastPos = currPos = glm::vec2(x,y);
 }
 
 
