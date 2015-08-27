@@ -2,6 +2,7 @@
 extern "C" {
 #include <libmesh5.h>
 }
+
 #include <glic/canvas.h>
 
 extern CglicCanvas *pcv;
@@ -81,11 +82,14 @@ CglicMesh::CglicMesh(char *name)
   //Préparation des buffers
   std::vector<float> vertices;
   std::vector<int>   indices;
+  int inv = ((pcv->profile.invertVertical)?-1:1);
 
   //Buffer des vertices
-  for (int i = 0 ; i < point.size() ; i++)
-    for(int j = 0 ; j < 3 ; j++)
-      vertices.push_back(point[i].c[j]);
+  for (int i = 0 ; i < point.size() ; i++){
+    vertices.push_back(      point[i].c[0]);
+    vertices.push_back(inv * point[i].c[1]);
+    vertices.push_back(inv * point[i].c[2]);
+  }
   glGenBuffers( 1,               &meshBuffer);
   glBindBuffer( GL_ARRAY_BUFFER, meshBuffer);
   glBufferData( GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
@@ -115,13 +119,11 @@ CglicMesh::CglicMesh(char *name)
     normals.push_back(0.0f);
   //Remplissage du vector 1D "normals", envoyé plus tard aux buffers
   for(int i = 0 ; i < NormalAtVertices.size() - 1 ; i++){
-    for(int j = 0 ; j <3 ; j++){
-      int indV = NormalAtVertices[i].inds[0] - 1;
-      int indN = NormalAtVertices[i].inds[1] - 1;
-      //cout << i << endl;
-      normals[3 * indV + j] = normal[indN].n[j];
-
-    }
+    int indV = NormalAtVertices[i].inds[0] - 1;
+    int indN = NormalAtVertices[i].inds[1] - 1;
+    normals[3 * indV + 0] =       normal[indN].n[0];
+    normals[3 * indV + 1] = inv * normal[indN].n[1];
+    normals[3 * indV + 2] = inv * normal[indN].n[2];
   }
   //Buffer des normales
   glGenBuffers( 1,               &normalBuffer);
@@ -181,23 +183,12 @@ void CglicMesh::getBBOX()
     p0->c[2] -= tra.z;
   }
 
-  //scale to 1
-  for (int k=0; k<np; k++) {
-    p0 = &point[k];
-    glm::vec3 s = 2.0f * (bbmax - bbmin);
-    p0->c[0] /= s.x;
-    p0->c[1] /= s.y;
-    p0->c[2] /= s.z;
+  glm::vec3 size = bbmax - bbmin;
+  localScale     = 0.5f * 1.0f / (max( max(size.x, size.y) , size.z ));
+  if(pcv->profile.independantScale){
+    scaleFactor = localScale;
   }
-
-  //Correct bbox
-  glm::vec3 s = 2.0f * (bbmax - bbmin);
-  bbmin.x/=s.x;
-  bbmin.y/=s.y;
-  bbmin.z/=s.z;
-  bbmax.x/=s.x;
-  bbmax.y/=s.y;
-  bbmax.z/=s.z;
+  //ELSE: C'EST LA SCENE QUI SE CHARGE DENVOYER LE PATE
 
   //Bounding box buffer
   float cube[] = {
@@ -271,7 +262,10 @@ void CglicMesh::shadowsDisplay(){
     glBindAttribLocation(shaderID, 0, "vertex_position");
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
-    glm::mat4 shadowMVP =  *pPROJ * *pVIEW * *pMODEL * shadowMatrix( glm::vec4(*sceneUp, 0.495), glm::vec4(*sceneUp, 0) ) * MODEL;
+    glm::mat4 shadowMVP =  *pPROJ * *pVIEW * *pMODEL *
+                           shadowMatrix( glm::vec4(*sceneUp, 0.495), glm::vec4(*sceneUp, 0) ) *
+                           glm::scale(MODEL, glm::vec3(scaleFactor));
+
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &shadowMVP[0][0]);
     uniformVec3(colorID, 0.08f * face_color);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -281,7 +275,7 @@ void CglicMesh::shadowsDisplay(){
 
 void CglicMesh::artifactsDisplay(){
   //Initialization
-  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * MODEL;
+  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
   int shaderID = pcv->simpleShader.mProgramID;
   glUseProgram(shaderID);
   int MatrixID = glGetUniformLocation(shaderID, "MVP");
@@ -378,8 +372,6 @@ void CglicMesh::artifactsDisplay(){
     glLineWidth(1.0);
   }
 
-
-
   //Closing and freeing ressources
   glDisable(GL_POLYGON_OFFSET_FILL);
   glDisableVertexAttribArray( 0);
@@ -392,7 +384,7 @@ void CglicMesh::artifactsDisplay(){
 void CglicMesh::display()
 {
   //Initialization
-  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * MODEL;
+  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
   int shaderID = pcv->simpleShader.mProgramID;
   glUseProgram(shaderID);
   int MatrixID = glGetUniformLocation(pcv->simpleShader.mProgramID, "MVP");
@@ -466,3 +458,5 @@ void CglicMesh::display()
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+
+

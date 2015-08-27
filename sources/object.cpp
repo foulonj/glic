@@ -32,18 +32,41 @@ CglicObject::CglicObject():transform()
   face_color = pcv->profile.color();
   edge_color = 0.5f * face_color;
   idGroup = -1;
+  localScale = 1;
 }
 
 CglicObject::~CglicObject(){}
 
 void CglicObject::linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::mat4 *PROJ, glm::vec3 *Center, glm::vec3 *Up, int ID){
-  pPROJ       = PROJ;
-  pVIEW       = VIEW;
-  pMODEL      = MODEL;
-  sceneCenter = Center;
-  sceneUp     = Up;
-  objectID   = ID;
+  pPROJ        = PROJ;
+  pVIEW        = VIEW;
+  pMODEL       = MODEL;
+  sceneCenter  = Center;
+  sceneUp      = Up;
+  objectID     = ID;
   pickingColor = glm::vec3(objectID/255.0f, 0, 0);
+}
+
+void CglicObject::pickingDisplay(){
+  int shaderID = pcv->simpleShader.mProgramID;
+  glUseProgram(shaderID);
+  int MatrixID = glGetUniformLocation(shaderID, "MVP");
+  int colorID  = glGetUniformLocation(shaderID, "COL");
+  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
+  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+  //Mesh buffer binding
+  glEnableVertexAttribArray( 0);
+  glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
+  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(      shaderID, 0, "vertex_position");
+  //Indices buffer binding
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+  //Faces
+  //glDisable(GL_DEPTH_TEST);
+  uniformVec3(colorID, pickingColor);
+  glPolygonMode(GL_FRONT, GL_FILL);
+  glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
+  //glEnable(GL_DEPTH_TEST);
 }
 
 void CglicObject::glicInit()
@@ -52,13 +75,11 @@ void CglicObject::glicInit()
 void CglicObject::applyTransformation()
 {
   glm::mat4 ID = glm::mat4(1.0f);
-  center += transform.tr;
-
-  //Le rotation center est défini en fonction des groupes
   if(idGroup==-1)
     rotationCenter = &center;
-  MODEL =  glm::translate(ID, *rotationCenter) * transform.rot * glm::translate(ID, -*rotationCenter) * glm::translate(ID, transform.tr) * MODEL;
-
+  MODEL =  glm::translate(ID, *rotationCenter) * transform.rot * glm::translate(ID, -*rotationCenter) * MODEL;
+  MODEL = glm::translate(ID, transform.tr) * MODEL;
+  center = glm::vec3(MODEL[3]);
   transform.reset();
 }
 void CglicObject::saveTransformations(){
@@ -76,37 +97,13 @@ void CglicObject::resetAll(){
     undoLast();
 }
 
-void CglicObject::pickingDisplay(){
-  int shaderID = pcv->simpleShader.mProgramID;
-  glUseProgram(shaderID);
-  int MatrixID = glGetUniformLocation(shaderID, "MVP");
-  int colorID  = glGetUniformLocation(shaderID, "COL");
 
-  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * MODEL;
+void CglicObject::setRotationCenter(glm::vec3 &center){rotationCenter = &center;}
+void CglicObject::setScaleFactor(float sf){scaleFactor = sf;}
 
-  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-  //Mesh buffer binding
-  glEnableVertexAttribArray( 0);
-  glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
-  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      shaderID, 0, "vertex_position");
-  //Indices buffer binding
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
-  //Faces
-  //glDisable(GL_DEPTH_TEST);
-  uniformVec3(colorID, pickingColor);
-  glPolygonMode(GL_FRONT, GL_FILL);
-  glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
-  //glEnable(GL_DEPTH_TEST);
-}
-
-
-void CglicObject::setRotationCenter(glm::vec3 &center){
-  rotationCenter = &center;
-}
-
-
-int  CglicObject::getID(){return objectID;}
+void       CglicObject::resetGroupID(){idGroup = -1;}
+float      CglicObject::getLocalScale(){return localScale;}
+int        CglicObject::getID(){return objectID;}
 glm::vec3* CglicObject::getCenterPtr(){return &center;}
 
 //Toogle render modes

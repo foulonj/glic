@@ -20,6 +20,9 @@ class CglicProfile
     bool displayAxes;
     bool displayAxesLabels;
 
+    bool invertVertical;
+    bool independantScale;
+    bool globalScale;
     bool groupRotation;
 
     glm::vec3 back_color, grid_color, idle_color;

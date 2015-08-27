@@ -50,6 +50,7 @@ private:
   glm::vec3 bbmin, bbmax;
   glm::vec3 tra;
 
+
 public:
   CglicMesh(char *name);
   void meshInfo(const int& verbose = 0, ostream& outstr = cout);

@@ -7,6 +7,11 @@ CglicProfile::CglicProfile()
   displayAxes       = true;
   displayAxesLabels = true;
 
+  invertVertical    = true;
+
+  independantScale  = false;
+  globalScale       = true;
+
   groupRotation     = true;
 
   //Colors

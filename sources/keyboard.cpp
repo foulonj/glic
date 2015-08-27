@@ -189,8 +189,10 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   if (key == 'G'){
     for(int iG = 0 ; iG < scene->listGroup.size() ; iG++){
       if(scene->listGroup[iG]->isSelected()){
-        for(int iO = 0 ; iO < scene->listGroup[iG]->listObject.size() ; iO++)
+        for(int iO = 0 ; iO < scene->listGroup[iG]->listObject.size() ; iO++){
           scene->listGroup[iG]->listObject[iO]->unSelect();
+          scene->listGroup[iG]->listObject[iO]->resetGroupID();
+        }
         scene->listGroup.erase(scene->listGroup.begin() + iG);
       }
     }

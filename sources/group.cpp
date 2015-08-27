@@ -8,11 +8,7 @@ extern CglicCanvas *pcv;
 CglicGroup::CglicGroup(std::vector<pCglicObject> groupOfObjects)
 {
   listObject = groupOfObjects;
-  //double a = (rand()/(double)(RAND_MAX + 1)) + 1;
-  //double b = (rand()/(double)(RAND_MAX + 1)) + 1;
-  //double c = (rand()/(double)(RAND_MAX + 1)) + 1;
-  //glm::vec3 rand = glm::vec3(a,b,c);
-  group_color = glm::vec3(0,0.7,0);//glm::vec3(0.5f) + 0.3f * rand;
+  group_color = glm::vec3(0,0.7,0);
 
   //Centres du groupe
   for(int i = 0 ; i < listObject.size() ; i++){

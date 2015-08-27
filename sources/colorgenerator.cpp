@@ -17,7 +17,10 @@ glm::vec3 CglicColorGenerator::generateColor(){
   h -= int(h);
   rgb rgbColor = hsv2rgb(hsv{double(h)*360, 0.7, 0.9});
   inc++;
-  return glm::vec3(rgbColor.r, rgbColor.g, rgbColor.b);
+  glm::vec3 mix = glm::vec3(1);
+  glm::vec3 col = glm::vec3(rgbColor.r, rgbColor.g, rgbColor.b);
+  float mixFactor = 0.4;//1 = pure color, 0 = pure white
+  return mixFactor * col + (1-mixFactor) * mix;
 }
 
 hsv CglicColorGenerator::rgb2hsv(rgb in){

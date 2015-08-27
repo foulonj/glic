@@ -1,4 +1,6 @@
 #include <glic/scene.h>
+#include <glic/canvas.h>
+extern CglicCanvas *pcv;
 
 // object constructor
 CglicScene::CglicScene():transform(){
@@ -9,6 +11,7 @@ CglicScene::CglicScene():transform(){
   m_right = glm::cross(m_look, m_up);
   center = glm::vec3(0,0,0);
   VIEW = glm::lookAt(m_cam, m_look, m_up);
+  globalScale = 100000.0f;//For use of minimums later
 }
 CglicScene::~CglicScene(){}
 
@@ -25,11 +28,19 @@ void CglicScene::addObject(pCglicObject object)
     axis->linkSceneParameters(&MODEL, &VIEW, &PROJ, &center, &m_up, 0);
     axis->view = view;
   }
+
+  globalScale = min(globalScale, object->getLocalScale());
 }
 
 
 void CglicScene::display()
 {
+  if(pcv->profile.globalScale){
+    for(int i = 0 ; i < listObject.size() ; i++){
+      listObject[i]->setScaleFactor(globalScale);
+    }
+  }
+
   update_matrices();
   applyTransformation();
 

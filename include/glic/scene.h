@@ -24,6 +24,7 @@ public:
   CglicAxis                 *axis;
   CglicView                 *view;
 
+  float globalScale;
   glm::vec3 center;
 
 public:
