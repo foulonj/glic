@@ -35,6 +35,8 @@ void CglicScene::addObject(pCglicObject object)
 
 void CglicScene::display()
 {
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
   if(pcv->profile.globalScale){
     for(int i = 0 ; i < listObject.size() ; i++){
       listObject[i]->setScaleFactor(globalScale);
@@ -50,17 +52,29 @@ void CglicScene::display()
   for (int iObj = 0; iObj < listObject.size(); iObj++)
     listObject[iObj]->applyTransformation();
 
+  axis->applyTransformation();
+  axis->display();
+
   for (int iObj = 0; iObj < listObject.size(); iObj++)
-    listObject[iObj]->shadowsDisplay();
+    if(!listObject[iObj]->isHidden())
+      listObject[iObj]->shadowsDisplay();
+  for (int iObj = 0; iObj < listObject.size(); iObj++)
+    if(listObject[iObj]->isHidden())
+      listObject[iObj]->shadowsDisplay();
 
   for (int iObj = 0; iObj < listObject.size(); iObj++)
     listObject[iObj]->artifactsDisplay();
 
-  for (int iObj = 0; iObj < listObject.size(); iObj++)
-    listObject[iObj]->display();
 
-  axis->applyTransformation();
-  axis->display();
+  //D'abord les transparents, ensuite les autres ou inverse
+  for (int iObj = 0; iObj < listObject.size(); iObj++)
+    if(!listObject[iObj]->isHidden())
+      listObject[iObj]->display();
+  for (int iObj = 0; iObj < listObject.size(); iObj++)
+    if(listObject[iObj]->isHidden())
+      listObject[iObj]->display();
+
+
 
   debug();
 }
@@ -70,8 +84,9 @@ int CglicScene::getPickedObjectID(int x, int y){
   unsigned char pixel[3];
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT,viewport);
+  glFlush();
   for(int i = 0 ; i < listObject.size() ; i++)
-      listObject[i]->pickingDisplay();
+    listObject[i]->pickingDisplay();
   glFlush();
   glReadPixels(x,viewport[3]-y,1,1,GL_RGB,GL_UNSIGNED_BYTE,(void *)pixel);
   return pixel[0];

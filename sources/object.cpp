@@ -68,8 +68,10 @@ void CglicObject::pickingDisplay(){
     //glDisable(GL_DEPTH_TEST);
     uniformVec3(colorID, pickingColor);
     glPolygonMode(GL_FRONT, GL_FILL);
+
+    glDisable(GL_DEPTH_TEST);
     glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
-    //glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
   }
 }
 

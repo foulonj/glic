@@ -76,7 +76,19 @@ void CglicMouse::motion(int x, int y)
 
     //cout << m_button[0] << m_button[1] << m_button[2] << endl;
     if(m_button[1]){
-      glm::vec3 tr = 0.5f * (dX * glm::vec3(scene->m_right.x,0,scene->m_right.z) + dY * glm::vec3(scene->m_up.x,0,scene->m_up.z));
+      glm::vec3 tr;
+      if(scene->m_cam.y==0)
+        tr = 0.5f * (
+             dX * glm::normalize(glm::vec3(scene->m_right.x,0,scene->m_right.z)) +
+             dY * glm::normalize(glm::vec3(scene->m_look.x,0,scene->m_look.z))
+             );
+      else{
+        tr = 0.5f * (
+             dX * glm::normalize(glm::vec3(scene->m_right.x,0,scene->m_right.z)) +
+             dY * glm::normalize(glm::vec3(scene->m_up.x,0,scene->m_up.z))
+             );
+      }
+
       //glm::vec3 tr = 0.5f * (dX * glm::vec3(1,0,0) - dY * glm::vec3(0,0,1));
       //glm::vec3 tr = dX * scene->m_right + dY * scene->m_up;
       if (scene->isSelected())
@@ -178,6 +190,8 @@ void CglicMouse::mouse(int b, int s, int x, int y)
 
       if(s==GLUT_UP){
         pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+
+
 
         int pickedID = scene->getPickedObjectID(x, y);
         bool match = false;

@@ -250,7 +250,11 @@ glm::mat4 shadowMatrix(glm::vec4 ground, glm::vec4 light){
 }
 
 void CglicMesh::shadowsDisplay(){
-  if( (pcv->profile.displayShadows) && (!hidden) ){
+  if(pcv->profile.displayShadows){
+    if(hidden)
+      glEnable(GL_BLEND);
+
+    glEnable(GL_CULL_FACE);
     int shaderID = pcv->simpleShader.mProgramID;
     glUseProgram(shaderID);
     int MatrixID = glGetUniformLocation(shaderID, "MVP");
@@ -271,6 +275,9 @@ void CglicMesh::shadowsDisplay(){
     uniformVec3(colorID, 0.08f * face_color);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+
+    glDisable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
   }
 }
 
@@ -384,87 +391,74 @@ void CglicMesh::artifactsDisplay(){
     glUseProgram(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDisable(GL_CULL_FACE);
   }
 }
 
 void CglicMesh::display()
 {
-  if(!hidden){
-    //Initialization
-    glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
-    //Shader used as main rendering
-    int shaderID = ((smooth)?pcv->smoothShader.mProgramID : pcv->simpleShader.mProgramID);
-    glUseProgram(shaderID);
+  if(hidden)
+    glEnable(GL_BLEND);
 
-    int MatrixID = glGetUniformLocation(shaderID, "MVP");
-    int colorID  = glGetUniformLocation(shaderID, "COL");
-    int lightID  = glGetUniformLocation(shaderID, "LIGHTPOS");
+  glEnable(GL_CULL_FACE);
 
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    uniformVec3(lightID, *sceneCam);
-    cout << sceneCam->x << " " << sceneCam->y << " " << sceneCam->z << endl;
-    //Mesh buffer binding
-    //glEnableVertexAttribArray( 0);
-    //glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
-    //glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    //glBindAttribLocation(      pcv->simpleShader.mProgramID, 0, "vertex_position");
-    //Indices buffer binding
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+  //Initialization
+  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
+  int shaderID = ((smooth)?pcv->smoothShader.mProgramID : pcv->simpleShader.mProgramID);
+  glUseProgram(shaderID);
+  int MatrixID = glGetUniformLocation(shaderID, "MVP");
+  int colorID  = glGetUniformLocation(shaderID, "COL");
+  int lightID  = glGetUniformLocation(shaderID, "LIGHTPOS");
+  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+  uniformVec3(lightID, *sceneCam);
 
+  //Mesh buffer binding
+  glEnableVertexAttribArray( 0);
+  glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
+  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(      shaderID, 0, "vertex_position");
 
-    //Initialization
-    //glUseProgram(shaderID);
-    //MatrixID = glGetUniformLocation(shaderID, "MVP");
-    //colorID  = glGetUniformLocation(shaderID, "COL");
-    //MVP update and send
-    //glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+  //Normal buffer binding
+  glEnableVertexAttribArray( 1);
+  glBindBuffer(              GL_ARRAY_BUFFER, normalBuffer);
+  glVertexAttribPointer(     1, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(      shaderID, 1, "vertex_normal");
 
-    //Mesh buffer binding
-    glEnableVertexAttribArray( 0);
-    glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
-    glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindAttribLocation(      shaderID, 0, "vertex_position");
-    //Normal buffer binding
-    glEnableVertexAttribArray( 1);
-    glBindBuffer(              GL_ARRAY_BUFFER, normalBuffer);
-    glVertexAttribPointer(     1, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindAttribLocation(      shaderID, 1, "vertex_normal");
-    //Indices buffer binding
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+  //Indices buffer binding
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
+  if(smooth){
+    GLuint MID      = glGetUniformLocation(shaderID, "M");
+    GLuint VID      = glGetUniformLocation(shaderID, "V");
+    glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
+    glUniformMatrix4fv( VID, 1, GL_FALSE, &(*pVIEW)[0][0]);
+    uniformVec3(colorID, face_color);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+  }
+  else{
+    uniformVec3(colorID, face_color);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+  }
+
+  if(line){
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(1,0);
-    if(smooth){
-      GLuint MID      = glGetUniformLocation(shaderID, "M");
-      GLuint VID      = glGetUniformLocation(shaderID, "V");
-      glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
-      glUniformMatrix4fv( VID, 1, GL_FALSE, &(*pVIEW)[0][0]);
-      uniformVec3(colorID, face_color);
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-    }
-    else{
-      uniformVec3(colorID, face_color);
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-    }
-
-    if(line){
-      uniformVec3(colorID, edge_color);
-      glPolygonMode(GL_FRONT, GL_LINE);
-      glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-    }
-
-
-
-    //Closing and freeing ressources
-    glDisable(GL_POLYGON_OFFSET_FILL);
-    glDisableVertexAttribArray( 0);
-    glDisableVertexAttribArray( 1);
-    glUseProgram(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    uniformVec3(colorID, edge_color);
+    glPolygonMode(GL_FRONT, GL_LINE);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }
+
+  //Closing and freeing ressources
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glDisableVertexAttribArray( 0);
+  glDisableVertexAttribArray( 1);
+  glUseProgram(0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDisable(GL_BLEND);
+  glDisable(GL_CULL_FACE);
 }
 
 

@@ -8,7 +8,7 @@ CglicProfile::CglicProfile()
   displayAxesLabels = true;
 
   upView            = false;
-  perspective       = false;
+  perspective       = true;
 
   invertVertical    = true;
 
