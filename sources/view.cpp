@@ -1,7 +1,7 @@
 #include <glic/view.h>
-
 #include "glm/gtx/string_cast.hpp"
-
+#include <glic/canvas.h>
+extern CglicCanvas *pcv;
 
 
 CglicView::CglicView()
@@ -11,6 +11,7 @@ CglicView::CglicView()
   m_eye    = TV_LEFT;
   m_ctyp   = TV_DEF;
   setPersp(70.0, 0.01, 3.0);
+  persp  = pcv->profile.perspective;
 }
 
 

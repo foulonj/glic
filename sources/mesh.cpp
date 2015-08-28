@@ -392,32 +392,32 @@ void CglicMesh::display()
   if(!hidden){
     //Initialization
     glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
-    int shaderID = pcv->simpleShader.mProgramID;
+    //Shader used as main rendering
+    int shaderID = ((smooth)?pcv->smoothShader.mProgramID : pcv->simpleShader.mProgramID);
     glUseProgram(shaderID);
-    int MatrixID = glGetUniformLocation(pcv->simpleShader.mProgramID, "MVP");
-    int colorID  = glGetUniformLocation(pcv->simpleShader.mProgramID, "COL");
+
+    int MatrixID = glGetUniformLocation(shaderID, "MVP");
+    int colorID  = glGetUniformLocation(shaderID, "COL");
+    int lightID  = glGetUniformLocation(shaderID, "LIGHTPOS");
+
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    uniformVec3(lightID, *sceneCam);
+    cout << sceneCam->x << " " << sceneCam->y << " " << sceneCam->z << endl;
     //Mesh buffer binding
-    glEnableVertexAttribArray( 0);
-    glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
-    glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindAttribLocation(      pcv->simpleShader.mProgramID, 0, "vertex_position");
+    //glEnableVertexAttribArray( 0);
+    //glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
+    //glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    //glBindAttribLocation(      pcv->simpleShader.mProgramID, 0, "vertex_position");
     //Indices buffer binding
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
-    //Shader used as main rendering
-    if(smooth)
-      shaderID = pcv->smoothShader.mProgramID;
-    else
-      shaderID = pcv->simpleShader.mProgramID;
 
     //Initialization
-    glUseProgram(shaderID);
-    MatrixID = glGetUniformLocation(shaderID, "MVP");
-    colorID  = glGetUniformLocation(shaderID, "COL");
-
+    //glUseProgram(shaderID);
+    //MatrixID = glGetUniformLocation(shaderID, "MVP");
+    //colorID  = glGetUniformLocation(shaderID, "COL");
     //MVP update and send
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    //glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
     //Mesh buffer binding
     glEnableVertexAttribArray( 0);

@@ -28,6 +28,7 @@ class GLIC_API CglicObject
     //Scene parameters
     glm::vec3 *sceneCenter;
     glm::vec3 *sceneUp;
+    glm::vec3 *sceneCam;
     glm::mat4 *pMODEL;
     //Colors
     glm::vec3 face_color, edge_color;
@@ -52,7 +53,7 @@ class GLIC_API CglicObject
   public:
     CglicObject();
     virtual ~CglicObject();
-    void linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::mat4 *PROJ, glm::vec3 *Center, glm::vec3 *Up, int ID);
+    void linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::mat4 *PROJ, glm::vec3 *Center, glm::vec3 *Up, glm::vec3 *Cam, int ID);
     void setRotationCenter(glm::vec3 &center);
     void setScaleFactor(float sf);
 

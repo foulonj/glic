@@ -20,12 +20,12 @@ void CglicScene::addObject(pCglicObject object)
 {
   //Ajout de l'objet à la scène
   listObject.push_back(object);
-  object->linkSceneParameters(&MODEL, &VIEW, &PROJ, &center, &m_up, listObject.size());
+  object->linkSceneParameters(&MODEL, &VIEW, &PROJ, &center, &m_up, &m_cam, listObject.size());
 
   //Création des axes
   if(listObject.size()==1){
     axis = new CglicAxis();
-    axis->linkSceneParameters(&MODEL, &VIEW, &PROJ, &center, &m_up, 0);
+    axis->linkSceneParameters(&MODEL, &VIEW, &PROJ, &center, &m_up, &m_cam, 0);
     axis->view = view;
   }
 
@@ -107,7 +107,10 @@ void CglicScene::applyTransformation()
 void CglicScene::update_matrices()
 {
   VIEW = glm::lookAt(m_cam, m_look, m_up);
-  PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
+  if(view->persp)
+    PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
+  else
+    PROJ = glm::ortho(-view->ratio*0.5,view->ratio*0.5,-0.5, 0.5, view->m_znear, view->m_zfar);
 }
 
 void CglicScene::saveTransformations(){

@@ -19,6 +19,7 @@ public:
 	double    m_fovy;
 	double    ratio;
 	int width, height;
+	bool persp;
 
 private:
   bool      m_stereo;

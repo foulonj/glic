@@ -8,6 +8,7 @@ CglicProfile::CglicProfile()
   displayAxesLabels = true;
 
   upView            = false;
+  perspective       = false;
 
   invertVertical    = true;
 
@@ -15,6 +16,7 @@ CglicProfile::CglicProfile()
   globalScale       = true;
 
   groupRotation     = true;
+
 
   bottomDistance    = 0.1;
   bottomAngle       = 0;//(float)3.14159/4;

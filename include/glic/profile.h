@@ -21,6 +21,8 @@ class CglicProfile
     bool  displayAxesLabels;
 
     bool  upView;
+    bool  perspective;
+
     float bottomDistance;
     float bottomAngle;
 

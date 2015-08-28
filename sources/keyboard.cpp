@@ -222,6 +222,10 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   if ((key == '1') || (key == '3'))
     scene->m_up = glm::vec3(0,1,0);
 
+  //Ortho view
+  if (key == '5')
+    scene->view->persp = !scene->view->persp;
+
 
   lastKey = key;
 

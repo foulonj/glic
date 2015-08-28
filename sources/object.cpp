@@ -38,12 +38,13 @@ CglicObject::CglicObject():transform()
 
 CglicObject::~CglicObject(){}
 
-void CglicObject::linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::mat4 *PROJ, glm::vec3 *Center, glm::vec3 *Up, int ID){
+void CglicObject::linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::mat4 *PROJ, glm::vec3 *Center, glm::vec3 *Up, glm::vec3 *Cam, int ID){
   pPROJ        = PROJ;
   pVIEW        = VIEW;
   pMODEL       = MODEL;
   sceneCenter  = Center;
   sceneUp      = Up;
+  sceneCam     = Cam;
   objectID     = ID;
   pickingColor = glm::vec3(objectID/255.0f, 0, 0);
 }

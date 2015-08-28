@@ -6,6 +6,7 @@ out vec3 fragmentColor;
 
 uniform mat4 MVP;
 uniform vec3 COL;
+uniform vec3 LIGHTPOS;
 
 uniform mat4 M;//MODEL
 uniform mat4 V;//VIEW
@@ -24,12 +25,18 @@ void main(){
 
   vec3 LightColor            = vec3(1,1,0.8);//Lumière un peu jaune
   vec3 MaterialDiffuseColor  = COL;
-  vec3 MaterialSpecularColor = vec3(1.0, 1.0, 1.0);
-  float LightPower           = 8.0f;
-  vec3 MaterialAmbientColor  = vec3(0.05,0.05,0.05) * MaterialDiffuseColor;
-  vec3 LightPosition_worldspace = vec3(2,2,2);
-  float distance = length(LightPosition_worldspace - gl_Position.xyz);
+  vec3 MaterialSpecularColor = 0.5 * (COL + vec3(1.0, 1.0, 1.0));
   float lobeSize = 5.0f;//Taille du lobe spéculaire
+  float LightPower           = 100.0f;
+  vec3 MaterialAmbientColor  = 0.5 * MaterialDiffuseColor;
+
+  vec3 LightPosition_worldspace = vec3(-1,10,-1);
+  //vec3 LightPosition_worldspace = (vec4(LIGHTPOS, 1) * M).xyz;
+  //vec3 LightPosition_worldspace = (MVP * vec4(LIGHTPOS,0)).xyz;
+  //MaterialAmbientColor = LIGHTPOS;
+
+  float distance = length(LightPosition_worldspace - gl_Position.xyz);
+
 
 
 
@@ -74,9 +81,9 @@ void main(){
 
 
   //Sortie finale de couleur
-  vec3 color = 0.1 * MaterialAmbientColor
-             + 0.8 * MaterialDiffuseColor  * LightColor * LightPower * cosTheta        / (distance*distance)
-             + 0.1 * MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,lobeSize) / (distance*distance)  //pow(...) = largeur du lobe speculaire
+  vec3 color = 0.2 * MaterialAmbientColor
+             + 0.6 * MaterialDiffuseColor  * LightColor * LightPower * cosTheta        / (distance*distance)
+             + 0.2 * MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,lobeSize) / (distance*distance)  //pow(...) = largeur du lobe speculaire
              ;
   fragmentColor = color;
 }
