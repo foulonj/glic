@@ -43,6 +43,7 @@ class GLIC_API CglicObject
     bool box;
     bool line;
     bool smooth;
+    bool hidden;
     //Constrained movements
     bool      isRotationConstrained,   isTranslationConstrained;
     glm::vec3 constrainedRotationAxis, constrainedTranslationAxis;
@@ -74,8 +75,11 @@ class GLIC_API CglicObject
     void  resetGroupID();
     glm::vec3* getCenterPtr();
     //Selection & picking
-    bool  isSelected();
     bool  isPicked(int ID);
+    bool  isHidden();
+    void  hide();
+    void  unHide();
+    bool  isSelected();
     void  toogleSelected();
     void  select();
     void  unSelect();

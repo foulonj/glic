@@ -250,7 +250,7 @@ glm::mat4 shadowMatrix(glm::vec4 ground, glm::vec4 light){
 }
 
 void CglicMesh::shadowsDisplay(){
-  if(pcv->profile.displayShadows){
+  if( (pcv->profile.displayShadows) && (!hidden) ){
     int shaderID = pcv->simpleShader.mProgramID;
     glUseProgram(shaderID);
     int MatrixID = glGetUniformLocation(shaderID, "MVP");
@@ -275,192 +275,196 @@ void CglicMesh::shadowsDisplay(){
 }
 
 void CglicMesh::artifactsDisplay(){
-  //Initialization
-  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
-  int shaderID = pcv->simpleShader.mProgramID;
-  glUseProgram(shaderID);
-  int MatrixID = glGetUniformLocation(shaderID, "MVP");
-  int colorID  = glGetUniformLocation(shaderID, "COL");
-  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  if(!hidden){
+    //Initialization
+    glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
+    int shaderID = pcv->simpleShader.mProgramID;
+    glUseProgram(shaderID);
+    int MatrixID = glGetUniformLocation(shaderID, "MVP");
+    int colorID  = glGetUniformLocation(shaderID, "COL");
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-  //Mesh buffer binding
-  glEnableVertexAttribArray( 0);
-  glBindBuffer(GL_ARRAY_BUFFER, meshBuffer);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(shaderID, 0, "vertex_position");
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+    //Mesh buffer binding
+    glEnableVertexAttribArray( 0);
+    glBindBuffer(GL_ARRAY_BUFFER, meshBuffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(shaderID, 0, "vertex_position");
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
-  //Group identification
-  pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
-  if (scene->listGroup.size() > 0){
-    for(int i = 0 ; i < scene->listGroup.size() ; i++){
-      for(int j = 0 ; j < scene->listGroup[i]->listObject.size() ; j++){
-        if(objectID==scene->listGroup[i]->listObject[j]->getID()){
-          idGroup = i;
+    //Group identification
+    pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+    if (scene->listGroup.size() > 0){
+      for(int i = 0 ; i < scene->listGroup.size() ; i++){
+        for(int j = 0 ; j < scene->listGroup[i]->listObject.size() ; j++){
+          if(objectID==scene->listGroup[i]->listObject[j]->getID()){
+            idGroup = i;
+          }
         }
       }
     }
-  }
-  else
-    idGroup = -1;
+    else
+      idGroup = -1;
 
-  glm::vec3 selection_color = ((idGroup==-1)?pcv->profile.sele_color:scene->listGroup[idGroup]->group_color);
+    glm::vec3 selection_color = ((idGroup==-1)?pcv->profile.sele_color:scene->listGroup[idGroup]->group_color);
 
-  //Contour
-  if(isSelected()){
-    glLineWidth(10.0);
-
-    uniformVec3(colorID, selection_color);
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-    glDisable(GL_DEPTH_TEST);
-    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-    glEnable(GL_DEPTH_TEST);
-
-    glLineWidth(1.0);
-  }
-
-  //Box
-  if(box){
-    glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
-
+    //Contour
     if(isSelected()){
-      glLineWidth(2.0);
-      uniformVec3(colorID, selection_color);}
-    else{
+      glLineWidth(10.0);
+
+      uniformVec3(colorID, selection_color);
+      glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+      glDisable(GL_DEPTH_TEST);
+      glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+      glEnable(GL_DEPTH_TEST);
+
       glLineWidth(1.0);
-      uniformVec3(colorID, pcv->profile.idle_color);}
-
-    glm::mat4 SCALE = glm::scale(MVP, 1.02f * (bbmax - bbmin));
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &SCALE[0][0]);
-
-    glEnable(GL_POLYGON_OFFSET_LINE);
-    glPolygonOffset(10,0);
-    glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
-    glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4*sizeof(GLushort)));
-    glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8*sizeof(GLushort)));
-
-    glDisable(GL_POLYGON_OFFSET_LINE);
-    glLineWidth(1.0);
-  }
-
-  //Axes avec contraintes
-  if((isConstrainedInRotation()) || (isConstrainedInTranslation())){
-    std::vector<glm::vec3> pts;
-    if(isConstrainedInRotation()){
-      pts.push_back(-10.0f * constrainedRotationAxis + *rotationCenter);
-      pts.push_back( 10.0f * constrainedRotationAxis + *rotationCenter);
     }
-    else if(isConstrainedInTranslation()){
-      pts.push_back(-10.0f * constrainedTranslationAxis + *rotationCenter);
-      pts.push_back( 10.0f * constrainedTranslationAxis + *rotationCenter);
-    }
-    glUseProgram(pcv->simpleShader.mProgramID);
-    GLuint axeBuffer;
-    glGenBuffers(1, &axeBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, axeBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), &pts[0][0], GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-    glBindAttribLocation(pcv->simpleShader.mProgramID, 0, "vertex_position");
-    MVP = *pPROJ * *pVIEW * *pMODEL;// * glm::translate(MODEL, center);
-    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    if(isConstrainedInRotation())
-      uniformVec3(colorID, constrainedRotationAxis);
-    else if(isConstrainedInTranslation())
-      uniformVec3(colorID, constrainedTranslationAxis);
-    glLineWidth(2.0f);
-    glDrawArrays(GL_LINES, 0, 2);
-    glLineWidth(1.0);
-  }
 
-  //Closing and freeing ressources
-  glDisable(GL_POLYGON_OFFSET_FILL);
-  glDisableVertexAttribArray( 0);
-  glDisableVertexAttribArray( 1);
-  glUseProgram(0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //Box
+    if(box){
+      glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
+
+      if(isSelected()){
+        glLineWidth(2.0);
+        uniformVec3(colorID, selection_color);}
+      else{
+        glLineWidth(1.0);
+        uniformVec3(colorID, pcv->profile.idle_color);}
+
+      glm::mat4 SCALE = glm::scale(MVP, 1.02f * (bbmax - bbmin));
+      glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &SCALE[0][0]);
+
+      glEnable(GL_POLYGON_OFFSET_LINE);
+      glPolygonOffset(10,0);
+      glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
+      glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4*sizeof(GLushort)));
+      glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8*sizeof(GLushort)));
+
+      glDisable(GL_POLYGON_OFFSET_LINE);
+      glLineWidth(1.0);
+    }
+
+    //Axes avec contraintes
+    if((isConstrainedInRotation()) || (isConstrainedInTranslation())){
+      std::vector<glm::vec3> pts;
+      if(isConstrainedInRotation()){
+        pts.push_back(-10.0f * constrainedRotationAxis + *rotationCenter);
+        pts.push_back( 10.0f * constrainedRotationAxis + *rotationCenter);
+      }
+      else if(isConstrainedInTranslation()){
+        pts.push_back(-10.0f * constrainedTranslationAxis + *rotationCenter);
+        pts.push_back( 10.0f * constrainedTranslationAxis + *rotationCenter);
+      }
+      glUseProgram(pcv->simpleShader.mProgramID);
+      GLuint axeBuffer;
+      glGenBuffers(1, &axeBuffer);
+      glBindBuffer(GL_ARRAY_BUFFER, axeBuffer);
+      glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), &pts[0][0], GL_STATIC_DRAW);
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+      glBindAttribLocation(pcv->simpleShader.mProgramID, 0, "vertex_position");
+      MVP = *pPROJ * *pVIEW * *pMODEL;// * glm::translate(MODEL, center);
+      glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+      if(isConstrainedInRotation())
+        uniformVec3(colorID, constrainedRotationAxis);
+      else if(isConstrainedInTranslation())
+        uniformVec3(colorID, constrainedTranslationAxis);
+      glLineWidth(2.0f);
+      glDrawArrays(GL_LINES, 0, 2);
+      glLineWidth(1.0);
+    }
+
+    //Closing and freeing ressources
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    glDisableVertexAttribArray( 0);
+    glDisableVertexAttribArray( 1);
+    glUseProgram(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+  }
 }
 
 void CglicMesh::display()
 {
-  //Initialization
-  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
-  int shaderID = pcv->simpleShader.mProgramID;
-  glUseProgram(shaderID);
-  int MatrixID = glGetUniformLocation(pcv->simpleShader.mProgramID, "MVP");
-  int colorID  = glGetUniformLocation(pcv->simpleShader.mProgramID, "COL");
-  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-  //Mesh buffer binding
-  glEnableVertexAttribArray( 0);
-  glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
-  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      pcv->simpleShader.mProgramID, 0, "vertex_position");
-  //Indices buffer binding
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+  if(!hidden){
+    //Initialization
+    glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
+    int shaderID = pcv->simpleShader.mProgramID;
+    glUseProgram(shaderID);
+    int MatrixID = glGetUniformLocation(pcv->simpleShader.mProgramID, "MVP");
+    int colorID  = glGetUniformLocation(pcv->simpleShader.mProgramID, "COL");
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    //Mesh buffer binding
+    glEnableVertexAttribArray( 0);
+    glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
+    glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(      pcv->simpleShader.mProgramID, 0, "vertex_position");
+    //Indices buffer binding
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
-  //Shader used as main rendering
-  if(smooth)
-    shaderID = pcv->smoothShader.mProgramID;
-  else
-    shaderID = pcv->simpleShader.mProgramID;
+    //Shader used as main rendering
+    if(smooth)
+      shaderID = pcv->smoothShader.mProgramID;
+    else
+      shaderID = pcv->simpleShader.mProgramID;
 
-  //Initialization
-  glUseProgram(shaderID);
-  MatrixID = glGetUniformLocation(shaderID, "MVP");
-  colorID  = glGetUniformLocation(shaderID, "COL");
+    //Initialization
+    glUseProgram(shaderID);
+    MatrixID = glGetUniformLocation(shaderID, "MVP");
+    colorID  = glGetUniformLocation(shaderID, "COL");
 
-  //MVP update and send
-  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    //MVP update and send
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-  //Mesh buffer binding
-  glEnableVertexAttribArray( 0);
-  glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
-  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      shaderID, 0, "vertex_position");
-  //Normal buffer binding
-  glEnableVertexAttribArray( 1);
-  glBindBuffer(              GL_ARRAY_BUFFER, normalBuffer);
-  glVertexAttribPointer(     1, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      shaderID, 1, "vertex_normal");
-  //Indices buffer binding
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+    //Mesh buffer binding
+    glEnableVertexAttribArray( 0);
+    glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
+    glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(      shaderID, 0, "vertex_position");
+    //Normal buffer binding
+    glEnableVertexAttribArray( 1);
+    glBindBuffer(              GL_ARRAY_BUFFER, normalBuffer);
+    glVertexAttribPointer(     1, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(      shaderID, 1, "vertex_normal");
+    //Indices buffer binding
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
-  glEnable(GL_POLYGON_OFFSET_FILL);
-  glPolygonOffset(1,0);
-  if(smooth){
-    GLuint MID      = glGetUniformLocation(shaderID, "M");
-    GLuint VID      = glGetUniformLocation(shaderID, "V");
-    glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
-    glUniformMatrix4fv( VID, 1, GL_FALSE, &(*pVIEW)[0][0]);
-    uniformVec3(colorID, face_color);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(1,0);
+    if(smooth){
+      GLuint MID      = glGetUniformLocation(shaderID, "M");
+      GLuint VID      = glGetUniformLocation(shaderID, "V");
+      glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
+      glUniformMatrix4fv( VID, 1, GL_FALSE, &(*pVIEW)[0][0]);
+      uniformVec3(colorID, face_color);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+    }
+    else{
+      uniformVec3(colorID, face_color);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+    }
+
+    if(line){
+      uniformVec3(colorID, edge_color);
+      glPolygonMode(GL_FRONT, GL_LINE);
+      glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+    }
+
+
+
+    //Closing and freeing ressources
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    glDisableVertexAttribArray( 0);
+    glDisableVertexAttribArray( 1);
+    glUseProgram(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
   }
-  else{
-    uniformVec3(colorID, face_color);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-  }
-
-  if(line){
-    uniformVec3(colorID, edge_color);
-    glPolygonMode(GL_FRONT, GL_LINE);
-    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-  }
-
-
-
-  //Closing and freeing ressources
-  glDisable(GL_POLYGON_OFFSET_FILL);
-  glDisableVertexAttribArray( 0);
-  glDisableVertexAttribArray( 1);
-  glUseProgram(0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 

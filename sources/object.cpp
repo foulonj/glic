@@ -11,14 +11,15 @@ CglicObject::CglicObject():transform()
 {
   //cout << "  --- [create CglicObject]" << endl;
   selected = false;
-  box    = false;
-  line   = false;
-  smooth = true;
+  box      = false;
+  line     = false;
+  smooth   = true;
+  hidden   = false;
 
-  MODEL = glm::mat4(1.0f);
+  MODEL  = glm::mat4(1.0f);
   center = glm::vec3(0.0f);
-  pPROJ = NULL;
-  pVIEW = NULL;
+  pPROJ  = NULL;
+  pVIEW  = NULL;
 
   //Colors
   /*
@@ -48,25 +49,27 @@ void CglicObject::linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::ma
 }
 
 void CglicObject::pickingDisplay(){
-  int shaderID = pcv->simpleShader.mProgramID;
-  glUseProgram(shaderID);
-  int MatrixID = glGetUniformLocation(shaderID, "MVP");
-  int colorID  = glGetUniformLocation(shaderID, "COL");
-  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
-  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
-  //Mesh buffer binding
-  glEnableVertexAttribArray( 0);
-  glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
-  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
-  glBindAttribLocation(      shaderID, 0, "vertex_position");
-  //Indices buffer binding
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
-  //Faces
-  //glDisable(GL_DEPTH_TEST);
-  uniformVec3(colorID, pickingColor);
-  glPolygonMode(GL_FRONT, GL_FILL);
-  glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
-  //glEnable(GL_DEPTH_TEST);
+  if(!hidden){
+    int shaderID = pcv->simpleShader.mProgramID;
+    glUseProgram(shaderID);
+    int MatrixID = glGetUniformLocation(shaderID, "MVP");
+    int colorID  = glGetUniformLocation(shaderID, "COL");
+    glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    //Mesh buffer binding
+    glEnableVertexAttribArray( 0);
+    glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
+    glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(      shaderID, 0, "vertex_position");
+    //Indices buffer binding
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+    //Faces
+    //glDisable(GL_DEPTH_TEST);
+    uniformVec3(colorID, pickingColor);
+    glPolygonMode(GL_FRONT, GL_FILL);
+    glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
+    //glEnable(GL_DEPTH_TEST);
+  }
 }
 
 void CglicObject::glicInit()
@@ -112,11 +115,14 @@ void CglicObject::toogleMesh()   {line       = !line;}
 void CglicObject::toogleSmooth() {smooth     = !smooth;}
 
 //Selection accessors
-bool CglicObject::isSelected(){return selected;}
 bool CglicObject::isPicked(int ID){return objectID == ID;}
+bool CglicObject::isHidden(){return hidden;}
+void CglicObject::hide(){    hidden = true;}
+void CglicObject::unHide(){  hidden = false;}
+bool CglicObject::isSelected(){return selected;}
 void CglicObject::toogleSelected(){    selected = !selected;}
-void CglicObject::select(){    selected = true;}
-void CglicObject::unSelect(){  selected = false;}
+void CglicObject::select(){            selected = true;}
+void CglicObject::unSelect(){          selected = false;}
 
 //Constrained movements accessors
 bool CglicObject::isConstrainedInRotation(){return isRotationConstrained;}

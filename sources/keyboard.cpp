@@ -198,6 +198,18 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     }
   }
 
+  if (key == 'h')
+    for(int i = 0 ; i < scene->listObject.size() ; i++)
+      if(scene->listObject[i]->isSelected()){
+        scene->listObject[i]->hide();
+        scene->listObject[i]->unSelect();
+        scene->select();
+      }
+  if (key == 'H')
+    for(int i = 0 ; i < scene->listObject.size() ; i++)
+      if(scene->listObject[i]->isHidden())
+        scene->listObject[i]->unHide();
+
   //Camera Presets
   if (key == '1')
     scene->m_cam = glm::vec3(0,0,1);
