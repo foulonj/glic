@@ -7,12 +7,13 @@ extern CglicCanvas *pcv;
 CglicView::CglicView()
 {
   m_stereo = false;
-  m_eyesep = 1.0;
+  m_eyesep = 0.1;
   m_eye    = TV_LEFT;
   m_ctyp   = TV_DEF;
   setPersp(70.0, 0.01, 3.0);
-  persp  = pcv->profile.perspective;
-  zoom = 1.0f;
+  persp    = pcv->profile.perspective;
+  zoom     = 1.0f;
+  camOffset= 0.0f;
 }
 
 

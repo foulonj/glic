@@ -24,6 +24,8 @@ class CglicProfile
     bool  perspective;
     bool  keepCamAbove;
 
+    bool  stereo;
+
     float bottomDistance;
     float bottomAngle;
 

@@ -8,6 +8,8 @@ CglicProfile::CglicProfile()
   displayAxesLabels = true;
   keepCamAbove      = true;
 
+  stereo            = false;
+
   upView            = false;
   perspective       = true;
 

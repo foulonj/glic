@@ -40,9 +40,8 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
 
   //glm::vec3 moveX(0.005, 0., 0.);
   //glm::vec3 moveZ(0., 0.005, 0.0);
-  glm::vec3 moveX = 0.01f * scene->m_right;
-  glm::vec3 moveZ = 0.01f * scene->m_up;
-
+  glm::vec3 moveX = 0.0025f * scene->m_right;
+  glm::vec3 moveZ = 0.0025f * scene->m_up;
 
   int state = 0;
   switch (key) {

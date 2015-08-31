@@ -21,10 +21,12 @@ public:
 	int       width, height;
 	bool      persp;
 	float     zoom;
+	float     camOffset;
+	double    m_eyesep;
 
 private:
   bool      m_stereo;
-  double    m_eyesep;
+
   TViewType m_ctyp,m_eye;
 
 public:

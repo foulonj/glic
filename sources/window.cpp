@@ -64,13 +64,32 @@ void CglicWindow::show()
 
 void CglicWindow::display()
 {
-  glDrawBuffer(GL_BACK_LEFT);
   glm::vec3 col = pcv->profile.back_color;
-  glClearColor(col.x, col.y, col.z, 1.0);
-  //glClearStencil(0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  pcv->scene[ids]->display();
+  //STEREO
+  if(pcv->profile.stereo){
+    //LEFT
+    glDrawBuffer(GL_BACK_LEFT);
+    glClearColor(col.x, col.y, col.z, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    pcv->scene[ids]->view->camOffset = pcv->scene[ids]->view->m_eyesep / 2;
+    pcv->scene[ids]->display();
+    //RIGHT
+    glDrawBuffer(GL_BACK_RIGHT);
+    glClearColor(col.x, col.y, col.z, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    pcv->scene[ids]->view->camOffset = -pcv->scene[ids]->view->m_eyesep / 2;
+    pcv->scene[ids]->display();
+  }
+
+  else{
+    glDrawBuffer(GL_BACK_RIGHT);
+    glClearColor(col.x, col.y, col.z, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    pcv->scene[ids]->view->camOffset = 0.0f;
+    pcv->scene[ids]->display();
+  }
+
 
   glutSwapBuffers();
 }

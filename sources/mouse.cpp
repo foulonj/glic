@@ -78,12 +78,12 @@ void CglicMouse::motion(int x, int y)
     if(m_button[1]){
       glm::vec3 tr;
       if(scene->m_cam.y==0)
-        tr = 0.5f * (
+        tr = 0.35f * (
              dX * glm::normalize(glm::vec3(scene->m_right.x,0,scene->m_right.z)) +
              dY * glm::normalize(glm::vec3(scene->m_look.x,0,scene->m_look.z))
              );
       else{
-        tr = 0.5f * (
+        tr = 0.35f * (
              dX * glm::normalize(glm::vec3(scene->m_right.x,0,scene->m_right.z)) +
              dY * glm::normalize(glm::vec3(scene->m_up.x,0,scene->m_up.z))
              );

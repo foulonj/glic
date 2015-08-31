@@ -139,7 +139,7 @@ void CglicScene::applyTransformation()
 
 void CglicScene::update_matrices()
 {
-  VIEW = glm::lookAt(m_cam, m_look, m_up);
+  VIEW = glm::lookAt(m_cam + view->camOffset * m_right, m_look, m_up);
   if(view->persp)
     PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
   else

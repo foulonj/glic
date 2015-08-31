@@ -8,7 +8,10 @@ CglicCanvas::CglicCanvas(int argc, char **argv)
 
   glutInit(&argc, argv);
 
-  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+  if(pcv->profile.stereo)
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STEREO);
+  else
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
   glicLight();
 
