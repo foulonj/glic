@@ -64,7 +64,8 @@ void CglicAxis::display()
 
   //Axes
   if(pcv->profile.displayAxes){
-    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
     glViewport(0,0,150,150);
     glm::mat4 neutralProj = glm::perspective(70.0, view->ratio, view->m_znear, view->m_zfar);
     glm::mat4 MVP = glm::translate(neutralProj * *pVIEW * *pMODEL * MODEL, -*sceneCenter);
@@ -86,7 +87,8 @@ void CglicAxis::display()
   }
 
   //Ressources freeing
-  glEnable(GL_DEPTH_TEST);
+  //glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
   view->reshape(view->width,view->height);
   glDisableVertexAttribArray(0);
   glLineWidth(1.0);

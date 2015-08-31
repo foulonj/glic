@@ -78,16 +78,10 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
 
   // ZOOM
   if(((key == 'z') || (key == 'Z')) && (lastKey!='t') && (lastKey!='r')){
-    double *fov = &scene->view->m_fovy;
-    double zoomFactor = 0.02;
-    //glm::vec3 zoom = (-scene->m_look + scene->center) * zoomFactor;
-    float zoom = 0;
-    if (key == 'z' )
-      *fov -= zoomFactor;
-    else if (key == 'Z' )
-      *fov += zoomFactor;
-    if(*fov<69.2){*fov=69.2;}
-    if(*fov>70.5){*fov=70.5;}
+    if ((glm::length(scene->m_cam)>0.15) && (key=='z'))
+      scene->view->zoom *= 0.95;
+    else if( (glm::length(scene->m_cam)<1.75) && (key=='Z') )
+      scene->view->zoom *= 1.05;
   }
 
   // BB
@@ -225,6 +219,13 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   //Ortho view
   if (key == '5')
     scene->view->persp = !scene->view->persp;
+
+  //Save
+  if(key == 's'){
+    for(int i = 0 ; i < scene->listObject.size() ; i++){
+      //Ecrire MODEL et nom du fichier dans un file
+    }
+  }
 
 
   lastKey = key;

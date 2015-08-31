@@ -34,7 +34,7 @@ CglicMesh::CglicMesh(char *name)
     exit(0);
   }
 
-  point.resize(np+1);
+  point.resize(np);
   GmfGotoKwd(inm,GmfVertices);
   for (k=0; k<np; k++){
     ppt = &point[k];
@@ -342,7 +342,14 @@ void CglicMesh::artifactsDisplay(){
         glLineWidth(1.0);
         uniformVec3(colorID, pcv->profile.idle_color);}
 
-      glm::mat4 SCALE = glm::scale(MVP, 1.02f * (bbmax - bbmin));
+      //glm::mat4 SCALE;
+      //if(idGroup==-1)
+        glm::mat4 SCALE = glm::scale(MVP, 1.02f * (bbmax - bbmin));
+      //else{
+        //SCALE = //glm::translate(glm::mat4(1),  scene->listGroup[idGroup]->group_center) *
+                //glm::scale(MVP, scene->listGroup[idGroup]->bbmax - scene->listGroup[idGroup]->bbmin);// *
+                //glm::translate(glm::mat4(1),  -scene->listGroup[idGroup]->group_center);
+      //}
       glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &SCALE[0][0]);
 
       glEnable(GL_POLYGON_OFFSET_LINE);

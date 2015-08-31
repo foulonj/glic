@@ -10,6 +10,7 @@ double frand_a_b(double a, double b){
 }
 
 void InitGlew(){
+  glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (err != GLEW_OK){
     cout << "glewinit impossible" << endl;
@@ -23,7 +24,7 @@ void InitGlew(){
 
 int main(int argc, char **argv){
 
-  int   idw,ids,ido;
+  int   idw,  ids,  ido;
 
   CglicCanvas cv(argc,argv);
 
@@ -85,6 +86,7 @@ int main(int argc, char **argv){
 
   else
   {
+    //Première fenêtre
     idw = cv.glicWindow(0,0,1000,1000);
     ids = cv.glicScene();
     cv.glicSetScene(ids, idw);
@@ -93,7 +95,6 @@ int main(int argc, char **argv){
     InitGlew();
 
     cout << idw << " " << ids << endl;
-
     vector<CglicMesh*> mesh;
     for (int i=0; i < argc - 1; i++){
       cout << "i: " << i << endl;
@@ -102,6 +103,18 @@ int main(int argc, char **argv){
       ido = cv.glicObject(mesh[i]);
       cv.glicSetObject(ido, ids);
     }
+
+    /*
+    //Seconde fenetre
+    idw = cv.glicWindow(1000, 0, 1000, 1000);
+    cv.glicSetScene(ids, idw);
+    cv.window[idw].show();
+    for (int i=0; i < mesh.size(); i++){
+      cout << "i: " << i << endl;
+      ido = i;
+      cv.glicSetObject(ido, ids);
+    }
+    */
   }
 
   cv.glicMainLoop();

@@ -71,6 +71,8 @@ class GLIC_API CglicObject
 
   //Public Accessors
   public:
+    virtual glm::vec3 getBBMIN(){};
+    virtual glm::vec3 getBBMAX(){};
     int   getID();
     float getLocalScale();
     void  resetGroupID();

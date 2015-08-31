@@ -18,8 +18,9 @@ public:
 	double    m_znear,m_zfar;
 	double    m_fovy;
 	double    ratio;
-	int width, height;
-	bool persp;
+	int       width, height;
+	bool      persp;
+	float     zoom;
 
 private:
   bool      m_stereo;

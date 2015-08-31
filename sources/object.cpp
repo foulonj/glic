@@ -50,6 +50,7 @@ void CglicObject::linkSceneParameters(glm::mat4 *MODEL, glm::mat4 *VIEW, glm::ma
 }
 
 void CglicObject::pickingDisplay(){
+
   if(!hidden){
     int shaderID = pcv->simpleShader.mProgramID;
     glUseProgram(shaderID);
@@ -65,13 +66,9 @@ void CglicObject::pickingDisplay(){
     //Indices buffer binding
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
     //Faces
-    //glDisable(GL_DEPTH_TEST);
     uniformVec3(colorID, pickingColor);
     glPolygonMode(GL_FRONT, GL_FILL);
-
-    glDisable(GL_DEPTH_TEST);
     glDrawElements(GL_TRIANGLES, nPicking, GL_UNSIGNED_INT, (void*)0);
-    glEnable(GL_DEPTH_TEST);
   }
 }
 

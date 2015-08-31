@@ -12,6 +12,7 @@ CglicScene::CglicScene():transform(){
   center = glm::vec3(0,0,0);
   VIEW = glm::lookAt(m_cam, m_look, m_up);
   globalScale = 100000.0f;//For use of minimums later
+
 }
 CglicScene::~CglicScene(){}
 
@@ -36,6 +37,7 @@ void CglicScene::addObject(pCglicObject object)
 void CglicScene::display()
 {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_CULL_FACE);
 
   if(pcv->profile.globalScale){
     for(int i = 0 ; i < listObject.size() ; i++){
@@ -62,11 +64,13 @@ void CglicScene::display()
     if(listObject[iObj]->isHidden())
       listObject[iObj]->shadowsDisplay();
 
+  //Display de l'ensemble des artefacts
   for (int iObj = 0; iObj < listObject.size(); iObj++)
     listObject[iObj]->artifactsDisplay();
 
 
-  //D'abord les transparents, ensuite les autres ou inverse
+
+  //Display des meshes
   for (int iObj = 0; iObj < listObject.size(); iObj++)
     if(!listObject[iObj]->isHidden())
       listObject[iObj]->display();
@@ -76,6 +80,11 @@ void CglicScene::display()
 
 
 
+
+
+
+
+  glClear(GL_DEPTH_BUFFER_BIT);
   debug();
 }
 
@@ -111,9 +120,18 @@ void CglicScene::applyTransformation()
     listObject[i]->transform.setTranslation(transform.tr);
   }
 
-  m_cam   = glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_cam,1)));
-  m_up    = glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_up,1)));
-  m_look  = glm::normalize(-m_cam);
+
+  m_cam   =  view->zoom * glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_cam,1)));
+  if(pcv->profile.keepCamAbove){
+    if (m_cam.y< 0){
+      m_cam.y = 0;
+      m_up = glm::normalize(glm::vec3(0,m_up.y,0));
+    }
+    else
+      m_up    = glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_up,1)));
+  }
+
+  m_look  = -m_cam;
   m_right = glm::normalize(glm::cross(m_look, m_up));
 
   transform.reset();
@@ -125,7 +143,12 @@ void CglicScene::update_matrices()
   if(view->persp)
     PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
   else
-    PROJ = glm::ortho(-view->ratio*0.5,view->ratio*0.5,-0.5, 0.5, view->m_znear, view->m_zfar);
+    PROJ = glm::ortho(view->zoom * -view->ratio*0.5,
+                      view->zoom * view->ratio*0.5,
+                     -0.5 * view->zoom,
+                      0.5 * view->zoom,
+                      view->m_znear,
+                      view->m_zfar);
 }
 
 void CglicScene::saveTransformations(){
@@ -156,12 +179,20 @@ void CglicScene::resetAll(){
 
 void CglicScene::debug(){
   //Vectors
+  /*
   cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
   cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
   cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
   cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
   cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
-
+  */
+  /*
+  glm::vec3 test = glm::unProject(glm::vec3(0.5,0.5,0),
+                                  MODEL,
+                                  PROJ,
+                                  glm::vec4(0,0,view->width, view->height));
+  cout << test.x << " / " << test.y << " / " << test.z << endl;
+  */
   /*
   //Matrices
   cout << endl;

@@ -9,10 +9,24 @@ CglicGroup::CglicGroup(std::vector<pCglicObject> groupOfObjects)
 {
   listObject = groupOfObjects;
   group_color = glm::vec3(0,0.7,0);
+  bbmin = glm::vec3(100000);
+  bbmax = glm::vec3(-100000);
 
   //Centres du groupe
   for(int i = 0 ; i < listObject.size() ; i++){
     pCenters.push_back(listObject[i]->getCenterPtr());
+  }
+
+  //BBOX
+  for(int i = 0 ; i < listObject.size() ; i++){
+    glm::vec3 mini = listObject[i]->getBBMIN();
+    glm::vec3 maxi = listObject[i]->getBBMAX();
+    bbmin.x = min(bbmin.x, mini.x);
+    bbmin.y = min(bbmin.y, mini.y);
+    bbmin.z = min(bbmin.z, mini.z);
+    bbmax.x = max(bbmax.x, maxi.x);
+    bbmax.y = max(bbmax.y, maxi.y);
+    bbmax.z = max(bbmax.z, maxi.z);
   }
 }
 

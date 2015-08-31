@@ -12,6 +12,7 @@ CglicView::CglicView()
   m_ctyp   = TV_DEF;
   setPersp(70.0, 0.01, 3.0);
   persp  = pcv->profile.perspective;
+  zoom = 1.0f;
 }
 
 

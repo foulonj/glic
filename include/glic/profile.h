@@ -22,6 +22,7 @@ class CglicProfile
 
     bool  upView;
     bool  perspective;
+    bool  keepCamAbove;
 
     float bottomDistance;
     float bottomAngle;

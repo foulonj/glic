@@ -60,6 +60,9 @@ public:
   void getBBOX();
   void displayBBOX();
   ~CglicMesh(){};
+
+  glm::vec3 getBBMIN(){return center + glm::vec3(glm::inverse(MODEL) * glm::vec4(bbmin, 0));};
+  glm::vec3 getBBMAX(){return center + glm::vec3(glm::inverse(MODEL) * glm::vec4(bbmax, 0));};
 };
 
 #endif

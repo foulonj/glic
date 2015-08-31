@@ -68,7 +68,7 @@ void CglicWindow::display()
   glm::vec3 col = pcv->profile.back_color;
   glClearColor(col.x, col.y, col.z, 1.0);
   //glClearStencil(0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   pcv->scene[ids]->display();
 

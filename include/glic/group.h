@@ -12,6 +12,7 @@ class CglicGroup
 
     std::vector< glm::vec3* > pCenters;
     glm::vec3 group_center;
+    glm::vec3 bbmin, bbmax;
 
     CglicGroup(std::vector<pCglicObject> groupOfObjects);
     ~CglicGroup();

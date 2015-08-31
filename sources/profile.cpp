@@ -6,6 +6,7 @@ CglicProfile::CglicProfile()
   displayBottomGrid = true;
   displayAxes       = true;
   displayAxesLabels = true;
+  keepCamAbove      = true;
 
   upView            = false;
   perspective       = true;
@@ -22,11 +23,12 @@ CglicProfile::CglicProfile()
   bottomAngle       = 0;//(float)3.14159/4;
 
   //Colors
-  back_color    = glm::vec3(1,   1,   0.97);        //Background
+  back_color    = glm::vec3(0,   0,   0.015);        //Background
+  //back_color    = glm::vec3(1,   1,   0.97);        //Background
   grid_color    = glm::vec3(0.5, 0.5, 0.5);         //Grid
   sele_color    = glm::vec3(1,   0.6, 0);           //Object selection
   idle_color    = glm::vec3(0.3, 0.3, 0.3);         //Unselected boxes
-  //group_color   = glm::vec3(0,   0.8, 0);           //Group selection
+  //group_color   = glm::vec3(0,   0.8, 0);         //Group selection
 }
 
 CglicProfile::~CglicProfile(){}
