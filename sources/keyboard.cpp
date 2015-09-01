@@ -61,7 +61,11 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
     }
   }
   else{
-    float speed = 0.01f;
+    float speed;
+    if (glutGetModifiers() && GLUT_ACTIVE_CTRL)
+      speed = 0.001f;
+    else
+      speed = 0.015f;
     switch (key) {
       case GLUT_KEY_LEFT:
         scene->transform.setTranslation(-speed * scene->m_right);
