@@ -183,10 +183,9 @@ void CglicMouse::mouse(int b, int s, int x, int y)
 
     case GLUT_RIGHT_BUTTON:
       m_button[2] = ((GLUT_DOWN==s)?1:0);
-
       bool  ctrl = ((glutGetModifiers() && GLUT_ACTIVE_CTRL) ? 1:0);
 
-      if(s==GLUT_UP){
+      if((s==GLUT_UP) && (!pcv->profile.flyingMode)){
         pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
         int pickedID = scene->getPickedObjectID(x, y);
         bool match = false;

@@ -115,6 +115,7 @@ void CglicScene::toogleFlyingMode(){
     pcv->mice.lastPassivePos = pcv->mice.lastPos = glm::vec2(view->width/2, view->height/2);
     glutSetCursor(GLUT_CURSOR_CROSSHAIR);
     glutWarpPointer(view->width/2, view->height/2);
+    m_look = -m_cam;
   }
   pcv->profile.flyingMode = !pcv->profile.flyingMode;
   select();
@@ -124,12 +125,12 @@ void CglicScene::toogleFlyingMode(){
 void CglicScene::applyTransformation()
 {
   if(pcv->profile.flyingMode){
-    view->zoom = 1.0f;
-    m_cam   +=  transform.tr;
-    m_up    =   glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1));
-    m_look  =   transform.tr + glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_look,1));
-    m_right =   glm::normalize(glm::cross(m_look, m_up));
-    VIEW = glm::lookAt(m_cam + view->camOffset * m_right, m_look, glm::vec3(0,1,0));
+    m_cam   +=   transform.tr;
+    m_look  =   glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_look,0)));
+    m_up    =   glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1)));
+    VIEW = glm::lookAt(m_cam + view->camOffset * m_right,
+                       m_cam + view->camOffset * m_right + m_look,
+                       m_up);
   }
   else{
     //Classical mode
@@ -143,8 +144,11 @@ void CglicScene::applyTransformation()
       m_up    = glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1)));
     }
     m_look  = -m_cam;
-    m_right = glm::normalize(glm::cross(m_look, m_up));
+    VIEW = glm::lookAt(m_cam + view->camOffset * m_right, m_look, glm::vec3(0,1,0));
   }
+
+  m_right =   glm::normalize(glm::cross(m_look, m_up));
+
 
   transform.reset();
 }
@@ -188,17 +192,18 @@ void CglicScene::resetAll(){
     undoLast();
   for(int i = 0 ; i < listObject.size() ; i++)
     listObject[i]->resetAll();
+  m_up = glm::normalize(glm::vec3(-1, 1., -1));
 }
 
 
 void CglicScene::debug(){
   //Vectors
 
-  //cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
-  //cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
+  cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
+  cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
   cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
   cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
-  //cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
+  cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
 
   /*
   //Matrices

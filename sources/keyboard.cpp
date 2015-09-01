@@ -251,11 +251,11 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   //Flying mode
   if(key == 'f'){
     bool noneSelected = true;
-    for(int i = 0 ; i < scene->listObject.size() ; i++){
-      if (scene->listObject[i]->isSelected()){
-        noneSelected = false;
-      }
-    }
+    //for(int i = 0 ; i < scene->listObject.size() ; i++){
+    //  if (scene->listObject[i]->isSelected()){
+    //    noneSelected = false;
+    //  }
+    //}
     bool camAbove = false;
     if(glm::normalize(scene->m_cam) == glm::vec3(0,1,0) )
       camAbove = true;
