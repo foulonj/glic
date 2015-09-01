@@ -22,7 +22,10 @@ class CglicProfile
 
     bool  upView;
     bool  perspective;
+
     bool  flyingMode;
+    bool  classicalMode;
+    bool  accumulatedMode;
 
     bool  stereo;
 

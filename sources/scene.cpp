@@ -102,8 +102,10 @@ void CglicScene::reOrderObjects(int picked){
 
 void CglicScene::toogleFlyingMode(){
   pcv->profile.displayAxes = ((pcv->profile.flyingMode)?1:0);
+  pcv->mice.lastPassivePos = pcv->mice.lastPos = glm::vec2(view->width/2, view->height/2);
+
+  //FROM FLYING TO NORMAL
   if(pcv->profile.flyingMode){
-    pcv->mice.lastPassivePos = pcv->mice.lastPos = glm::vec2(view->width/2, view->height/2);
     m_cam *= 1.0f * glm::length(m_cam);
     m_look = -m_cam;
     glutSetCursor(GLUT_CURSOR_RIGHT_ARROW);
@@ -111,12 +113,13 @@ void CglicScene::toogleFlyingMode(){
     m_right = glm::normalize(glm::vec3(m_cam.z, 0, -m_cam.x));
     m_up = glm::cross(m_right, m_look);
   }
+  //FROM NORMAL TO FLYING
   else{
-    pcv->mice.lastPassivePos = pcv->mice.lastPos = glm::vec2(view->width/2, view->height/2);
     glutSetCursor(GLUT_CURSOR_CROSSHAIR);
     glutWarpPointer(view->width/2, view->height/2);
     m_look = -m_cam;
   }
+
   pcv->profile.flyingMode = !pcv->profile.flyingMode;
   select();
   transform.reset();
@@ -124,6 +127,7 @@ void CglicScene::toogleFlyingMode(){
 
 void CglicScene::applyTransformation()
 {
+  //FLYING MODE
   if(pcv->profile.flyingMode){
     m_cam   +=   transform.tr;
     m_look  =   glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_look,0)));
@@ -131,9 +135,10 @@ void CglicScene::applyTransformation()
     VIEW = glm::lookAt(m_cam + view->camOffset * m_right,
                        m_cam + view->camOffset * m_right + m_look,
                        m_up);
+    m_right = glm::cross(m_look,m_up);
   }
-  else{
-    //Classical mode
+  //CLASSICAL MODE
+  else if (pcv->profile.classicalMode){
     MODEL = glm::translate(MODEL, transform.tr);
     m_cam   =  view->zoom * glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_cam,1)));
     if (m_cam.y< 0){
@@ -144,10 +149,20 @@ void CglicScene::applyTransformation()
       m_up    = glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1)));
     }
     m_look  = -m_cam;
-    VIEW = glm::lookAt(m_cam + view->camOffset * m_right, m_look, glm::vec3(0,1,0));
+    VIEW = glm::lookAt(m_cam + view->camOffset * m_right, m_look, m_up);
+    m_right = glm::cross(m_look,m_up);
+  }
+  //ACCUMULATED MODE
+  else if(pcv->profile.accumulatedMode){
+    MODEL = glm::translate(MODEL, transform.tr);
+    m_cam   =  view->zoom * glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_cam,1)));
+    m_up    = glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1)));
+    m_look  = glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_look,1)));//-m_cam;
+    VIEW = glm::lookAt(m_cam + view->camOffset * m_right, m_look, m_up);
+    m_right = glm::cross(m_look,m_up);
+
   }
 
-  m_right =   glm::normalize(glm::cross(m_look, m_up));
 
 
   transform.reset();
@@ -192,7 +207,9 @@ void CglicScene::resetAll(){
     undoLast();
   for(int i = 0 ; i < listObject.size() ; i++)
     listObject[i]->resetAll();
+  m_cam = glm::vec3(1,1,1);
   m_up = glm::normalize(glm::vec3(-1, 1., -1));
+  view->zoom = 1.0f;
 }
 
 

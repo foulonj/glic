@@ -46,21 +46,17 @@ void CglicMouse::motion(int x, int y)
 
   if (currPos != lastPos) {
 
-    glm::vec3 va = get_arcball_vector(lastPos);
-    glm::vec3 vb = get_arcball_vector(currPos);
-    glm::vec3 d  = vb-va;
-
-    float dX = d.x;
-    float dY = d.y;
     glm::mat4 ID = glm::mat4(1.0f);
+    glm::vec2 d = currPos - lastPos;
+    glm::mat4 ROT(1);
 
-      //On applique la rotation
       if(m_button[0]){
-        //On tourne par rapport à un axe vertical
-          glm::mat4 ROT = glm::mat4( glm::angleAxis(-5.0f * dY, scene->m_right) * glm::angleAxis(5.0f * dX, glm::vec3(0,1,0))  );
-          glm::mat4 ROTOBJECT = glm::mat4( glm::angleAxis(5.0f * dX, glm::vec3(0,1,0))  );
-        //On tourne par rapport à ce qu'on voit
-          //glm::mat4 ROT = glm::mat4( glm::angleAxis(-5.0f * dY, scene->m_right) * glm::angleAxis(5.0f * dX, scene->m_up)       );
+        glm::mat4 ROTOBJECT = glm::mat4( glm::angleAxis(0.01f * d.x, glm::vec3(0,1,0))  );
+
+        if(pcv->profile.classicalMode)
+          ROT = glm::mat4(  glm::angleAxis(0.01f * d.y, scene->m_right)  *  glm::angleAxis(0.01f * d.x, glm::vec3(0,1,0))  );
+        else if(pcv->profile.accumulatedMode)
+          ROT = glm::mat4(  glm::angleAxis(0.01f * d.y, scene->m_right)  *  glm::angleAxis(0.01f * d.x, scene->m_up)  );
 
         if (scene->isSelected())
           scene->transform.setRotation(ROT);
@@ -69,18 +65,17 @@ void CglicMouse::motion(int x, int y)
             scene->listObject[i]->transform.setRotation(ROTOBJECT);
       }
 
-      //cout << m_button[0] << m_button[1] << m_button[2] << endl;
       if(m_button[1]){
         glm::vec3 tr;
         if(scene->m_cam.y==0)
-          tr = 0.35f * (
-               dX * glm::normalize(glm::vec3(scene->m_right.x,0,scene->m_right.z)) +
-               dY * glm::normalize(glm::vec3(scene->m_look.x,0,scene->m_look.z))
+          tr = 0.00015f * (
+               d.x * glm::normalize(glm::vec3(scene->m_right.x,0,scene->m_right.z)) +
+               -d.y * glm::vec3(0,1,0)
                );
         else{
-          tr = 0.35f * (
-               dX * glm::normalize(glm::vec3(scene->m_right.x,0,scene->m_right.z)) +
-               dY * glm::normalize(glm::vec3(scene->m_up.x,0,scene->m_up.z))
+          tr = 0.0010f * (
+               d.x * glm::normalize(glm::vec3(scene->m_right.x,0,scene->m_right.z)) +
+               -d.y * glm::normalize(glm::vec3(scene->m_up.x,0,scene->m_up.z))
                );
         }
 

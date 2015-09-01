@@ -11,6 +11,9 @@ CglicProfile::CglicProfile()
 
   upView            = false;
   perspective       = true;
+
+  classicalMode     = true;
+  accumulatedMode   = false;
   flyingMode        = false;
 
   invertVertical    = true;
