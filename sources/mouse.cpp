@@ -124,6 +124,22 @@ void CglicMouse::passiveMotion(int x, int y){
 }
 
 
+void save(bool cond){
+  pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+  cout << scene->isSelected() << endl;
+  if(cond){
+    if (scene->isSelected())
+      scene->saveTransformations();
+    for (unsigned int i = 0; i < scene->listObject.size(); i++){
+      CglicObject *obj = scene->listObject[i];
+      if (obj->isSelected()){
+        //if((!obj->isConstrainedInRotation()) && (!obj->isConstrainedInTranslation()))
+          obj->saveTransformations();
+      }
+    }
+  }
+}
+
 void CglicMouse::mouse(int b, int s, int x, int y)
 {
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
@@ -150,36 +166,11 @@ void CglicMouse::mouse(int b, int s, int x, int y)
   {
     case GLUT_LEFT_BUTTON:
       m_button[0] = ((GLUT_DOWN==s)?1:0);
-
-      //A l'appui, on enregistre le MODEL
-      if(isPressed){
-        if (scene->isSelected())
-          scene->saveTransformations();
-        for (unsigned int i = 0; i < scene->listObject.size(); i++){
-          CglicObject *obj = scene->listObject[i];
-          if (obj->isSelected()){
-            if((!obj->isConstrainedInRotation()) && (!obj->isConstrainedInTranslation()))
-              obj->saveTransformations();
-          }
-        }
-      }
-
-      //currPos = glm::vec2( glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT) );
-      //m_pos = projsph(glm::vec2(0.));
-
-
-      //key = glutGetModifiers();
-      //m_key = TM_NONE;
-      //if ( glutGetModifiers() & GLUT_ACTIVE_SHIFT){
-        //cout << "\n\n\t Active shift \n\n"; m_key = TM_SHIFT;
-      //}
-      //if (glutGetModifiers() & GLUT_ACTIVE_CTRL){
-        //m_key = TM_CTRL;
-        //pcv->glicPickObject(x, y);
-      //}
+      save(isPressed);
       break;
 
     case GLUT_MIDDLE_BUTTON:
+      save(isPressed);
       m_button[1] = ((GLUT_DOWN==s)?1:0);
       break;
 
@@ -190,9 +181,6 @@ void CglicMouse::mouse(int b, int s, int x, int y)
 
       if(s==GLUT_UP){
         pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
-
-
-
         int pickedID = scene->getPickedObjectID(x, y);
         bool match = false;
         int  IndPicked = -1;

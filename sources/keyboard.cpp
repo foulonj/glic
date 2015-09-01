@@ -32,16 +32,14 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
     for (unsigned int i = 0; i < scene->listObject.size(); i++){
       CglicObject *obj = scene->listObject[i];
       if (obj->isSelected()){
-        if(( !obj->isConstrainedInRotation()) && (!obj->isConstrainedInTranslation()) )
+        //if(( !obj->isConstrainedInRotation()) && (!obj->isConstrainedInTranslation()) )
           obj->saveTransformations();
       }
     }
   }
 
-  //glm::vec3 moveX(0.005, 0., 0.);
-  //glm::vec3 moveZ(0., 0.005, 0.0);
   glm::vec3 moveX = 0.0025f * scene->m_right;
-  glm::vec3 moveZ = 0.0025f * scene->m_up;
+  glm::vec3 moveZ = 0.0025f * glm::vec3(0,1,0);
 
   int state = 0;
   switch (key) {
@@ -72,8 +70,8 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
 
   // QUIT
-  if ( key == 'q' || key == 27 )
-    exit(0);
+  if ( key == 'q' || key == 27 ){
+    exit(0);}
 
   // ZOOM
   if(((key == 'z') || (key == 'Z')) && (lastKey!='t') && (lastKey!='r')){
@@ -191,33 +189,39 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     }
   }
 
-  if (key == 'h')
-    for(int i = 0 ; i < scene->listObject.size() ; i++)
+  //Hide
+  if (key == 'h'){
+    for(int i = 0 ; i < scene->listObject.size() ; i++){
       if(scene->listObject[i]->isSelected()){
         scene->listObject[i]->hide();
         scene->listObject[i]->unSelect();
         scene->select();
       }
-  if (key == 'H')
-    for(int i = 0 ; i < scene->listObject.size() ; i++)
-      if(scene->listObject[i]->isHidden())
+    }
+  }
+  if (key == 'H'){
+    for(int i = 0 ; i < scene->listObject.size() ; i++){
+      if(scene->listObject[i]->isHidden()){
         scene->listObject[i]->unHide();
+      }
+    }
+  }
 
   //Camera Presets
-  if (key == '1')
-    scene->m_cam = glm::vec3(0,0,1);
-  if (key == '3')
-    scene->m_cam = glm::vec3(1,0,0);
+  if (key == '1'){
+    scene->m_cam = glm::vec3(0,0,1);}
+  if (key == '3'){
+    scene->m_cam = glm::vec3(1,0,0);}
   if ((key=='7') && (!pcv->profile.upView)){
     scene->m_cam = glm::vec3(0,1,0);
     scene->m_up  = glm::vec3(0,0,-1);
   }
-  if ((key == '1') || (key == '3'))
-    scene->m_up = glm::vec3(0,1,0);
+  if ((key == '1') || (key == '3')){
+    scene->m_up = glm::vec3(0,1,0);}
 
   //Ortho view
-  if (key == '5')
-    scene->view->persp = !scene->view->persp;
+  if (key == '5'){
+    scene->view->persp = !scene->view->persp;}
 
   //Save
   if(key == 's'){
