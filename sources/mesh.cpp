@@ -9,6 +9,7 @@ extern CglicCanvas *pcv;
 
 CglicMesh::CglicMesh(char *name)
 {
+  isMesh   = true;
   Point    *ppt;
   Tria     *pt;
   double   *n,dd;
@@ -380,7 +381,7 @@ void CglicMesh::artifactsDisplay(){
       glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), &pts[0][0], GL_STATIC_DRAW);
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
       glBindAttribLocation(pcv->simpleShader.mProgramID, 0, "vertex_position");
-      MVP = *pPROJ * *pVIEW * *pMODEL;// * glm::translate(MODEL, center);
+      MVP = *pPROJ * *pVIEW * *pMODEL;
       glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
       if(isConstrainedInRotation())
         uniformVec3(colorID, constrainedRotationAxis);

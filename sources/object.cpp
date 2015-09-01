@@ -15,21 +15,13 @@ CglicObject::CglicObject():transform()
   line     = false;
   smooth   = true;
   hidden   = false;
+  isMesh   = false;
 
   MODEL  = glm::mat4(1.0f);
   center = glm::vec3(0.0f);
   pPROJ  = NULL;
   pVIEW  = NULL;
 
-  //Colors
-  /*
-  double a = (rand()/(double)(RAND_MAX + 1)) + 1;
-  double b = (rand()/(double)(RAND_MAX + 1)) + 1;
-  double c = (rand()/(double)(RAND_MAX + 1)) + 1;
-  glm::vec3 rand = glm::vec3(a,b,c);
-  face_color = glm::vec3(0.7f) + 0.3f * rand;
-  edge_color = 0.7f * rand;
-  */
   face_color = pcv->profile.color();
   edge_color = 0.5f * face_color;
   idGroup = -1;
@@ -81,8 +73,9 @@ void CglicObject::applyTransformation()
   if(idGroup==-1)
     rotationCenter = &center;
   MODEL =  glm::translate(ID, *rotationCenter) * transform.rot * glm::translate(ID, -*rotationCenter) * MODEL;
-  MODEL = glm::translate(ID, transform.tr) * MODEL;
-  center = glm::vec3(MODEL[3]);
+  if(isMesh)
+    MODEL = glm::translate(ID, transform.tr) * MODEL;
+  center += transform.tr;// glm::vec3(MODEL[3]);
   transform.reset();
 }
 void CglicObject::saveTransformations(){

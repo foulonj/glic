@@ -6,7 +6,7 @@ set(CMAKE_BUILD_TYPE "Release")
 
 #Options C++ (-Wno-deprecated: remove glut deprecated)
 
-set (CMAKE_CXX_FLAGS "-std=c++0x -g3 -Wall -Wno-deprecated -O0")
+set (CMAKE_CXX_FLAGS "-std=c++0x -g3 -Wno-deprecated -O0")
 # -stdlib=libc++
 #Options graphiques
 find_package(GLUT)

@@ -68,7 +68,7 @@ void CglicAxis::display()
     glDepthFunc(GL_ALWAYS);
     glViewport(0,0,150,150);
     glm::mat4 neutralProj = glm::perspective(70.0, view->ratio, view->m_znear, view->m_zfar);
-    glm::mat4 MVP = glm::scale(glm::translate(neutralProj * *pVIEW * *pMODEL * MODEL, -*sceneCenter), glm::vec3(view->zoom));
+    glm::mat4 MVP = glm::scale(glm::translate(neutralProj * *pVIEW * MODEL, glm::vec3(0)/*-*sceneCenter*/), glm::vec3(view->zoom));
     glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
     glLineWidth(2.0);
     glBindBuffer(              GL_ARRAY_BUFFER, axesBuffer);

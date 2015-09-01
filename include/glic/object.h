@@ -16,6 +16,8 @@ class GLIC_API CglicObject
 {
   public:
     CglicTransform transform;
+    bool isMesh;
+
   protected:
     //Matrices and vectors
     glm::mat4 MODEL;

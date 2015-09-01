@@ -78,12 +78,6 @@ void CglicScene::display()
     if(listObject[iObj]->isHidden())
       listObject[iObj]->display();
 
-
-
-
-
-
-
   glClear(GL_DEPTH_BUFFER_BIT);
   debug();
 }
@@ -110,16 +104,9 @@ void CglicScene::reOrderObjects(int picked){
 
 void CglicScene::applyTransformation()
 {
-  glm::mat4 ID = glm::mat4(1.0f);
-  //center += transform.tr;
+  MODEL = glm::translate(MODEL, transform.tr);
   glm::mat4 TRANS;
-  TRANS = glm::translate(ID, -center) * transform.rot * glm::translate(ID, center);
-
-  //MODEL = MODEL * TRANS;
-  for(int i = 0 ; i < listObject.size() ; i++){
-    listObject[i]->transform.setTranslation(transform.tr);
-  }
-
+  TRANS = transform.rot;
 
   m_cam   =  view->zoom * glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_cam,1)));
   if(pcv->profile.keepCamAbove){
