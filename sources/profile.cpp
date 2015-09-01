@@ -6,7 +6,6 @@ CglicProfile::CglicProfile()
   displayBottomGrid = true;
   displayAxes       = true;
   displayAxesLabels = true;
-  keepCamAbove      = true;
 
   stereo            = false;
 

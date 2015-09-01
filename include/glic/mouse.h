@@ -13,10 +13,11 @@
 
 class GLIC_API CglicMouse
 {
-private:
-  glm::vec2 currPos;
+public:
   glm::vec2 lastPos;
   glm::vec2 lastPassivePos;
+private:
+  glm::vec2 currPos;
   bool arcball;
 
   //enum   TmouseType {TM_NONE, TM_SHIFT, TM_ALT, TM_CTRL};

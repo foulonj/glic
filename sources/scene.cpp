@@ -103,44 +103,44 @@ void CglicScene::reOrderObjects(int picked){
 void CglicScene::toogleFlyingMode(){
   pcv->profile.displayAxes = ((pcv->profile.flyingMode)?1:0);
   if(pcv->profile.flyingMode){
+    pcv->mice.lastPassivePos = pcv->mice.lastPos = glm::vec2(view->width/2, view->height/2);
     m_cam *= 1.0f * glm::length(m_cam);
     m_look = -m_cam;
     glutSetCursor(GLUT_CURSOR_RIGHT_ARROW);
-    glutWarpPointer(view->width/2, view->height/2);
+    pcv->mice.lastPos = glm::vec2(view->width/2, view->height/2);
+    m_right = glm::normalize(glm::vec3(m_cam.z, 0, -m_cam.x));
+    m_up = glm::cross(m_right, m_look);
   }
   else{
-    //for(int i = 0 ; i < listObject.size() ; i++){
-    //  listObject[i]->unSelect();
-    //}
-    //select();
-    glutSetCursor(GLUT_CURSOR_NONE);
+    pcv->mice.lastPassivePos = pcv->mice.lastPos = glm::vec2(view->width/2, view->height/2);
+    glutSetCursor(GLUT_CURSOR_CROSSHAIR);
     glutWarpPointer(view->width/2, view->height/2);
   }
   pcv->profile.flyingMode = !pcv->profile.flyingMode;
-
+  select();
+  transform.reset();
 }
 
 void CglicScene::applyTransformation()
 {
   if(pcv->profile.flyingMode){
-    //view->zoom = 1.0f;
+    view->zoom = 1.0f;
     m_cam   +=  transform.tr;
-    m_up    =   glm::vec3(0,1,0);//glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1));
-    m_look  =   transform.tr + glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_look,0));
+    m_up    =   glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1));
+    m_look  =   transform.tr + glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_look,1));
     m_right =   glm::normalize(glm::cross(m_look, m_up));
+    VIEW = glm::lookAt(m_cam + view->camOffset * m_right, m_look, glm::vec3(0,1,0));
   }
   else{
     //Classical mode
     MODEL = glm::translate(MODEL, transform.tr);
     m_cam   =  view->zoom * glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_cam,1)));
-    if(pcv->profile.keepCamAbove){
-      if (m_cam.y< 0){
-        m_cam.y = 0;
-        m_up = glm::normalize(glm::vec3(0,m_up.y,0));
-      }
-      else{
-        m_up    = glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1)));
-      }
+    if (m_cam.y< 0){
+      m_cam.y = 0;
+      m_up = glm::vec3(0,1,0);
+    }
+    else{
+      m_up    = glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1)));
     }
     m_look  = -m_cam;
     m_right = glm::normalize(glm::cross(m_look, m_up));
@@ -151,7 +151,9 @@ void CglicScene::applyTransformation()
 
 void CglicScene::update_matrices()
 {
-  VIEW = glm::lookAt(m_cam + view->camOffset * m_right, m_look, m_up);
+  if(!pcv->profile.flyingMode)
+    VIEW = glm::lookAt(m_cam + view->camOffset * m_right, m_look, m_up);
+
   if(pcv->profile.perspective)
     PROJ = glm::perspective(view->m_fovy, view->ratio, view->m_znear, view->m_zfar);
   else
@@ -192,12 +194,11 @@ void CglicScene::resetAll(){
 void CglicScene::debug(){
   //Vectors
 
-  cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
-  cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
+  //cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
+  //cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
   cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
   cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
-  cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
-
+  //cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
 
   /*
   //Matrices

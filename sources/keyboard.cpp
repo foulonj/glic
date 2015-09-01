@@ -45,19 +45,15 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
     int state = 0;
     switch (key) {
       case GLUT_KEY_LEFT:
-        cout << "GLUT_KEY_LEFT" << endl;
         setTranslation(-moveX, state);
         break;
       case GLUT_KEY_RIGHT:
-        cout << "GLUT_KEY_RIGHT" << endl;
         setTranslation(moveX, state);
         break;
       case GLUT_KEY_DOWN:
-        cout << "GLUT_KEY_DOWN" << endl;
         setTranslation(-moveZ, state);
         break;
       case GLUT_KEY_UP:
-        cout << "GLUT_KEY_UP" << endl;
         setTranslation(moveZ, state);
         break;
       default:
@@ -116,11 +112,11 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   }
 
   //Smooth to flat shading
-  if (key == 'f'){
-    for (unsigned int i = 0; i < scene->listObject.size(); i++)
-      if( scene->listObject[i]->isSelected())
-        scene->listObject[i]->toogleSmooth();
-  }
+  //if (key == 'f'){
+  //  for (unsigned int i = 0; i < scene->listObject.size(); i++)
+  //    if( scene->listObject[i]->isSelected())
+  //      scene->listObject[i]->toogleSmooth();
+  //}
 
   //Reset Transformations
   if (key == 'e'){
@@ -254,7 +250,18 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
 
   //Flying mode
   if(key == 'f'){
-    scene->toogleFlyingMode();
+    bool noneSelected = true;
+    for(int i = 0 ; i < scene->listObject.size() ; i++){
+      if (scene->listObject[i]->isSelected()){
+        noneSelected = false;
+      }
+    }
+    bool camAbove = false;
+    if(glm::normalize(scene->m_cam) == glm::vec3(0,1,0) )
+      camAbove = true;
+
+    if(noneSelected && !camAbove)
+      scene->toogleFlyingMode();
   }
 
   lastKey = key;
