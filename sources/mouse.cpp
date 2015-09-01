@@ -120,7 +120,19 @@ void CglicMouse::passiveMotion(int x, int y){
       }
     }
     lastPassivePos = currPassivePos;
+
+    //Flying mode
+    /*
+    glutSetCursor(GLUT_CURSOR_NONE);
+    glutWarpPointer(scene->view->width/2, scene->view->height/2);
+    glm::mat4 LOOKROT = glm::mat4( glm::angleAxis(-2.0f * d.y, scene->m_right) * glm::angleAxis(2.0f * d.x, glm::vec3(0,1,0))  );
+    if (scene->isSelected())
+      scene->transform.setRotation(LOOKROT);
+    */
   }
+
+
+
 }
 
 

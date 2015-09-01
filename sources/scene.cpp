@@ -104,22 +104,31 @@ void CglicScene::reOrderObjects(int picked){
 
 void CglicScene::applyTransformation()
 {
-  MODEL = glm::translate(MODEL, transform.tr);
-  glm::mat4 TRANS;
-  TRANS = transform.rot;
+  //Flying mode
+  /*
+  pcv->profile.displayAxes = false;
+  view->zoom = 1.0f;
+  m_cam   +=  transform.tr;
+  m_up    =   glm::vec3(0,1,0);//glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1));
+  m_look  =   transform.tr + glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_look,0));
+  m_right =   glm::normalize(glm::cross(m_look, m_up));
+  */
 
-  m_cam   =  view->zoom * glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_cam,1)));
+  //Classical mode
+  MODEL = glm::translate(MODEL, transform.tr);
+  m_cam   =  view->zoom * glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_cam,1)));
   if(pcv->profile.keepCamAbove){
     if (m_cam.y< 0){
       m_cam.y = 0;
       m_up = glm::normalize(glm::vec3(0,m_up.y,0));
     }
     else
-      m_up    = glm::normalize(glm::vec3(glm::inverse(TRANS) * glm::vec4(m_up,1)));
+      m_up    = glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1)));
   }
 
   m_look  = -m_cam;
   m_right = glm::normalize(glm::cross(m_look, m_up));
+
 
   transform.reset();
 }
@@ -166,20 +175,14 @@ void CglicScene::resetAll(){
 
 void CglicScene::debug(){
   //Vectors
-  /*
+
   cout << "cam   = " << m_cam.x   << " " << m_cam.y   << " " << m_cam.z   << endl;
   cout << "look  = " << m_look.x  << " " << m_look.y  << " " << m_look.z  << endl;
   cout << "up    = " << m_up.x    << " " << m_up.y    << " " << m_up.z    << endl;
   cout << "right = " << m_right.x << " " << m_right.y << " " << m_right.z << endl;
   cout << "center = " << center.x << " " << center.y << " " << center.z << endl;
-  */
-  /*
-  glm::vec3 test = glm::unProject(glm::vec3(0.5,0.5,0),
-                                  MODEL,
-                                  PROJ,
-                                  glm::vec4(0,0,view->width, view->height));
-  cout << test.x << " / " << test.y << " / " << test.z << endl;
-  */
+
+
   /*
   //Matrices
   cout << endl;

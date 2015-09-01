@@ -230,6 +230,17 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
     }
   }
 
+  //Flying mode
+  float speed = 0.005f;
+  if (key == '8'){
+  scene->transform.setTranslation(speed * glm::normalize(scene->m_look));}
+  if (key == '2'){
+  scene->transform.setTranslation(-speed * glm::normalize(scene->m_look));}
+  if (key == '4'){
+  scene->transform.setTranslation(-speed * scene->m_right);}
+  if (key == '6'){
+  scene->transform.setTranslation(speed * scene->m_right);}
+
 
   lastKey = key;
 
