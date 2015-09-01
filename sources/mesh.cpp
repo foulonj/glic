@@ -435,24 +435,24 @@ void CglicMesh::display()
   //Indices buffer binding
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
 
+  pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+  glm::vec3 selection_color = ((idGroup==-1)?pcv->profile.sele_color:scene->listGroup[idGroup]->group_color);
+
   if(smooth){
     GLuint MID      = glGetUniformLocation(shaderID, "M");
     GLuint VID      = glGetUniformLocation(shaderID, "V");
     glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
     glUniformMatrix4fv( VID, 1, GL_FALSE, &(*pVIEW)[0][0]);
 
-    pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
-    glm::vec3 selection_color = ((idGroup==-1)?pcv->profile.sele_color:scene->listGroup[idGroup]->group_color);
+
     if(isSelected())
       uniformVec3(colorID, 1.0f * selection_color);
     else
       uniformVec3(colorID, face_color);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(1.0,1.0);
-
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }
   else{
@@ -462,10 +462,11 @@ void CglicMesh::display()
   }
 
   if(line){
-    //glDisable(GL_CULL_FACE);
-    //glDepthFunc(GL_LEQUAL);
     glDisable(GL_POLYGON_OFFSET_FILL);
-    uniformVec3(colorID, edge_color);
+    if(isSelected())
+      uniformVec3(colorID, 0.8f * selection_color);
+    else
+      uniformVec3(colorID, edge_color);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
   }

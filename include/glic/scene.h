@@ -56,6 +56,10 @@ public:
   void select();
   void unSelect();
 
+  void toogleFlyingMode();
+
+  glm::vec2 cursorOrigin;
+
 protected:
   virtual void glicInit();
 };

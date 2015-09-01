@@ -11,7 +11,6 @@ CglicView::CglicView()
   m_eye    = TV_LEFT;
   m_ctyp   = TV_DEF;
   setPersp(70.0, 0.01, 3.0);
-  persp    = pcv->profile.perspective;
   zoom     = 1.0f;
   camOffset= 0.0f;
 }
@@ -37,6 +36,7 @@ void CglicView::reshape(int w, int h)
   ratio = (double)w/h;
   width  = w;
   height = h;
+  pcv->scene[pcv->window[pcv->winid()].ids]->cursorOrigin = glm::vec2(width/2, height/2);
 }
 
 

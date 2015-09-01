@@ -19,7 +19,6 @@ public:
 	double    m_fovy;
 	double    ratio;
 	int       width, height;
-	bool      persp;
 	float     zoom;
 	float     camOffset;
 	double    m_eyesep;

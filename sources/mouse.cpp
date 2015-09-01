@@ -109,26 +109,27 @@ void CglicMouse::passiveMotion(int x, int y){
     glm::vec3 va = get_arcball_vector(lastPassivePos);
     glm::vec3 vb = get_arcball_vector(currPassivePos);
     glm::vec3 d  = vb-va;
-    //Si un objet est sélectionné
-    for (unsigned int i = 0; i < scene->listObject.size(); i++){
-      CglicObject *obj = scene->listObject[i];
-      if (obj->isSelected()){
-        if(obj->isConstrainedInRotation())
-          obj->setConstrainedRotation(5.0f * d.y);
-        else if(obj->isConstrainedInTranslation())
-          obj->setConstrainedTranslation(1.0f * (d.y));
-      }
-    }
+
     lastPassivePos = currPassivePos;
 
-    //Flying mode
-    /*
-    glutSetCursor(GLUT_CURSOR_NONE);
-    glutWarpPointer(scene->view->width/2, scene->view->height/2);
-    glm::mat4 LOOKROT = glm::mat4( glm::angleAxis(-2.0f * d.y, scene->m_right) * glm::angleAxis(2.0f * d.x, glm::vec3(0,1,0))  );
-    if (scene->isSelected())
-      scene->transform.setRotation(LOOKROT);
-    */
+    if(pcv->profile.flyingMode){
+      glutWarpPointer(scene->view->width/2, scene->view->height/2);
+      glm::mat4 LOOKROT = glm::mat4( glm::angleAxis(-2.0f * d.y, scene->m_right) * glm::angleAxis(2.0f * d.x, glm::vec3(0,1,0))  );
+      if (scene->isSelected())
+        scene->transform.setRotation(LOOKROT);
+    }
+    else{
+      for (unsigned int i = 0; i < scene->listObject.size(); i++){
+        CglicObject *obj = scene->listObject[i];
+        if (obj->isSelected()){
+          if(obj->isConstrainedInRotation())
+            obj->setConstrainedRotation(5.0f * d.y);
+          else if(obj->isConstrainedInTranslation())
+            obj->setConstrainedTranslation(1.0f * (d.y));
+        }
+      }
+    }
+
   }
 
 

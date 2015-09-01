@@ -38,30 +38,52 @@ void CglicKeyboard::special(unsigned char key, int x, int y)
     }
   }
 
-  glm::vec3 moveX = 0.0025f * scene->m_right;
-  glm::vec3 moveZ = 0.0025f * glm::vec3(0,1,0);
 
-  int state = 0;
-  switch (key) {
-    case GLUT_KEY_LEFT:
-      cout << "GLUT_KEY_LEFT" << endl;
-      setTranslation(-moveX, state);
-      break;
-    case GLUT_KEY_RIGHT:
-      cout << "GLUT_KEY_RIGHT" << endl;
-      setTranslation(moveX, state);
-      break;
-    case GLUT_KEY_DOWN:
-      cout << "GLUT_KEY_DOWN" << endl;
-      setTranslation(-moveZ, state);
-      break;
-    case GLUT_KEY_UP:
-      cout << "GLUT_KEY_UP" << endl;
-      setTranslation(moveZ, state);
-      break;
-    default:
-      break;
+  if(!pcv->profile.flyingMode){
+    glm::vec3 moveX = 0.0025f * scene->m_right;
+    glm::vec3 moveZ = 0.0025f * glm::vec3(0,1,0);
+    int state = 0;
+    switch (key) {
+      case GLUT_KEY_LEFT:
+        cout << "GLUT_KEY_LEFT" << endl;
+        setTranslation(-moveX, state);
+        break;
+      case GLUT_KEY_RIGHT:
+        cout << "GLUT_KEY_RIGHT" << endl;
+        setTranslation(moveX, state);
+        break;
+      case GLUT_KEY_DOWN:
+        cout << "GLUT_KEY_DOWN" << endl;
+        setTranslation(-moveZ, state);
+        break;
+      case GLUT_KEY_UP:
+        cout << "GLUT_KEY_UP" << endl;
+        setTranslation(moveZ, state);
+        break;
+      default:
+        break;
+    }
   }
+  else{
+    float speed = 0.01f;
+    switch (key) {
+      case GLUT_KEY_LEFT:
+        scene->transform.setTranslation(-speed * scene->m_right);
+        break;
+      case GLUT_KEY_RIGHT:
+        scene->transform.setTranslation(speed * scene->m_right);
+        break;
+      case GLUT_KEY_DOWN:
+        scene->transform.setTranslation(-speed * glm::normalize(scene->m_look));
+        break;
+      case GLUT_KEY_UP:
+        scene->transform.setTranslation(speed * glm::normalize(scene->m_look));
+        break;
+      default:
+        break;
+    }
+  }
+
   lastKey = key;
 }
 
@@ -221,7 +243,7 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
 
   //Ortho view
   if (key == '5'){
-    scene->view->persp = !scene->view->persp;}
+    pcv->profile.perspective = !pcv->profile.perspective;}
 
   //Save
   if(key == 's'){
@@ -231,16 +253,9 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   }
 
   //Flying mode
-  float speed = 0.005f;
-  if (key == '8'){
-  scene->transform.setTranslation(speed * glm::normalize(scene->m_look));}
-  if (key == '2'){
-  scene->transform.setTranslation(-speed * glm::normalize(scene->m_look));}
-  if (key == '4'){
-  scene->transform.setTranslation(-speed * scene->m_right);}
-  if (key == '6'){
-  scene->transform.setTranslation(speed * scene->m_right);}
-
+  if(key == 'f'){
+    scene->toogleFlyingMode();
+  }
 
   lastKey = key;
 
