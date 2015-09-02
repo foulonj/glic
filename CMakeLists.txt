@@ -17,9 +17,7 @@ ExternalProject_Add(
   LOG_INSTALL ON
 )
 
-#Move shaders to build directory
-file(MAKE_DIRECTORY shaders)
-file(COPY shaders/ DESTINATION shaders)#${CMAKE_CURRENT_BINARY_DIR})
+
 
 #Options C++ (-Wno-deprecated: remove glut deprecated)
 set (CMAKE_CXX_FLAGS "-std=c++0x -g3 -Wno-deprecated -O0")
@@ -44,5 +42,9 @@ add_dependencies(GLIC glm)
 target_link_libraries(GLIC ${CORELIBS} mesh)
 
 project(main)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "$ENV{HOME}/bin")
 add_executable(main main.cpp)
 target_link_libraries(main GLIC)
+
+file(MAKE_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders")
+file(COPY shaders/ DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders")
