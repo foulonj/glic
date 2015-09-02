@@ -49,93 +49,6 @@ bool SHADER::CompileShader(GLuint hso, string& src)
 
 
 void SHADER::load(string vert_path, string frag_path){
-  #ifdef __APPLE__
-
-
-
-
-
-   //Init
-  mVertex_file_path   = vert_path;
-  mFragment_file_path = frag_path;
-  GLuint mProgramID   = glCreateProgram();
-  string src;
-  GLuint hfso, hvso;
-
-  //Lecture de VERTEX
-  if (mVertex_file_path!="") {
-    hvso = glCreateShader(GL_VERTEX_SHADER);
-    //cout << "vertex shader: " << mVertex_file_path << endl;;
-    if (ReadProgram(src, mVertex_file_path)) {
-      if (CompileShader(hvso, src)) {
-        glAttachShader(mProgramID, hvso);
-      }
-      //cout << "vertex source:\n" << src << endl;
-    } 
-    else {
-      cerr << " could not read vertex shader " << mVertex_file_path << endl;
-      exit(100);
-    }
-    cout << hvso << ": " << mVertex_file_path  << endl;
-  }
-
-  //Lecture de FRAGMENT
-  if (mFragment_file_path!="") {
-    hfso = glCreateShader(GL_FRAGMENT_SHADER);
-    //cout << "fragment shader: " << mFragment_file_path << endl;;
-    if (ReadProgram(src, mFragment_file_path)) {
-      if (CompileShader(hfso, src)) {
-        glAttachShader(mProgramID, hfso);
-      }
-    } 
-    else {
-      cerr << " could not read fragment shader " << mFragment_file_path << endl;
-      exit(101);
-    }
-    cout << hfso << ": " << mFragment_file_path << endl;
-  }
-
-  cout << mProgramID << ": Program ID"  << endl;
-
-  glLinkProgram(mProgramID);
-  //Checks the program
-  GLint linked;
-  glGetProgramiv(mProgramID, GL_LINK_STATUS, &linked);
-  if (!linked) {
-    if (mVertex_file_path!="") {
-      cerr << " could not link " << mVertex_file_path << " vertex shader" << endl;
-    } 
-    if (mFragment_file_path!="") {
-      cerr << " could not link " << mFragment_file_path << " fragment shader" << endl;
-    }
-    exit(102);
-  }
-
-  if(0){
-    if(hvso && hfso){
-      GLuint PID = glCreateProgram();
-      glAttachShader(PID, hvso);
-      glAttachShader(PID, hfso);
-      glLinkProgram(PID);
-      mProgramID = PID;
-      cout << mProgramID << "/ Final PID" << endl;
-    }
-    glDeleteShader(hvso);
-    glDeleteShader(hfso);
-  }  
-
-
-
-
-
-
-  #else
-
-
-
-
-
-
   // Crée les shaders
   mVertex_file_path   = vert_path;
   mFragment_file_path = frag_path;
@@ -207,12 +120,4 @@ void SHADER::load(string vert_path, string frag_path){
   glDeleteShader(VertexShaderID);
   glDeleteShader(FragmentShaderID);
   mProgramID = ProgramID;
-
-
-
-
-  #endif
-
-
-
 }

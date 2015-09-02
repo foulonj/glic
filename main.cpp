@@ -95,9 +95,9 @@ int main(int argc, char **argv){
     InitGlew();
 
     //Génératio de VAO
-    //GLuint VertexArrayID;
-    //glGenVertexArrays(1, &VertexArrayID);
-    //glBindVertexArray(VertexArrayID);
+
+    glGenVertexArrays(1, &(cv.vaoID));
+    glBindVertexArray(cv.vaoID);
 
     cout << idw << " " << ids << endl;
     vector<CglicMesh*> mesh;

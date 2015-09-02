@@ -30,6 +30,7 @@ public:
   CglicKeyboard keyboard;
   CglicProfile  profile;
   SHADER        simpleShader, smoothShader;
+  GLuint        vaoID;
 
   //private:
   int winid();
