@@ -4,7 +4,7 @@ project(GLIC)
 
 set(CMAKE_BUILD_TYPE "Release")
 
-#Include de GLM
+#Include GLM
 include(ExternalProject)
 ExternalProject_Add(
   glm
@@ -18,24 +18,21 @@ ExternalProject_Add(
 )
 
 #Move shaders to build directory
-#configure_file(data_file ${CMAKE_CURRENT_BINARY_DIR}/data_file COPYONLY)
-#file(COPY shaders/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
+file(MAKE_DIRECTORY shaders)
+file(COPY shaders/ DESTINATION shaders)#${CMAKE_CURRENT_BINARY_DIR})
 
 #Options C++ (-Wno-deprecated: remove glut deprecated)
-
 set (CMAKE_CXX_FLAGS "-std=c++0x -g3 -Wno-deprecated -O0")
 # -stdlib=libc++
+
 #Options graphiques
 find_package(GLUT)
 find_package(OpenGL)
 find_package(X11)
 find_package(GLEW)
-
 set(CORELIBS ${GLEW_LIBRARY} ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${X11_LIBRARIES})
 
 #Include files
-#include_directories("include/")
 include_directories("include/" "libmesh/" "${CMAKE_CURRENT_BINARY_DIR}/glm/src/glm")
 
 #Compilation
