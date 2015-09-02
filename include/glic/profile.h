@@ -20,7 +20,6 @@ class CglicProfile
     bool  displayAxes;
     bool  displayAxesLabels;
 
-    bool  upView;
     bool  perspective;
 
     bool  flyingMode;

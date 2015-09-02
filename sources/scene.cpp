@@ -132,10 +132,12 @@ void CglicScene::applyTransformation()
     m_cam   +=   transform.tr;
     m_look  =   glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_look,0)));
     m_up    =   glm::normalize(glm::vec3(glm::inverse(transform.rot) * glm::vec4(m_up,1)));
+
     VIEW = glm::lookAt(m_cam + view->camOffset * m_right,
                        m_cam + view->camOffset * m_right + m_look,
                        m_up);
     m_right = glm::cross(m_look,m_up);
+
   }
   //CLASSICAL MODE
   else if (pcv->profile.classicalMode){

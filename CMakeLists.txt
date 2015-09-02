@@ -4,18 +4,22 @@ project(GLIC)
 
 set(CMAKE_BUILD_TYPE "Release")
 
-
+#Include de GLM
 include(ExternalProject)
-ExternalProject_Add(     
+ExternalProject_Add(
   glm
-  PREFIX "./glm"   
-  GIT_REPOSITORY https://github.com/g-truc/glm.git     
-  CONFIGURE_COMMAND ""     
-  BUILD_COMMAND ""     
+  PREFIX "./glm"
+  GIT_REPOSITORY https://github.com/g-truc/glm.git
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
   INSTALL_COMMAND ""
-  LOG_DOWNLOAD ON     
+  LOG_DOWNLOAD ON
   LOG_INSTALL ON
 )
+
+#Move shaders to build directory
+#configure_file(data_file ${CMAKE_CURRENT_BINARY_DIR}/data_file COPYONLY)
+#file(COPY shaders/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 
 #Options C++ (-Wno-deprecated: remove glut deprecated)

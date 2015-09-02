@@ -87,12 +87,17 @@ int main(int argc, char **argv){
   else
   {
     //Première fenêtre
-    idw = cv.glicWindow(0,0,1000,1000);
+    idw = cv.glicWindow(0,0,800,800);
     ids = cv.glicScene();
     cv.glicSetScene(ids, idw);
     cv.window[idw].show();
 
     InitGlew();
+
+    //Génératio de VAO
+    //GLuint VertexArrayID;
+    //glGenVertexArrays(1, &VertexArrayID);
+    //glBindVertexArray(VertexArrayID);
 
     cout << idw << " " << ids << endl;
     vector<CglicMesh*> mesh;

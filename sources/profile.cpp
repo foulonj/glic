@@ -5,11 +5,10 @@ CglicProfile::CglicProfile()
   displayShadows    = true;
   displayBottomGrid = true;
   displayAxes       = true;
-  displayAxesLabels = true;
+  displayAxesLabels = false;
 
   stereo            = false;
 
-  upView            = false;
   perspective       = true;
 
   classicalMode     = true;
