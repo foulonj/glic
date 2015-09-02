@@ -250,15 +250,22 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
   //Save
   if(key == 's'){
     ofstream saveFile;
-    saveFile.open("save.txt");
+    saveFile.open("glic.save");
+    int numberMeshes = 0;
+    for(int i = 0 ; i < scene->listObject.size() ; i++)
+      if(scene->listObject[i]->isMeshObject())
+        numberMeshes++;
+    saveFile << numberMeshes << endl;
     for(int i = 0 ; i < scene->listObject.size() ; i++){
       if(scene->listObject[i]->isMeshObject()){
-        glm::mat4 M = scene->listObject[i]->getMODEL();
-        saveFile << scene->listObject[i]->meshFile << endl;
+        pCglicObject obj = scene->listObject[i];
+        glm::mat4 M = obj->getMODEL();
+        saveFile << obj->meshFile << endl;
         for(int i = 0 ; i < 4 ; i++)
-          saveFile << M[i][0] << " " << M[i][1] << " " << M[i][2] << " " << M[i][3] << endl;
-        saveFile << scene->listObject[i]->getGroupID() << endl;
-        saveFile << endl;
+          saveFile << float(M[i][0]) << " " << float(M[i][1]) << " " << float(M[i][2]) << " " << float(M[i][3]) << endl;
+        glm::vec3 c = *(obj->getCenterPtr());
+        saveFile << c.x << " " << c.y << " " << c.z << endl;
+        saveFile << obj->getGroupID() << endl;
       }
     }
     saveFile.close();
