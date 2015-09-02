@@ -10,6 +10,7 @@ double frand_a_b(double a, double b){
 }
 
 void InitGlew(){
+#ifndef __APPLE__
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
   if (err != GLEW_OK){
@@ -20,6 +21,7 @@ void InitGlew(){
     cout << "Version 2.1 pas supportée" << endl;
     exit(1);
   }
+#endif
 }
 
 int main(int argc, char **argv){
@@ -93,11 +95,6 @@ int main(int argc, char **argv){
     cv.window[idw].show();
 
     InitGlew();
-
-    //Génératio de VAO
-
-    glGenVertexArrays(1, &(cv.vaoID));
-    glBindVertexArray(cv.vaoID);
 
     cout << idw << " " << ids << endl;
     vector<CglicMesh*> mesh;

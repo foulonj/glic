@@ -1,8 +1,8 @@
-#version 130
+#version 120
 
-in vec3 vertex_position;
-in vec3 vertex_normal;
-out vec3 fragmentColor;
+attribute vec3 vertex_position;
+attribute vec3 vertex_normal;
+varying vec3 fragmentColor;
 
 uniform mat4 MVP;
 uniform vec3 COL;
@@ -26,8 +26,8 @@ void main(){
   vec3 LightColor            = vec3(1,1,0.8);//Lumière un peu jaune
   vec3 MaterialDiffuseColor  = COL;
   vec3 MaterialSpecularColor = 0.5 * (COL + vec3(1.0, 1.0, 1.0));
-  float lobeSize = 5.0f;//Taille du lobe spéculaire
-  float LightPower           = 100.0f;
+  float lobeSize = 5.0;//Taille du lobe spéculaire
+  float LightPower           = 100.0;
   vec3 MaterialAmbientColor  = 0.5 * MaterialDiffuseColor;
 
   vec3 LightPosition_worldspace = vec3(-1,10,-1);
@@ -63,7 +63,7 @@ void main(){
   vec3 l = normalize( LightDirection_cameraspace );
 
   // Le cosinus de l'angle entre la normale et le rayon de lumière est toujours supérieur à 0
-  float cosTheta = clamp( dot( n,l ), 0,1 );
+  float cosTheta = clamp( dot( n,l ), 0.,1. );
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ void main(){
   vec3 R = reflect(-l,n);
 
   // Cosinus de l'angle entre le vecteur œil et le vecteur de reflexion limité à 0
-  float cosAlpha = clamp( dot( E,R ), 0,1 );
+  float cosAlpha = clamp( dot( E,R ), 0.,1. );
 
 
   //Sortie finale de couleur

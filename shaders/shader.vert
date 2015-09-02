@@ -1,8 +1,8 @@
-#version 130
+#version 120
 
-in vec3 vertex_position;
-in vec3 vertex_normal;
-out vec3 fragmentColor;
+attribute vec3 vertex_position;
+attribute vec3 vertex_normal;
+varying vec3 fragmentColor;
 
 uniform mat4 MVP;
 uniform vec3 COL;

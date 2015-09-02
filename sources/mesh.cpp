@@ -426,9 +426,6 @@ void CglicMesh::display()
 
   //Mesh buffer binding
 
-      glBindVertexArray(pcv->vaoID);
-
-
   glEnableVertexAttribArray( 0);
   glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
   glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
@@ -442,11 +439,6 @@ void CglicMesh::display()
 
   //Indices buffer binding
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
-
-
-    glBindVertexArray(0);
-
-
 
   pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
   glm::vec3 selection_color = ((idGroup==-1)?pcv->profile.sele_color:scene->listGroup[idGroup]->group_color);
@@ -467,10 +459,7 @@ void CglicMesh::display()
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(1.0,1.0);
 
-
-    //glBindVertexArray(pcv->vaoID);
     glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
-    //glBindVertexArray(0);
   }
   else{
     uniformVec3(colorID, face_color);
