@@ -47,9 +47,15 @@ bool SHADER::CompileShader(GLuint hso, string& src)
 }
 
 
-/*
+
 void SHADER::load(string vert_path, string frag_path){
-  //Init
+  #ifdef __APPLE__
+
+
+
+
+
+   //Init
   mVertex_file_path   = vert_path;
   mFragment_file_path = frag_path;
   GLuint mProgramID   = glCreateProgram();
@@ -117,12 +123,19 @@ void SHADER::load(string vert_path, string frag_path){
     glDeleteShader(hvso);
     glDeleteShader(hfso);
   }  
-}
-*/
 
 
 
-void SHADER::load(string vert_path, string frag_path){
+
+
+
+  #else
+
+
+
+
+
+
   // Crée les shaders
   mVertex_file_path   = vert_path;
   mFragment_file_path = frag_path;
@@ -194,4 +207,12 @@ void SHADER::load(string vert_path, string frag_path){
   glDeleteShader(VertexShaderID);
   glDeleteShader(FragmentShaderID);
   mProgramID = ProgramID;
+
+
+
+
+  #endif
+
+
+
 }
