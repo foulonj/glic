@@ -10,16 +10,19 @@
 #define __GLIC_KEYBOARD_H_
 
 #include "defs.h"
-#include <glic/math1.h>
 
 class GLIC_API CglicKeyboard
 {
 public:
-  int selection;
-  CglicKeyboard():selection(-1){};
+  CglicKeyboard(){selection=-1; lastKey='*';};
   virtual ~CglicKeyboard(){};
   void keyboard(unsigned char key, int x, int y);
+  void keyboardUp(unsigned char key, int x, int y);
   void special(unsigned char key, int x, int y);
+
+private:
+  unsigned char lastKey;
+  int selection;
   void keyColor(unsigned char key,int x,int y);
 };
 

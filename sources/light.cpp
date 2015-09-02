@@ -1,37 +1,38 @@
 #include <glic/light.h>
 #include <glic/material.h>
+#include <glm/ext.hpp>
 
 
 // light constructor
 CglicLight::CglicLight(const int& i)
 {
-  cout << "  --- - [create CglicLight]" << endl;
+  //cout << "  --- - [create CglicLight]" << endl;
   ltyp = TL_DIRECTION;
   lid = i;
-  
-  setCol(CglicMaterial::TC_AMB, 0.0, 0.0, 0.0, 1.0);
-  setCol(CglicMaterial::TC_DIF, 1.0, 1.0, 1.0, 1.0);
-  setCol(CglicMaterial::TC_SPE, 1.0, 1.0, 1.0, 1.0);
-  
+
+  //setCol(CglicMaterial::TC_AMB, 0.0, 0.0, 0.0, 1.0);
+  //setCol(CglicMaterial::TC_DIF, 1.0, 1.0, 1.0, 1.0);
+  //setCol(CglicMaterial::TC_SPE, 1.0, 1.0, 1.0, 1.0);
+
   setPos(0, 0, 0, 1);
   setAtt(1, 0, 0);
-  
+
   spotCutoff   = 45.0;
   spotDirect[0] =  0.0;
   spotDirect[1] =  0.0;
   spotDirect[2] = -1.0;
   spotExp      =  0.0;
-  
+
   //cout << " -- Number of Light: " << lid << endl;
-  
+
 }
 
 
 CglicLight::~CglicLight()
 {
-  cout << "  --- - [destroy CglicLight]" << endl;
+  //cout << "  --- - [destroy CglicLight]" << endl;
 }
-
+/*
 void CglicLight::setCol(CglicMaterial::TcolType typ, const float r, const float g,const float b, const float a)
 {
   switch (typ) {
@@ -54,11 +55,11 @@ void CglicLight::setCol(CglicMaterial::TcolType typ, const float r, const float 
       spe[3] = a;
       break;
     default:
-      
+
       break;
   }
 }
-
+*/
 
 void CglicLight::setPos(const float x, const float y, const float z, const float w)
 {
@@ -95,7 +96,7 @@ void CglicLight::setSpot(float cutoff, float sx, float sy, float sz, float expo)
   spotExp       = expo;
 }
 
-
+/*
 void CglicLight::getCol(CglicMaterial::TcolType typ, float &r, float &g, float &b, float &a) const
 {
   switch (typ) {
@@ -118,11 +119,11 @@ void CglicLight::getCol(CglicMaterial::TcolType typ, float &r, float &g, float &
       a = spe[3];
       break;
     default:
-      
+
       break;
   }
 }
-
+*/
 
 void CglicLight::getPos(float &x, float &y, float &z, float &w ) const
 {
@@ -137,34 +138,34 @@ void CglicLight::glicInit()
 {
   // check if enabled ...
   GLenum   light = GL_LIGHT0 + lid;
-  
-  glLightfv(light, GL_AMBIENT, amb);
-  glLightfv(light, GL_DIFFUSE, dif);
-  glLightfv(light, GL_SPECULAR, spe);
-  
+
+  glLightfv(light, GL_AMBIENT, glm::value_ptr(amb));
+  glLightfv(light, GL_DIFFUSE, glm::value_ptr(dif));
+  glLightfv(light, GL_SPECULAR, glm::value_ptr(spe));
+
   switch (ltyp) {
     case TL_POINT:
       pos[3] = 1.0;
-      glLightfv(light, GL_POSITION, pos);
+      glLightfv(light, GL_POSITION, glm::value_ptr(pos));
       glLightf(light, GL_SPOT_CUTOFF, 180.0);
       break;
     case TL_DIRECTION:
       pos[3] = 0.0;
-      glLightfv(light, GL_POSITION, pos);
+      glLightfv(light, GL_POSITION, glm::value_ptr(pos));
       glLightf(light, GL_SPOT_CUTOFF, 180.0);
       break;
     case TL_SPOT:
       pos[3] = 1.0;
-      glLightfv(light, GL_POSITION, pos);
+      glLightfv(light, GL_POSITION, glm::value_ptr(pos));
       glLightf(light, GL_SPOT_CUTOFF, spotCutoff);
       glLightfv(light, GL_SPOT_DIRECTION, spotDirect);
       glLightf(light, GL_SPOT_EXPONENT, spotExp);
       break;
     default:
-      
+
       break;
   }
-  
+
   glLighti(light, GL_CONSTANT_ATTENUATION, cstatt);
   glLighti(light, GL_LINEAR_ATTENUATION, linatt);
   glLighti(light, GL_QUADRATIC_ATTENUATION, quadatt);

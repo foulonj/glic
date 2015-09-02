@@ -29,29 +29,40 @@ typedef struct {
 } Normal;
 //typedef Normal * pNormal;
 
+typedef struct {
+  int inds[2];
+} NormalAtVertex;
+
 
 class GLIC_API CglicMesh : public CglicObject
 {
+
 private:
-  int np,nt,nn,dim,ver;
+  int np,nt,nn,dim,ver, nNAtV;
+  //Pas nécessaire de les conserver en mémoire si uniquement du display, on peut garder le système de buffer
   vector<Point>    point;
   vector<Tria>     tria;
   vector<Normal>   normal;
-  GLuint listTria;
-  GLuint listEdge;
-public:
-  double      xmin,ymin,zmin,xmax,ymax,zmax;
-  double      xtra,ytra,ztra;
-  float       bbmin,bbmax;
-  
+  vector<NormalAtVertex> NormalAtVertices;
+  GLuint bboxBuffer;
+  GLuint bboxIndBuffer;
+  GLuint normalBuffer;
+  glm::vec3 bbmin, bbmax;
+  glm::vec3 tra;
+
+
 public:
   CglicMesh(char *name);
   void meshInfo(const int& verbose = 0, ostream& outstr = cout);
+  void shadowsDisplay();
+  void artifactsDisplay();
   void display();
-  void meshBox();
+  void getBBOX();
+  void displayBBOX();
   ~CglicMesh(){};
-  GLuint buildTria();
-  GLuint buildEdge();
+
+  glm::vec3 getBBMIN(){return center + glm::vec3(glm::inverse(MODEL) * glm::vec4(bbmin, 0));};
+  glm::vec3 getBBMAX(){return center + glm::vec3(glm::inverse(MODEL) * glm::vec4(bbmax, 0));};
 };
 
 #endif

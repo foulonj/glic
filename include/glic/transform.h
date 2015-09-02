@@ -10,22 +10,24 @@
 #define __GLIC_TRANSFORM_H_
 
 #include "defs.h"
-#include <glic/math1.h>
 
 class GLIC_API CglicTransform
 {
 public:
-  mat4x4 mat;
-  
-  vec3d translation;
-  double angle;
-  vec3d axe;
+  glm::vec3 tr;
+  glm::mat4 rot;
 
-  CglicTransform();
+  //Retour en arrière
+  std::vector<glm::mat4> lastMatrices;
+  std::vector<glm::vec3> lastUps;
+  std::vector<glm::vec3> lastCams;
+
+  CglicTransform(){};
   ~CglicTransform(){};
-  void setRotation(double ang, vec3d axis);
-  void setTranslation(double x, double y, double z);
+  void setRotation(glm::mat4 M);
+  void setTranslation(glm::vec3 translation);
   void print();
+  void reset();
 };
 
 #endif

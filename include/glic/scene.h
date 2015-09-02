@@ -11,27 +11,55 @@
 
 #include "defs.h"
 #include <glic/object.h>
+#include <glic/view.h>
+#include <glic/axis.h>
+#include <glic/group.h>
 
 class GLIC_API CglicScene
 {
 public:
-  
-//private:
-  //int  ids;
-  enum TsceState {TO_OFF, TO_ON, TO_SEL, TO_DYN};
-  void resize(int width, int height);
   std::vector<pCglicObject> listObject;
-  CglicTransform transform;
-  double m_rot[16];
+  std::vector<pCglicGroup>  listGroup;
+  CglicTransform            transform;
+  CglicAxis                 *axis;
+  CglicView                 *view;
+
+  float globalScale;
+  glm::vec3 center;
+
 public:
-  char  state;
+  glm::vec3 m_look, m_cam, m_up, m_look_offset;
+  glm::vec3 m_right;
+
+  glm::mat4 MODEL;
+  glm::mat4 VIEW;
+  glm::mat4 PROJ;
+
+public:
+  bool selected;
   int  ids;
-  //int id(){return ids;};
+
   CglicScene();
   virtual ~CglicScene();
   void display();
   void addObject(pCglicObject object);
   void applyTransformation();
+  void saveTransformations();
+  void update_matrices();
+  void debug();
+  int  getPickedObjectID(int x, int y);
+  void reOrderObjects(int picked);
+  void resetAll();
+  void undoLast();
+
+  bool isSelected();
+  void select();
+  void unSelect();
+
+  void toogleFlyingMode();
+
+  glm::vec2 cursorOrigin;
+
 protected:
   virtual void glicInit();
 };

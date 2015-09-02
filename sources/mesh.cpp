@@ -3,33 +3,39 @@ extern "C" {
 #include <libmesh5.h>
 }
 
+#include <glic/canvas.h>
+
+extern CglicCanvas *pcv;
 
 CglicMesh::CglicMesh(char *name)
 {
+  isMesh   = true;
   Point    *ppt;
   Tria     *pt;
   double   *n,dd;
   float     fp1,fp2,fp3;
   int       k,inm;
-  
-  cout << "\n NAME:" << name << endl;
-  
+
+  //cout << "\n NAME:" << name << endl;
+
   inm = GmfOpenMesh(name,GmfRead,&ver,&dim);
   if ( !inm ){
-    cout << "  ** FILE NOT FOUND.\n";
+    //cout << "  ** FILE NOT FOUND.\n";
     exit(0);
   }
-  
-  np = GmfStatKwd(inm,GmfVertices);
-  nt = GmfStatKwd(inm,GmfTriangles);
-  nn = GmfStatKwd(inm,GmfNormals);
-  
+
+  np    = GmfStatKwd(inm, GmfVertices);
+  nt    = GmfStatKwd(inm, GmfTriangles);
+  nn    = GmfStatKwd(inm, GmfNormals);
+  //Normals At vertices
+  nNAtV = GmfStatKwd(inm, GmfNormalAtVertices);
+
   if ( !np ){
     cout << "  ** MISSING DATA\n";
     exit(0);
   }
-  
-  point.resize(np+1);
+
+  point.resize(np);
   GmfGotoKwd(inm,GmfVertices);
   for (k=0; k<np; k++){
     ppt = &point[k];
@@ -42,7 +48,7 @@ CglicMesh::CglicMesh(char *name)
     else
       GmfGetLin(inm,GmfVertices,&ppt->c[0],&ppt->c[1],&ppt->c[2],&ppt->ref);
   }
-  
+
   //read triangles
   tria.resize(nt+1);
   GmfGotoKwd(inm,GmfTriangles);
@@ -50,9 +56,8 @@ CglicMesh::CglicMesh(char *name)
     pt = &tria[k];
     GmfGetLin(inm,GmfTriangles,&pt->v[0],&pt->v[1],&pt->v[2],&pt->ref);
   }
-  
+
   normal.resize(np+1);
-  
   if ( nn ) {
     GmfGotoKwd(inm,GmfNormals);
     for (k=0; k<nn; k++) {
@@ -71,16 +76,74 @@ CglicMesh::CglicMesh(char *name)
       n[2] *= dd;
     }
   }
-  meshBox();
-  listTria=buildTria();
-  listEdge=buildEdge();
+
+  //Calcul de la bounding box
+  getBBOX();
+
+  //Préparation des buffers
+  std::vector<float> vertices;
+  std::vector<int>   indices;
+  int inv = ((pcv->profile.invertVertical)?-1:1);
+
+  //Buffer des vertices
+  for (int i = 0 ; i < point.size() ; i++){
+    vertices.push_back(      point[i].c[0]);
+    vertices.push_back(inv * point[i].c[1]);
+    vertices.push_back(inv * point[i].c[2]);
+  }
+  glGenBuffers( 1,               &meshBuffer);
+  glBindBuffer( GL_ARRAY_BUFFER, meshBuffer);
+  glBufferData( GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+
+  //Buffer des indices
+  for (int i = 0 ; i < tria.size() ; i++)
+    for(int j = 0 ; j < 3 ; j++)
+      indices.push_back(tria[i].v[j]-1);
+  glGenBuffers(1, &indicesBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+
+  //Lecture des NormalsAtVertices pour faire les normales
+  NormalAtVertices.resize(nNAtV + 1);
+  //Lecture du .mesh
+  if ( nNAtV ) {
+    GmfGotoKwd(inm,GmfNormalAtVertices);
+    for (k=0; k<nNAtV; k++)
+      GmfGetLin(inm,GmfNormalAtVertices,
+                &NormalAtVertices[k].inds[0],
+                &NormalAtVertices[k].inds[1]);
+  }
+  //Initialisation des normals à 0 pour les vertices n'ayant pas de normales
+  std::vector<float> normals;
+  for(int i = 0 ; i < vertices.size() ; i++)
+    normals.push_back(0.0f);
+  //Remplissage du vector 1D "normals", envoyé plus tard aux buffers
+  for(int i = 0 ; i < NormalAtVertices.size() - 1 ; i++){
+    int indV = NormalAtVertices[i].inds[0] - 1;
+    int indN = NormalAtVertices[i].inds[1] - 1;
+    normals[3 * indV + 0] =       normal[indN].n[0];
+    normals[3 * indV + 1] = inv * normal[indN].n[1];
+    normals[3 * indV + 2] = inv * normal[indN].n[2];
+  }
+  //Buffer des normales
+  glGenBuffers( 1,               &normalBuffer);
+  glBindBuffer( GL_ARRAY_BUFFER, normalBuffer);
+  glBufferData( GL_ARRAY_BUFFER, sizeof(float) * normals.size(), &normals[0], GL_STATIC_DRAW);
+
+
+  //face_color = glm::vec3(0, 0, 1);
+  //edge_color = glm::vec3(0,0,1);
+
+  //TYPE DE RENDU ET SHADER
+  nPicking = 3 * tria.size();
 }
 
 void CglicMesh::meshInfo(const int& verbose, ostream& outstr)
 {
-  cout << " \t\t MeshInfo \n" << endl;
+  //cout << " \t\t MeshInfo \n" << endl;
   cout << "np: " << np << ", nt: " << nt << ", nn:" << nn << ", dim: " << dim << ", ver: " << ver << endl;
-  
+
   if (verbose){
     cout << "Points" << endl;
     for (int i = 0; i < np; i++)
@@ -94,158 +157,335 @@ void CglicMesh::meshInfo(const int& verbose, ostream& outstr)
   }
 }
 
-
-GLuint CglicMesh::buildTria()
+void CglicMesh::getBBOX()
 {
-  int i;
-  Tria  *pt;
-  Point     *p0,*p1,*p2;
-  float      pp0[3],pp1[3],pp2[3];
-  
-  listTria = glGenLists(1);
-  
-  glNewList(listTria,GL_COMPILE);
-  
-  //glColor3f(0., 1., 0.);
-  
-  GLfloat mat_amb[] = { 0.0, 0.0, 0.0, 1.0 };
-   GLfloat mat_dif[] = { 0., 0., 0., 1.0 };
-   GLfloat mat_specular[] = { 0.07, 0.0, 0.0, 1.0 };
-   GLfloat mat_emi[] = { 0.0, 0.0, 0.0, 1.0 };
-   GLfloat mat_shininess[] = { 20.0 };
-   
-   glMaterialfv(GL_FRONT, GL_AMBIENT, mat_amb);
-   glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_dif);
-   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-   glMaterialfv(GL_FRONT, GL_EMISSION, mat_emi);
-   glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-  
-  //glColor3f(0.51,0.52,0.8);
-  
-  
-  //GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
-  //GLfloat mat_shininess[] = { 80.0 };
+  //Init
+  Point     *p0;
+  bbmin = glm::vec3(FLOAT_MAX);
+  bbmax = glm::vec3(-FLOAT_MAX);
 
-
-  //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-  //glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-  
-  glColor3f(0.51,0.52,0.8);
-  //glColor3f(1.,0.99,0.94);
-  
-  
-  glBegin (GL_TRIANGLES);
-  for (int k=0; k<nt; k++) {
-    pt = &tria[k];
-    p0 = &point[pt->v[0]-1];
-    p1 = &point[pt->v[1]-1];
-    p2 = &point[pt->v[2]-1];
-    for (i=0; i<3 ; i++) {
-      pp0[i] = p0->c[i];
-      pp1[i] = p1->c[i];
-      pp2[i] = p2->c[i];
-    }
-    
-    glVertex3fv(pp0);
-    glVertex3fv(pp1);
-    glVertex3fv(pp2);
+  //Compute bounding box
+  for (int k=0; k<np; k++) {
+    p0 = &point[k];
+    if ( p0->c[0] < bbmin.x ) bbmin.x = p0->c[0];
+    if ( p0->c[0] > bbmax.x ) bbmax.x = p0->c[0];
+    if ( p0->c[1] < bbmin.y ) bbmin.y = p0->c[1];
+    if ( p0->c[1] > bbmax.y ) bbmax.y = p0->c[1];
+    if ( p0->c[2] < bbmin.z ) bbmin.z = p0->c[2];
+    if ( p0->c[2] > bbmax.z ) bbmax.z = p0->c[2];
   }
-  glEnd();
-  glEndList();
-  return(listTria);
+
+  //Translate mesh to center
+  tra = 0.5f * (bbmin + bbmax);
+  for (int k=0; k<np; k++) {
+    p0 = &point[k];
+    p0->c[0] -= tra.x;
+    p0->c[1] -= tra.y;
+    p0->c[2] -= tra.z;
+  }
+
+  glm::vec3 size = bbmax - bbmin;
+  localScale     = 0.5f * 1.0f / (max( max(size.x, size.y) , size.z ));
+  if(pcv->profile.independantScale){
+    scaleFactor = localScale;
+  }
+  //ELSE: C'EST LA SCENE QUI SE CHARGE DENVOYER LE PATE
+
+  //Bounding box buffer
+  float cube[] = {
+    -0.5, -0.5, -0.5,
+     0.5, -0.5, -0.5,
+     0.5,  0.5, -0.5,
+    -0.5,  0.5, -0.5,
+    -0.5, -0.5,  0.5,
+     0.5, -0.5,  0.5,
+     0.5,  0.5,  0.5,
+    -0.5,  0.5,  0.5,
+  };
+  glGenBuffers(1, &bboxBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
+
+  //Indices buffer
+  GLushort elements[] = {
+    0, 1, 2, 3,
+    4, 5, 6, 7,
+    0, 4, 1, 5, 2, 6, 3, 7
+  };
+  glGenBuffers(1, &bboxIndBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+  //Freeing ressources
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-GLuint CglicMesh::buildEdge()
-{
-  int i;
-  Tria  *pt;
-  Point     *p0,*p1,*p2;
-  float      pp0[3],pp1[3],pp2[3];
-  
-  listEdge = glGenLists(1);
-  
-  glNewList(listEdge,GL_COMPILE);
-  
-  glColor3f(0., 0., 1.);
-  for (int k=0; k<nt; k++) {
-    pt = &tria[k];
-    p0 = &point[pt->v[0]-1];
-    p1 = &point[pt->v[1]-1];
-    p2 = &point[pt->v[2]-1];
-    for (i=0; i<3 ; i++) {
-      pp0[i] = p0->c[i];
-      pp1[i] = p1->c[i];
-      pp2[i] = p2->c[i];
-    }
-    
-    glBegin(GL_LINES);
-    glVertex3fv(pp0);
-    glVertex3fv(pp1);
-    glEnd();
-    glBegin(GL_LINES);
-    glVertex3fv(pp1);
-    glVertex3fv(pp2);
-    glEnd();
-    glBegin(GL_LINES);
-    glVertex3fv(pp2);
-    glVertex3fv(pp0);
-    glEnd();
-  }
-  
-  glEndList();
-  return(listEdge);
+
+//Light[3] = 0 si directionelle
+glm::mat4 shadowMatrix(glm::vec4 ground, glm::vec4 light){
+    float  dot;
+    glm::mat4 shadowMat;
+    dot = ground[0] * light[0] +
+          ground[1] * light[1] +
+          ground[2] * light[2] +
+          ground[3] * light[3];
+    shadowMat[0][0] = dot - light[0] * ground[0];
+    shadowMat[1][0] = 0.0 - light[0] * ground[1];
+    shadowMat[2][0] = 0.0 - light[0] * ground[2];
+    shadowMat[3][0] = 0.0 - light[0] * ground[3];
+    shadowMat[0][1] = 0.0 - light[1] * ground[0];
+    shadowMat[1][1] = dot - light[1] * ground[1];
+    shadowMat[2][1] = 0.0 - light[1] * ground[2];
+    shadowMat[3][1] = 0.0 - light[1] * ground[3];
+    shadowMat[0][2] = 0.0 - light[2] * ground[0];
+    shadowMat[1][2] = 0.0 - light[2] * ground[1];
+    shadowMat[2][2] = dot - light[2] * ground[2];
+    shadowMat[3][2] = 0.0 - light[2] * ground[3];
+    shadowMat[0][3] = 0.0 - light[3] * ground[0];
+    shadowMat[1][3] = 0.0 - light[3] * ground[1];
+    shadowMat[2][3] = 0.0 - light[3] * ground[2];
+    shadowMat[3][3] = dot - light[3] * ground[3];
+    return shadowMat;
 }
 
+void CglicMesh::shadowsDisplay(){
+  if(pcv->profile.displayShadows){
+    if(hidden)
+      glEnable(GL_BLEND);
+
+    glEnable(GL_CULL_FACE);
+    int shaderID = pcv->simpleShader.mProgramID;
+    glUseProgram(shaderID);
+    int MatrixID = glGetUniformLocation(shaderID, "MVP");
+    int colorID  = glGetUniformLocation(shaderID, "COL");
+
+    glEnableVertexAttribArray( 0);
+    glBindBuffer(GL_ARRAY_BUFFER, meshBuffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(shaderID, 0, "vertex_position");
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+
+    glm::mat4 shadowMVP =  *pPROJ * *pVIEW * *pMODEL *
+                           shadowMatrix( glm::vec4(glm::vec3(0,1,0), pcv->profile.bottomDistance - 0.002), glm::vec4(glm::vec3(0,1,0), 0) ) *
+                           //shadowMatrix( glm::vec4(*sceneUp, 0.495), glm::vec4(*sceneUp, 0) ) *
+                           glm::scale(MODEL, glm::vec3(scaleFactor));
+
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &shadowMVP[0][0]);
+    uniformVec3(colorID, 0.08f * face_color);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+
+
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+
+    glDisable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+  }
+}
+
+void CglicMesh::artifactsDisplay(){
+  if(!hidden){
+    //Initialization
+    glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
+    int shaderID = pcv->simpleShader.mProgramID;
+    glUseProgram(shaderID);
+    int MatrixID = glGetUniformLocation(shaderID, "MVP");
+    int colorID  = glGetUniformLocation(shaderID, "COL");
+    glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    //Mesh buffer binding
+    glEnableVertexAttribArray( 0);
+    glBindBuffer(GL_ARRAY_BUFFER, meshBuffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+    glBindAttribLocation(shaderID, 0, "vertex_position");
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+
+    //Group identification
+    pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+    if (scene->listGroup.size() > 0){
+      for(int i = 0 ; i < scene->listGroup.size() ; i++){
+        for(int j = 0 ; j < scene->listGroup[i]->listObject.size() ; j++){
+          if(objectID==scene->listGroup[i]->listObject[j]->getID()){
+            idGroup = i;
+          }
+        }
+      }
+    }
+    else
+      idGroup = -1;
+
+    glm::vec3 selection_color = ((idGroup==-1)?pcv->profile.sele_color:scene->listGroup[idGroup]->group_color);
+
+    //Contour
+    if(isSelected()){
+      glLineWidth(10.0);
+
+      uniformVec3(colorID, selection_color);
+      glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+      glDisable(GL_DEPTH_TEST);
+      glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+      glEnable(GL_DEPTH_TEST);
+
+      glLineWidth(1.0);
+    }
+
+    //Box
+    if(box){
+      glBindBuffer(GL_ARRAY_BUFFER, bboxBuffer);
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bboxIndBuffer);
+
+      if(isSelected()){
+        glLineWidth(2.0);
+        uniformVec3(colorID, selection_color);}
+      else{
+        glLineWidth(1.0);
+        uniformVec3(colorID, pcv->profile.idle_color);}
+
+      //glm::mat4 SCALE;
+      //if(idGroup==-1)
+        glm::mat4 SCALE = glm::scale(MVP, 1.02f * (bbmax - bbmin));
+      //else{
+        //SCALE = //glm::translate(glm::mat4(1),  scene->listGroup[idGroup]->group_center) *
+                //glm::scale(MVP, scene->listGroup[idGroup]->bbmax - scene->listGroup[idGroup]->bbmin);// *
+                //glm::translate(glm::mat4(1),  -scene->listGroup[idGroup]->group_center);
+      //}
+      glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &SCALE[0][0]);
+
+      glEnable(GL_POLYGON_OFFSET_LINE);
+      glPolygonOffset(10,0);
+      glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
+      glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4*sizeof(GLushort)));
+      glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8*sizeof(GLushort)));
+
+      glDisable(GL_POLYGON_OFFSET_LINE);
+      glLineWidth(1.0);
+    }
+
+    //Axes avec contraintes
+    if((isConstrainedInRotation()) || (isConstrainedInTranslation())){
+      std::vector<glm::vec3> pts;
+      if(isConstrainedInRotation()){
+        pts.push_back(-10.0f * constrainedRotationAxis + *rotationCenter);
+        pts.push_back( 10.0f * constrainedRotationAxis + *rotationCenter);
+      }
+      else if(isConstrainedInTranslation()){
+        pts.push_back(-10.0f * constrainedTranslationAxis + *rotationCenter);
+        pts.push_back( 10.0f * constrainedTranslationAxis + *rotationCenter);
+      }
+      glUseProgram(pcv->simpleShader.mProgramID);
+      GLuint axeBuffer;
+      glGenBuffers(1, &axeBuffer);
+      glBindBuffer(GL_ARRAY_BUFFER, axeBuffer);
+      glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), &pts[0][0], GL_STATIC_DRAW);
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+      glBindAttribLocation(pcv->simpleShader.mProgramID, 0, "vertex_position");
+      MVP = *pPROJ * *pVIEW * *pMODEL;
+      glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+      if(isConstrainedInRotation())
+        uniformVec3(colorID, constrainedRotationAxis);
+      else if(isConstrainedInTranslation())
+        uniformVec3(colorID, constrainedTranslationAxis);
+      glLineWidth(2.0f);
+      glDrawArrays(GL_LINES, 0, 2);
+      glLineWidth(1.0);
+    }
+
+    //Closing and freeing ressources
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    glDisableVertexAttribArray( 0);
+    glDisableVertexAttribArray( 1);
+    glUseProgram(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDisable(GL_CULL_FACE);
+  }
+}
 
 void CglicMesh::display()
 {
-  cout << "   ---> display mesh\n";
+  if(hidden)
+    glEnable(GL_BLEND);
 
-  if (box == TO_ON){
-    glPushMatrix();
-    glScalef(1.01 * fabs(xmax-xmin),
-             1.01 * fabs(ymax-ymin),
-             1.01 * fabs(zmax-zmin));
-    glColor3f(1.0,1.0,1.0);
-    glutWireCube(1.0);
-    glPopMatrix();
-  };
-  
-  glCallList(listTria);
-  if ( line == TO_ON)
-    glCallList(listEdge);
-  glFlush();
-  
+  glEnable(GL_CULL_FACE);
+
+  //Initialization
+  glm::mat4 MVP = *pPROJ * *pVIEW * *pMODEL * glm::scale(MODEL, glm::vec3(scaleFactor));;
+  int shaderID = ((smooth)?pcv->smoothShader.mProgramID : pcv->simpleShader.mProgramID);
+  glUseProgram(shaderID);
+  int MatrixID = glGetUniformLocation(shaderID, "MVP");
+  int colorID  = glGetUniformLocation(shaderID, "COL");
+  int lightID  = glGetUniformLocation(shaderID, "LIGHTPOS");
+  glUniformMatrix4fv( MatrixID, 1, GL_FALSE, &MVP[0][0]);
+  uniformVec3(lightID, *sceneCam);
+
+  //Mesh buffer binding
+
+  glEnableVertexAttribArray( 0);
+  glBindBuffer(              GL_ARRAY_BUFFER, meshBuffer);
+  glVertexAttribPointer(     0, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(      shaderID, 0, "vertex_position");
+
+  //Normal buffer binding
+  glEnableVertexAttribArray( 1);
+  glBindBuffer(              GL_ARRAY_BUFFER, normalBuffer);
+  glVertexAttribPointer(     1, 3, GL_FLOAT, GL_FALSE, 0, ( void*)0);
+  glBindAttribLocation(      shaderID, 1, "vertex_normal");
+
+  //Indices buffer binding
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+
+  pCglicScene scene = pcv->scene[pcv->window[pcv->winid()].ids];
+  glm::vec3 selection_color = ((idGroup==-1)?pcv->profile.sele_color:scene->listGroup[idGroup]->group_color);
+
+  if(smooth){
+    GLuint MID      = glGetUniformLocation(shaderID, "M");
+    GLuint VID      = glGetUniformLocation(shaderID, "V");
+    glUniformMatrix4fv( MID, 1, GL_FALSE, &MODEL[0][0]);
+    glUniformMatrix4fv( VID, 1, GL_FALSE, &(*pVIEW)[0][0]);
+
+
+    if(isSelected())
+      uniformVec3(colorID, 1.0f * selection_color);
+    else
+      uniformVec3(colorID, face_color);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(1.0,1.0);
+
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+  }
+  else{
+    uniformVec3(colorID, face_color);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+  }
+
+  if(line){
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    if(isSelected())
+      uniformVec3(colorID, 0.8f * selection_color);
+    else
+      uniformVec3(colorID, edge_color);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDrawElements(GL_TRIANGLES, 3 * tria.size(), GL_UNSIGNED_INT, (void*)0);
+  }
+
+  //Closing and freeing ressources
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glDisableVertexAttribArray( 0);
+  glDisableVertexAttribArray( 1);
+  glUseProgram(0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDisable(GL_BLEND);
+  glDisable(GL_CULL_FACE);
 }
 
-void CglicMesh::meshBox()
-{
-  
-  Point     *p0;
-  /* default */
-  xmin = ymin = zmin =  FLOAT_MAX;
-  xmax = ymax = zmax = -FLOAT_MAX;
-  
-  for (int k=0; k<np; k++) {
-    p0 = &point[k];
-    if ( p0->c[0] < xmin ) xmin = p0->c[0];
-    if ( p0->c[0] > xmax ) xmax = p0->c[0];
-    if ( p0->c[1] < ymin ) ymin = p0->c[1];
-    if ( p0->c[1] > ymax ) ymax = p0->c[1];
-    if ( p0->c[2] < zmin ) zmin = p0->c[2];
-    if ( p0->c[2] > zmax ) zmax = p0->c[2];
-  }
-  
-  //fprintf(stdout,"    Bounding box:  x:[%g  %g]  y:[%g  %g]  z:[%g  %g]\n", xmin,xmax,ymin,ymax,zmin,zmax);
-  
-  /* translate mesh at center */
-  xtra = 0.5 * (xmin+xmax);
-  ytra = 0.5 * (ymin+ymax);
-  ztra = 0.5 * (zmin+zmax);
-  for (int k=0; k<np; k++) {
-    p0 = &point[k];
-    p0->c[0] -= xtra;
-    p0->c[1] -= ytra;
-    p0->c[2] -= ztra;
-  }
-}
+
