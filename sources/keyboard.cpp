@@ -2,6 +2,8 @@
 #include <glic/keyboard.h>
 #include <glic/cube.h>
 
+#include <fstream>
+
 extern CglicCanvas *pcv;
 
 void CglicKeyboard::keyColor(unsigned char key,int x,int y) {
@@ -247,9 +249,20 @@ void CglicKeyboard::keyboard(unsigned char key, int x, int y)
 
   //Save
   if(key == 's'){
+    ofstream saveFile;
+    saveFile.open("save.txt");
     for(int i = 0 ; i < scene->listObject.size() ; i++){
-      //Ecrire MODEL et nom du fichier dans un file
+      if(scene->listObject[i]->isMeshObject()){
+        glm::mat4 M = scene->listObject[i]->getMODEL();
+        saveFile << scene->listObject[i]->meshFile << endl;
+        for(int i = 0 ; i < 4 ; i++)
+          saveFile << M[i][0] << " " << M[i][1] << " " << M[i][2] << " " << M[i][3] << endl;
+        saveFile << scene->listObject[i]->getGroupID() << endl;
+        saveFile << endl;
+      }
     }
+    saveFile.close();
+    cout << "Scene saved!!!" << endl;
   }
 
   //Flying mode

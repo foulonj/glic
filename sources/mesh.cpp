@@ -15,6 +15,7 @@ CglicMesh::CglicMesh(char *name)
   double   *n,dd;
   float     fp1,fp2,fp3;
   int       k,inm;
+  meshFile  = std::string(name);
 
   //cout << "\n NAME:" << name << endl;
 

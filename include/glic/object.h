@@ -16,7 +16,7 @@ class GLIC_API CglicObject
 {
   public:
     CglicTransform transform;
-    bool isMesh;
+    string meshFile;
 
   protected:
     //Matrices and vectors
@@ -27,6 +27,7 @@ class GLIC_API CglicObject
     glm::vec3 *rotationCenter;
     float     localScale;
     float     scaleFactor;
+    bool isMesh;
     //Scene parameters
     glm::vec3 *sceneCenter;
     glm::vec3 *sceneUp;
@@ -75,6 +76,10 @@ class GLIC_API CglicObject
   public:
     virtual glm::vec3 getBBMIN(){};
     virtual glm::vec3 getBBMAX(){};
+    bool  isMeshObject(){return isMesh;}
+    glm::mat4 getMODEL(){return MODEL;}
+
+    int   getGroupID();
     int   getID();
     float getLocalScale();
     void  resetGroupID();
