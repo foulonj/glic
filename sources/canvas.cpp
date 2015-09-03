@@ -174,8 +174,8 @@ void CglicCanvas::specialWrap(int key, int x, int y)
 
 void CglicCanvas::glicMainLoop()
 {
-  simpleShader.load("shaders/shader.vert", "shaders/shader.frag");
-  smoothShader.load("shaders/smooth_shader.vert", "shaders/smooth_shader.frag");
+  simpleShader.load("./shaders/shader.vert", "./shaders/shader.frag");
+  smoothShader.load("./shaders/smooth_shader.vert", "./shaders/smooth_shader.frag");
   glutMainLoop();
 }
 
